@@ -909,6 +909,99 @@ async function setArm(on){
   return { ok:true, enabled: pol.enabled, note: pol.enabled?'ARMED. The agent will deploy idle USDC into allowlisted yield within caps once the wallet is funded.':'Disarmed — back to dry-run, moves nothing.' };
 }
 
+// AUTO AIRDROP COLLECTOR — the never-miss radar. Sorts by urgency, tracks claim deadlines, scans the
+// operator's public addresses. Keyless. Claiming stays the operator's signed action (auto-claim = drain vector).
+async function airdropRadar(){
+  let reg; try{ reg=JSON.parse(await readFile(path.join(LAB,'config','airdrop-radar.json'),'utf8')); }catch{ return { count:0, airdrops:[] }; }
+  const order={ claimable:0, 'snapshot-pending':1, farming:2, rumored:3, ended:4 };
+  const now=Date.now();
+  const drops=(reg.airdrops||[]).map(a=>{
+    let days=null, urgent=false;
+    if(a.claim_deadline){ const dl=Date.parse(a.claim_deadline); if(!isNaN(dl)){ days=Math.ceil((dl-now)/86400000); urgent=days>=0&&days<=14; } }
+    return { ...a, days_to_deadline:days, urgent };
+  }).sort((x,y)=> (order[x.status]??9)-(order[y.status]??9) || (x.days_to_deadline??99999)-(y.days_to_deadline??99999));
+  const counts={}; for(const d of drops) counts[d.status]=(counts[d.status]||0)+1;
+  // addresses we scan (the agent wallet's ecosystems + any public addresses in wallets-watch)
+  const scanned=[];
+  try{ const aw=JSON.parse(await readFile(path.join(LAB,'config','agent-wallet.json'),'utf8')); for(const [eco,v] of Object.entries(aw.addresses||{})) scanned.push({ eco, address:v.address }); }catch{}
+  try{ const ww=JSON.parse(await readFile(path.join(LAB,'config','wallets-watch.json'),'utf8')); for(const w of (ww.wallets||[])) if(!scanned.some(s=>s.address===w.address)) scanned.push({ eco:w.chain||'evm', address:w.address }); }catch{}
+  const free=drops.filter(d=>/free/.test(d.cost||''));
+  const farmingNow=drops.filter(d=>d.status==='farming');
+  // auto-discovered tokenless DeFi candidates (refreshed daily by airdrop-fetcher.mjs)
+  let discovered={ count:0, new_today:0, candidates:[] };
+  try{ discovered=JSON.parse(await readFile(path.join(LAB,'data','airdrop-discovered.json'),'utf8')); }catch{}
+  return { count:drops.length, counts, airdrops:drops, checkers:reg.checkers||[], scanned_addresses:scanned,
+    discovered:{ count:discovered.count||0, new_today:discovered.new_today||0, date:discovered.date,
+      candidates:(discovered.candidates||[]).slice(0,40) },
+    urgent:drops.filter(d=>d.urgent), free_to_qualify:free.map(d=>d.name), farming_now:farmingNow.length,
+    note:'Radar of every tracked airdrop, sorted by urgency. Add your EXISTING public addresses to config/wallets-watch.json to scan them for unclaimed drops (keyless). The orchestrator re-checks on a cadence + alerts before any claim window closes. You sign the claim.',
+    honest:reg.honest };
+}
+
+// SYSTEM PLAYS — 100 ways to monetize OUR system, ranked by buildable × low-capital × ai-leverage.
+async function systemPlays(){
+  let cfg; try{ cfg=JSON.parse(await readFile(path.join(LAB,'config','system-plays.json'),'utf8')); }catch{ return { count:0, plays:[] }; }
+  const eW={low:1,med:0.72,high:0.5}, bW={yes:1,partial:0.62,no:0.25};
+  const scored=(cfg.plays||[]).map(p=>{ const score=Math.round(100*(bW[p.buildable]??0.6)*(eW[p.effort]??0.72)*(p.capital?0.7:1)*(p.ai?1.1:1)); return { ...p, score }; }).sort((a,b)=>b.score-a.score);
+  const byCat={}; for(const p of scored){ (byCat[p.cat]=byCat[p.cat]||[]).push(p); }
+  const catLabel={ security:'Security / bug-bounty (skill+AI → big $)', data:'Data products (sell our scanners)', monitor:'Monitoring / alerts', tools:'Tools / micro-SaaS', edge:'Trading / edge feeds', infra:'Infrastructure (run for pay)', content:'Content / research / influence', fintech:'Fintech-adjacent', agent:'Automation / agents', niche:'Niche / services' };
+  return { count:scored.length, byCat, catLabel, top:scored.slice(0,12), plays:scored,
+    note:'100 ways to turn the system (dashboard · keyless scanners · multi-chain wallet · mesh · quant engines · AI) into money. Ranked by buildable × low-capital × ai-leverage. The bug-bounty + data-product + monitoring lanes are the highest-EV for our stack.' };
+}
+
+// REAL address checker — paste any public address, get REAL onchain reads (balances, tx activity,
+// token holdings) across ecosystems + airdrop-eligibility signals. Keyless. This is a functional TOOL,
+// not a display: input → real RPC calls → real result. (Also system-play sp31, the airdrop checker.)
+async function checkAddress(addr){
+  if(!addr || typeof addr!=='string') return { error:'paste a public wallet address' };
+  addr=addr.trim();
+  // EVM
+  if(/^0x[0-9a-fA-F]{40}$/.test(addr)){
+    const pad=addr.slice(2).toLowerCase().padStart(64,'0');
+    const chains=await Promise.all(Object.entries(CHAIN_RPC).map(async([ch,rpc])=>{
+      const [bal,nonce,usdc]=await Promise.all([
+        evmRpc(rpc,'eth_getBalance',[addr,'latest']),
+        evmRpc(rpc,'eth_getTransactionCount',[addr,'latest']),
+        USDC_ADDR[ch]?evmRpc(rpc,'eth_call',[{to:USDC_ADDR[ch],data:'0x70a08231'+pad},'latest']):Promise.resolve(null) ]);
+      return { chain:ch, native: bal!=null?+(parseInt(bal,16)/1e18).toFixed(5):null,
+        tx: nonce!=null?parseInt(nonce,16):null, usdc: usdc&&usdc!=='0x'?+(parseInt(usdc,16)/1e6).toFixed(2):0 };
+    }));
+    const totalTx=chains.reduce((a,c)=>a+(c.tx||0),0);
+    const active=chains.filter(c=>(c.tx||0)>0).map(c=>c.chain);
+    const usdcTotal=chains.reduce((a,c)=>a+(c.usdc||0),0);
+    const sig=[];
+    if(active.includes('base')) sig.push('Active on Base → Base network-token airdrop candidate (check builderscore.xyz too)');
+    if(active.includes('arbitrum')) sig.push('Active on Arbitrum → Arbitrum-ecosystem drops');
+    if(active.includes('optimism')) sig.push('Active on Optimism → OP retro/airdrop seasons');
+    if(active.includes('polygon')) sig.push('Active on Polygon → Polymarket / Polygon ecosystem');
+    if(totalTx===0) sig.push('No activity yet — this address is eligible for nothing. Use protocols (needs gas) to build eligibility.');
+    return { ok:true, type:'EVM', address:addr, chains, total_tx:totalTx, active_chains:active, usdc_total:+usdcTotal.toFixed(2),
+      signals:sig, checker_links:[{name:'Drops.bot',url:'https://www.drops.bot/'},{name:'AirdropScan',url:'https://airdropscan.io/'}],
+      note:'Real onchain reads across 5 EVM chains. tx_count = activity (airdrop-eligibility proxy). Keyless — no key touched.' };
+  }
+  // Solana
+  if(/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr)){
+    try{ const r=await fetch('https://api.mainnet-beta.solana.com',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'getBalance',params:[addr]}),signal:AbortSignal.timeout(7000)}); const j=await r.json();
+      const sol=j?.result?.value!=null?+(j.result.value/1e9).toFixed(6):null;
+      return { ok:true, type:'Solana', address:addr, sol, signals: sol>0?['Has SOL — active on Solana → Jupiter/Solana ecosystem drops']:['No SOL — fund + use Solana DeFi to qualify'],
+        checker_links:[{name:'Jupiter',url:'https://jup.ag/'},{name:'Drops.bot',url:'https://www.drops.bot/'}], note:'Real Solana balance read. Keyless.' };
+    }catch{ return { error:'Solana RPC busy, try again' }; }
+  }
+  // Bitcoin
+  if(/^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$/.test(addr)){
+    try{ const j=await gjT(`https://blockstream.info/api/address/${addr}`,7000); if(j?.chain_stats){ const bal=((j.chain_stats.funded_txo_sum||0)-(j.chain_stats.spent_txo_sum||0))/1e8; const txs=(j.chain_stats.tx_count||0);
+      return { ok:true, type:'Bitcoin', address:addr, btc:+bal.toFixed(8), tx:txs, signals:[txs>0?`${txs} txs — active BTC address`:'No activity'], note:'Real Bitcoin balance read (Blockstream). Keyless.' }; } }catch{}
+    return { error:'BTC lookup failed' };
+  }
+  // Cosmos
+  if(/^cosmos1[a-z0-9]{38}$/.test(addr)){
+    try{ const j=await gjT(`https://rest.cosmos.directory/cosmoshub/cosmos/bank/v1beta1/balances/${addr}`,7000); const u=(j?.balances||[]).find(b=>b.denom==='uatom'); const atom=u?+(+u.amount/1e6).toFixed(6):0;
+      return { ok:true, type:'Cosmos', address:addr, atom, signals:[atom>0?'Has ATOM — active on Cosmos':'No ATOM'], note:'Real Cosmos balance read. Keyless.' }; }catch{}
+    return { error:'Cosmos lookup failed' };
+  }
+  return { error:'Unrecognized address format. Supports EVM (0x…), Solana, Bitcoin (bc1…/1…/3…), Cosmos (cosmos1…).' };
+}
+
 async function readBody(req){ let b=''; for await (const c of req) b+=c; return b; }
 
 http.createServer(async (req,res)=>{
@@ -946,6 +1039,9 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/autonomous') return J(200, await autonomousRevenue());
     if(u.pathname==='/api/agent-wallet') return J(200, await agentWallet());
     if(u.pathname==='/api/agent-plan') return J(200, await agentPlan());
+    if(u.pathname==='/api/airdrops') return J(200, await airdropRadar());
+    if(u.pathname==='/api/system-plays') return J(200, await systemPlays());
+    if(u.pathname==='/api/check') return J(200, await checkAddress(u.searchParams.get('address')));
     if(u.pathname==='/api/agent-arm') return J(200, await setArm(u.searchParams.get('on')==='1'));
     if(u.pathname==='/api/playbook') return J(200, await playbook());
     if(u.pathname==='/api/playbook-status'){

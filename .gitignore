@@ -29,3 +29,4 @@ data/automation-status.json
 config/agent-wallet.key.json
 config/*.key.json
 node_modules/
+data/airdrop-discovered.json

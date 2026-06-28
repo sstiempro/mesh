@@ -26,6 +26,7 @@
       <button data-nav="ledger" onclick="route('ledger')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 13l3-3 3 3 5-6"/></svg>Ledger</button>
       <button data-nav="farm" onclick="route('farm')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22c0-6 0-9 5-12M12 22c0-5 0-8-5-11"/><path d="M17 4c-3 0-5 1-5 4 3 0 5-1 5-4zM7 6c2.5 0 4 1 4 3.5C8.5 9.5 7 8.5 7 6z"/></svg>Farm</button>
       <button data-nav="edges" onclick="route('edges')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-9"/><path d="M16 7h5v5"/></svg>Edges</button>
+      <button data-nav="airdrops" onclick="route('airdrops')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 13a7 7 0 0 1 14 0v1H5z"/><path d="M9 14v3a3 3 0 0 0 6 0v-3"/></svg>Airdrops</button>
       <button data-nav="yield" onclick="route('yield')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 21c0-6 2.5-9 7-10-1 5-4 8-7 10z"/><path d="M12 21c0-5-2-7.5-6-8.5 1 4 3 6.5 6 8.5z"/><path d="M12 21v-7"/></svg>Yield</button>
       <button data-nav="pulse" onclick="route('pulse')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12h4l2-7 4 14 2-7h4"/></svg>Pulse</button>
       <button data-nav="build" onclick="route('build')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 7l-1.5-1.5a2.8 2.8 0 00-4 4L10 11M10 17l1.5 1.5a2.8 2.8 0 004-4L19 13"/><path d="M8 8l-4 4M16 16l4-4"/></svg>Build</button>
@@ -149,6 +150,26 @@
         <div id="edge-filters" class="flex flex-wrap gap-1.5 mb-3"></div>
         <div id="edge-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </section>
+      <section data-page="airdrops" hidden>
+        <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.08] to-fuchsia-500/[.04] p-6 mb-4">
+          <div class="text-[11px] text-slate-400 uppercase tracking-wider">🪂 Auto airdrop collector — never miss one</div>
+          <div class="text-2xl font-bold tracking-tight mt-1"><span id="ad-count">—</span> tracked <span class="text-sm text-slate-500 font-normal">· scanning <span id="ad-addrs">—</span> · alerts before every deadline</span></div>
+          <div id="ad-kpis" class="flex flex-wrap gap-2 mt-3"></div>
+          <div class="mt-4 pt-3 border-t border-slate-800">
+            <div class="text-[11px] uppercase tracking-wider text-slate-400 mb-1.5">🔎 Live address checker — real onchain reads, paste any wallet</div>
+            <div class="flex gap-2 flex-wrap">
+              <input id="chk-input" type="text" placeholder="0x… / Solana / bc1… / cosmos1…" class="flex-1 min-w-[260px] bg-slate-950/60 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 placeholder:text-slate-600 focus:border-sky-500 focus:outline-none" onkeydown="if(event.key==='Enter')runCheck()">
+              <button onclick="runCheck()" class="px-4 py-2 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-200 text-sm hover:bg-sky-500/30 font-semibold">Check ↵</button>
+            </div>
+            <div id="chk-result" class="mt-3"></div>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-3 border-t border-slate-800 pt-2.5">The orchestrator re-checks hourly + alerts before any claim window closes. <span class="text-sky-300">You sign the claim</span> — auto-claim is the #1 wallet-drain vector.</div>
+        </div>
+        <div id="ad-filters" class="flex flex-wrap gap-1.5 mb-3"></div>
+        <div id="ad-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        <div id="ad-discovered" class="mt-5"></div>
+        <div id="ad-checkers" class="mt-4 text-[11px] text-slate-500"></div>
+      </section>
       <section data-page="yield" hidden>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.08] to-cyan-500/[.03] p-6">
@@ -218,6 +239,7 @@
         <div id="fringe-lab" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-fuchsia-500/[.06] to-sky-500/[.03] p-5 mb-4"></div>
         <div id="kc-filters" class="flex flex-wrap gap-1.5 mb-3"></div>
         <div id="kc-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        <div id="sysplays" class="mt-5"></div>
       </section>
       <section data-page="wallet" hidden>
         <div id="agent-wallet" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-violet-500/[.08] to-emerald-500/[.04] p-6 mb-4"></div>
@@ -355,8 +377,8 @@
 let WALLET={}, hist=[], PAGE='overview', LASTO=null;
 const XMR=n=>Number(n||0)/1e12, f6=n=>XMR(n).toFixed(6), nf=n=>Number(n||0).toLocaleString();
 const ago=ts=>ts?Math.max(0,Math.round((Date.now()/1000-ts)/60))+'m ago':'—';
-const titles={overview:'Overview',plan:'Plan',income:'Income',ledger:'Ledger',farm:'Farm',edges:'Edges',yield:'Yield',pulse:'Pulse',build:'Build',wallet:'Wallet',mining:'Mining',fleet:'Fleet',vitals:'Vitals',earn:'Earn',controls:'Controls',settings:'Settings'};
-function route(p){ PAGE=p; document.querySelectorAll('[data-page]').forEach(s=>s.hidden=s.dataset.page!==p); document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('on',n.dataset.nav===p)); document.getElementById('ptitle').textContent=titles[p]; if(p==='overview') drawChart(); if(p==='fleet'&&LASTO) drawTopology(LASTO); if(p==='wallet') loadPayments(); if(p==='income') loadIncome(); if(p==='vitals') loadVitals(); if(p==='farm') loadFarm(); if(p==='edges') loadEdges(); if(p==='yield') loadYield(); if(p==='pulse') loadPulse(); if(p==='build') loadBuild(); if(p==='plan') loadPlan(); if(p==='ledger') loadLedger(); }
+const titles={overview:'Overview',plan:'Plan',income:'Income',ledger:'Ledger',farm:'Farm',edges:'Edges',airdrops:'Airdrops',yield:'Yield',pulse:'Pulse',build:'Build',wallet:'Wallet',mining:'Mining',fleet:'Fleet',vitals:'Vitals',earn:'Earn',controls:'Controls',settings:'Settings'};
+function route(p){ PAGE=p; document.querySelectorAll('[data-page]').forEach(s=>s.hidden=s.dataset.page!==p); document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('on',n.dataset.nav===p)); document.getElementById('ptitle').textContent=titles[p]; if(p==='overview') drawChart(); if(p==='fleet'&&LASTO) drawTopology(LASTO); if(p==='wallet') loadPayments(); if(p==='income') loadIncome(); if(p==='vitals') loadVitals(); if(p==='farm') loadFarm(); if(p==='edges') loadEdges(); if(p==='airdrops') loadAirdrops(); if(p==='yield') loadYield(); if(p==='pulse') loadPulse(); if(p==='build') loadBuild(); if(p==='plan') loadPlan(); if(p==='ledger') loadLedger(); }
 const ccolor=n=>({Monero:'#f60',Bitcoin:'#f7931a',Zephyr:'#7b61ff',Salvium:'#1d9e75',Verus:'#3165d4',Gridcoin:'#10b981',Wownero:'#df4',ArQmA:'#1abc9c',Yada:'#e84',Raptoreum:'#b22',Conceal:'#5b8',Tari:'#a06bf5',DERO:'#0bd','Quantum Resistant Ledger':'#ffb000',Equilibria:'#16a085',Xolentum:'#8e44ad',Talecoin:'#e67e22',Sugarchain:'#ec4899',Yenten:'#2ecc71',CPUchain:'#0ea5e9',Bellscoin:'#eab308',Magi:'#dc2626'}[n]||'#6366f1');
 function copyAddr(){ if(WALLET.address) navigator.clipboard.writeText(WALLET.address); }
 async function ctl(a){ document.getElementById('ctlmsg').textContent='switching…'; await fetch('/api/control?action='+a); setTimeout(refresh,1000); }
@@ -671,6 +693,63 @@ async function loadEdges(){
   }).join('');
 }
 function edgeFilter(f){ EDGEFILTER=f; loadEdges(); }
+let ADDATA=null, ADFILTER='all';
+async function loadAirdrops(){
+  const d=await fetch('/api/airdrops').then(r=>r.json()).catch(()=>null); if(!d) return;
+  ADDATA=d;
+  document.getElementById('ad-count').textContent=d.count;
+  document.getElementById('ad-addrs').textContent=(d.scanned_addresses||[]).map(s=>s.eco).join(' · ')||'no addresses';
+  const K=(k,v,c)=>`<div class="bg-slate-950/40 rounded-xl px-3 py-1.5"><span class="text-[10px] uppercase tracking-wider text-slate-500">${k}</span> <span class="text-sm font-semibold ${c||''}">${v}</span></div>`;
+  document.getElementById('ad-kpis').innerHTML=K('farming',d.counts?.farming||0,'text-emerald-400')+K('snapshot pending',d.counts?.['snapshot-pending']||0,'text-amber-400')+K('rumored',d.counts?.rumored||0,'text-slate-400')+K('free to qualify',(d.free_to_qualify||[]).length,'text-sky-400')+K('urgent',(d.urgent||[]).length,(d.urgent||[]).length?'text-red-400':'text-slate-500');
+  const cats=['all','farming','snapshot-pending','rumored','free'];
+  document.getElementById('ad-filters').innerHTML=cats.map(f=>`<button onclick="adFilter('${f}')" class="text-[11px] px-2 py-1 rounded-lg border capitalize ${ADFILTER===f?'border-slate-400 bg-slate-700 text-slate-100':'border-slate-700 bg-slate-800 text-slate-400'}">${f.replace('-',' ')}</button>`).join('');
+  document.getElementById('ad-checkers').innerHTML='Keyless multi-chain checkers (paste your address, no connect): '+(d.checkers||[]).map(c=>`<a href="${c.url}" target="_blank" class="text-sky-400 hover:text-sky-300">${c.name}↗</a>`).join(' · ');
+  const disc=d.discovered||{}; const dc=disc.candidates||[];
+  document.getElementById('ad-discovered').innerHTML = dc.length ? `<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+    <div class="flex items-center justify-between flex-wrap gap-2 mb-1"><div class="text-sm font-semibold">🔭 Auto-discovered daily — tokenless DeFi (farming pre-token)</div><div class="text-[11px] text-emerald-400">${disc.new_today||0} new today · ${disc.count} tracked · DefiLlama, refreshed daily</div></div>
+    <div class="text-[11px] text-slate-500 mb-3">Protocols with real TVL and no token yet = the highest-probability future airdrops. Use them genuinely now to qualify.</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">${dc.map(c=>`<a href="${c.url}" target="_blank" class="bg-slate-950/40 rounded-lg px-2.5 py-1.5 hover:bg-slate-800/50">${c.is_new?'<span class="text-[8px] text-emerald-400 align-top">NEW </span>':''}<span class="text-[11px] text-slate-300">${c.name}</span><div class="text-[9px] text-slate-600">${(c.chains||[]).slice(0,2).join('/')} · $${(c.tvl/1e6).toFixed(0)}M · ${c.category}</div></a>`).join('')}</div></div>` : '';
+  renderAdCards();
+}
+function adFilter(f){ ADFILTER=f; loadAirdrops(); }
+async function runCheck(){
+  const inp=document.getElementById('chk-input'), out=document.getElementById('chk-result');
+  const addr=(inp.value||'').trim(); if(!addr){ out.innerHTML='<span class="text-amber-400 text-xs">paste an address first</span>'; return; }
+  out.innerHTML='<span class="text-slate-500 text-xs">reading the chains…</span>';
+  const j=await fetch('/api/check?address='+encodeURIComponent(addr)).then(r=>r.json()).catch(()=>null);
+  if(!j){ out.innerHTML='<span class="text-red-400 text-xs">request failed</span>'; return; }
+  if(j.error){ out.innerHTML=`<span class="text-amber-400 text-xs">${j.error}</span>`; return; }
+  let body='';
+  if(j.type==='EVM'){
+    body=`<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2">${(j.chains||[]).map(c=>`<div class="bg-slate-950/40 rounded-lg px-2.5 py-1.5"><div class="text-[10px] uppercase tracking-wider text-slate-500">${c.chain}</div><div class="text-xs text-slate-300 font-mono">${c.tx!=null?c.tx+' tx':'—'} · ${c.usdc>0?'$'+c.usdc:'$0'} USDC</div><div class="text-[10px] text-slate-600">${c.native!=null?c.native+' native':'rpc busy'}</div></div>`).join('')}</div>
+      <div class="text-xs text-slate-400">Total: <span class="text-emerald-400 font-semibold">${j.total_tx} txs</span> · active on ${(j.active_chains||[]).join(', ')||'nothing yet'} · $${j.usdc_total} USDC</div>`;
+  } else {
+    const v=j.sol!=null?j.sol+' SOL':j.btc!=null?j.btc+' BTC':j.atom!=null?j.atom+' ATOM':'—';
+    body=`<div class="text-sm text-slate-300">${j.type}: <span class="text-emerald-400 font-mono">${v}</span>${j.tx!=null?' · '+j.tx+' txs':''}</div>`;
+  }
+  out.innerHTML=`<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3">
+    <div class="text-[10px] text-slate-500 mb-1">${j.type} · <span class="font-mono">${j.address.slice(0,12)}…${j.address.slice(-6)}</span></div>
+    ${body}
+    ${(j.signals||[]).map(s=>`<div class="text-[11px] text-sky-300/90 mt-1.5">→ ${s}</div>`).join('')}
+    ${(j.checker_links||[]).length?`<div class="text-[10px] text-slate-500 mt-2">deep-check: ${(j.checker_links).map(l=>`<a href="${l.url}" target="_blank" class="text-sky-400">${l.name}↗</a>`).join(' · ')}</div>`:''}
+    <div class="text-[10px] text-slate-600 mt-1.5">${j.note||''}</div></div>`;
+}
+function renderAdCards(){
+  if(!ADDATA) return;
+  const sc={claimable:'bg-emerald-500/20 text-emerald-300',farming:'bg-emerald-500/12 text-emerald-300','snapshot-pending':'bg-amber-500/15 text-amber-300',rumored:'bg-slate-700/40 text-slate-400',ended:'bg-slate-800 text-slate-600'};
+  const cc={free:'text-sky-400','free-low':'text-sky-400','free-to-gas':'text-sky-300',gas:'text-amber-400','capital':'text-red-400/80'};
+  let list=ADDATA.airdrops;
+  if(ADFILTER==='free') list=list.filter(a=>/free/.test(a.cost||''));
+  else if(ADFILTER!=='all') list=list.filter(a=>a.status===ADFILTER);
+  document.getElementById('ad-cards').innerHTML=list.map(a=>`<div class="rounded-2xl border ${a.urgent?'border-red-500/40':'border-slate-800'} bg-slate-900/40 p-4">
+    <div class="flex items-start justify-between gap-2">
+      <div><div class="text-sm font-semibold text-slate-200">${a.name} <span class="text-[11px] text-slate-500">${a.token}</span></div>
+        <div class="text-[10px] text-slate-500">${a.chain}${a.snapshot_date?' · snapshot: '+a.snapshot_date:''}${a.days_to_deadline!=null?' · ⏳ '+a.days_to_deadline+'d to claim':''}</div></div>
+      <div class="text-right shrink-0"><span class="px-1.5 py-0.5 rounded ${sc[a.status]||'bg-slate-700'} text-[9px] uppercase tracking-wider">${a.status}</span><div class="text-[9px] mt-0.5 ${cc[a.cost]||'text-slate-500'}">${a.cost}</div></div></div>
+    <div class="text-[11px] text-slate-400 mt-2">${a.qualify}</div>
+    ${a.value_hint?`<div class="text-[10px] text-slate-600 mt-1">💰 ${a.value_hint}</div>`:''}
+    <div class="flex gap-2 mt-2">${a.checker_url?`<a href="${a.checker_url}" target="_blank" class="text-[11px] text-sky-400 hover:text-sky-300">qualify/check ↗</a>`:''}${a.claim_url?`<a href="${a.claim_url}" target="_blank" class="text-[11px] text-emerald-400 hover:text-emerald-300">claim ↗</a>`:''}</div></div>`).join('')||'<span class="text-slate-500 text-xs">none in this filter</span>';
+}
 let PLANDATA=null;
 const PLAN_NEXT={todo:'doing',doing:'done',done:'todo'};
 async function loadPlan(){
@@ -754,8 +833,24 @@ async function loadFringe(){
     ${lift?`<div class="text-[11px] text-emerald-300/90 bg-emerald-500/[.06] rounded-lg px-2 py-1.5">⚡ Foundations first (build-in-public · Basename · Farcaster-PoH) lift the stack <b>+${Math.round((lift.with.p50/Math.max(1,lift.without.p50)-1)*100)}% median · +${Math.round((lift.with.p90/Math.max(1,lift.without.p90)-1)*100)}% upside</b> — set them up before anything else.</div>`:''}
     <div class="text-[11px] text-slate-500 mt-2 border-t border-slate-800 pt-2">Honest: tail-driven — most months modest, the EV lives in the rare big hit (viral coin · big airdrop · crit bug). Priors are rough; the test shows the SHAPE + what dominates, not a promise.</div>`;
 }
+let SPFILTER='all', SPDATA=null;
+async function loadSystemPlays(){
+  const d=await fetch('/api/system-plays').then(r=>r.json()).catch(()=>null); const el=document.getElementById('sysplays'); if(!d||!el) return;
+  SPDATA=d;
+  const cats=['all',...Object.keys(d.byCat||{})];
+  const chips=cats.map(c=>`<button onclick="spFilter('${c}')" class="text-[10px] px-2 py-0.5 rounded-lg border ${SPFILTER===c?'border-slate-400 bg-slate-700 text-slate-100':'border-slate-700 bg-slate-800 text-slate-400'}">${c==='all'?'all 100':c}</button>`).join('');
+  let list=d.plays; if(SPFILTER!=='all') list=(d.byCat[SPFILTER]||[]);
+  const rows=list.slice(0,SPFILTER==='all'?14:30).map(p=>`<div class="flex items-start gap-2 py-1.5 border-b border-slate-800/40 text-[11px]">
+    <span class="font-mono ${p.score>=60?'text-emerald-400':p.score>=45?'text-amber-400':'text-slate-500'} w-7 shrink-0">${p.score}</span>
+    <div><span class="text-slate-200">${p.name}</span> <span class="text-slate-600">— ${p.pays}</span><div class="text-[10px] text-slate-500">⚙ ${p.system}${p.capital?' · <span class=\'text-amber-400/70\'>needs capital</span>':''}${p.market?' · '+p.market:''}</div></div></div>`).join('');
+  el.innerHTML=`<div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-rose-500/[.06] to-sky-500/[.03] p-5">
+    <div class="flex items-center justify-between flex-wrap gap-2 mb-1"><div class="text-sm font-semibold">🛠️ 100 ways to monetize our system</div><div class="text-[11px] text-slate-500">ranked · buildable × low-capital × AI-leverage</div></div>
+    <div class="text-[11px] text-slate-500 mb-2">${d.note}</div>
+    <div class="flex flex-wrap gap-1 mb-3">${chips}</div>${rows}</div>`;
+}
+function spFilter(c){ SPFILTER=c; loadSystemPlays(); }
 async function loadBuild(){
-  loadStrategy(); loadAutomation(); loadReport(); loadFringe();
+  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays();
   const d=await fetch('/api/knowledge-capital').then(r=>r.json()).catch(()=>null); if(!d) return;
   KCDATA=d; document.getElementById('kc-count').textContent=d.count;
   document.getElementById('kc-passive').innerHTML='<div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1.5">⚡ passive — set up once, pays weekly</div><div class="flex flex-wrap gap-1.5">'+(d.passive||[]).map(p=>`<a href="${p.url}" target="_blank" class="text-[11px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20" title="${(p.requires||'').replace(/"/g,'&#34;')}">${p.name} <span class="text-emerald-400/70">${p.est_value}</span></a>`).join('')+'</div>';

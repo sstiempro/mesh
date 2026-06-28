@@ -16,6 +16,11 @@ const sh = (cmd)=> new Promise(r=> exec(cmd,{cwd:LAB,maxBuffer:1<<22,timeout:120
 
 // each task: how to run it + how to summarize the result for the status board + optional history file
 const TASKS = [
+  { id:'airdrop-discover', every: 86400, hist:null,
+    run: async()=>{ const r=await sh('node dashboard/airdrop-fetcher.mjs --once'); let s='ran'; try{ const j=JSON.parse(await readFile(path.join(DATA,'airdrop-discovered.json'),'utf8')); s=`${j.count} candidates · ${j.new_today} NEW today (${(j.candidates||[])[0]?.name||''})`; }catch{} return { ok:r.ok, summary:s }; } },
+  { id:'airdrop-radar', every: 3600, hist:'airdrop-history.jsonl',
+    run: async()=>{ const d=await getj('/api/airdrops'); const urg=(d.urgent||[]).length; return { ok:!d.error, summary:`${d.count} tracked · ${d.counts?.farming||0} farming · ${urg} urgent deadline${urg!==1?'s':''} · ${(d.scanned_addresses||[]).length} addrs scanned`,
+      row:{ ts:Date.now(), tracked:d.count, farming:d.counts?.farming, urgent:urg, urgent_names:(d.urgent||[]).map(x=>x.name) } }; } },
   { id:'strategist', every: 1800, hist:null,
     run: async()=>{ const d=await getj('/api/strategy'); return { ok:!d.error, summary:d.energy_ledger?`top transform: ${d.energy_ledger[0].transform.split('(')[0].trim()} [${d.energy_ledger[0].ratio}] · now: ${(d.now||'').slice(0,40)}…`:'err' }; } },
   { id:'formulation-test', every: 3600,  hist:'formulation-history.jsonl',
