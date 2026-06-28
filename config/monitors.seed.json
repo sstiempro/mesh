@@ -1,0 +1,11 @@
+{
+  "_doc": "SEED monitors (committed). The builder loop copies this to config/monitors.json (gitignored) and grows the live fleet from here. Each = a real keyless data product. Run live at /api/monitors.",
+  "monitors": [
+    { "id": "mon-stable-depeg", "template": "stable-depeg", "label": "Stablecoin depeg watch", "params": { "threshold": 0.005 }, "monetize": "depeg-alert feed (Telegram/webhook), arb trigger" },
+    { "id": "mon-tvl-drain", "template": "tvl-drain", "label": "Protocol TVL-drain early-warning", "params": { "minTvl": 50000000, "dropPct": 0.15 }, "monetize": "exploit early-warning feed (security teams pay for this)" },
+    { "id": "mon-funding-extreme", "template": "funding-extreme", "label": "Funding-rate extremes", "params": { "threshold": 0.0008 }, "monetize": "crowded-positioning signal -> omnione mean-revert / paid feed" },
+    { "id": "mon-yield-spike", "template": "yield-spike", "label": "High-APY stable-pool radar", "params": { "minApy": 20, "minTvl": 1000000, "stableOnly": true }, "monetize": "yield-radar newsletter / API" },
+    { "id": "mon-gas-watch", "template": "gas-watch", "label": "ETH gas / congestion watch", "params": { "threshold": 30, "chain": "eth" }, "monetize": "tx-timing + MEV-window alert" },
+    { "id": "mon-sentiment-flip", "template": "sentiment-flip", "label": "Fear&Greed regime flip", "params": {}, "monetize": "contrarian regime trigger -> strategist + paid feed" }
+  ]
+}

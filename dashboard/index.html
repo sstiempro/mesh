@@ -221,6 +221,8 @@
         <div id="pulse-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </section>
       <section data-page="build" hidden>
+        <div id="builder-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.10] to-sky-500/[.04] p-5 mb-4"></div>
+        <div id="monitors-panel" class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4"></div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.08] to-violet-500/[.04] p-6">
             <div class="text-[11px] text-slate-400 uppercase tracking-wider">Knowledge → money · zero starting capital</div>
@@ -849,8 +851,36 @@ async function loadSystemPlays(){
     <div class="flex flex-wrap gap-1 mb-3">${chips}</div>${rows}</div>`;
 }
 function spFilter(c){ SPFILTER=c; loadSystemPlays(); }
+async function loadBuilder(){
+  const d=await fetch('/api/builder').then(r=>r.json()).catch(()=>null); const el=document.getElementById('builder-panel'); if(!d||!el) return;
+  const lt=d.last_tick||{};
+  const built=(d.recent_built||[]).map(b=>`<div class="flex items-start gap-2 py-1 border-b border-slate-800/40 text-[11px]"><span class="text-emerald-400">✓</span><div><span class="text-slate-200">${b.label}</span> <span class="text-slate-600">— ${b.signal||''}</span><div class="text-[10px] text-slate-500">$ ${b.monetize||''}</div></div></div>`).join('');
+  const specs=(d.recent_specs||[]).map(s=>`<div class="py-1 border-b border-slate-800/40 text-[11px]"><span class="font-mono text-amber-400/80 w-6 inline-block">${s.score}</span> <span class="text-slate-300">${s.idea}</span></div>`).join('');
+  el.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2">
+      <div class="text-sm font-semibold">🤖 Autonomous builder loop <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 ml-1">LIVE · cron 5min</span></div>
+      <div class="text-[11px] text-slate-500">no human in the loop — it generates + knocks down avenues</div></div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 my-3">
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-emerald-400">${d.monitors_active}</div><div class="text-[10px] text-slate-500">live monitors</div></div>
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-sky-400">${d.built_by_loop}</div><div class="text-[10px] text-slate-500">built by loop</div></div>
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-violet-400">${d.ideas_generated}</div><div class="text-[10px] text-slate-500">ideas generated</div></div>
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-amber-400">${d.spec_ideas_pending}</div><div class="text-[10px] text-slate-500">specs queued</div></div></div>
+    <div class="text-[10px] text-slate-500 mb-2">last tick: <span class="text-slate-300">${lt.knocked||'—'}</span> · +${lt.new_ideas||0} ideas · ${lt.monitors_live||0}/${lt.monitors_total||0} live · ${(lt.ts||'').replace('T',' ').slice(0,16)}</div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div><div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1">recently built (verified)</div>${built||'<div class="text-[11px] text-slate-600">warming up…</div>'}</div>
+      <div><div class="text-[10px] uppercase tracking-wider text-amber-400 mb-1">next ideas (queued for a build pass)</div>${specs||'<div class="text-[11px] text-slate-600">—</div>'}</div></div>`;
+}
+async function loadMonitors(){
+  const el=document.getElementById('monitors-panel'); if(!el) return; el.innerHTML='<div class="text-[11px] text-slate-500">loading live signals…</div>';
+  const d=await fetch('/api/monitors').then(r=>r.json()).catch(()=>null); if(!d){ el.innerHTML='<div class="text-[11px] text-rose-400">monitors offline</div>'; return; }
+  const alerts=(d.alerts||[]).slice(0,14).map(a=>{ const {monitor,...rest}=a; const detail=Object.entries(rest).map(([k,v])=>`${k}:${v}`).join(' · ');
+    return `<div class="flex items-start gap-2 py-1 border-b border-slate-800/40 text-[11px]"><span class="text-amber-400">⚠</span><div><span class="text-slate-300">${monitor}</span> <span class="text-slate-500">${detail}</span></div></div>`; }).join('');
+  el.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+      <div class="text-sm font-semibold">📡 Live keyless monitors <span class="text-[10px] text-slate-500 font-normal">— real data products, $0, no keys</span></div>
+      <div class="text-[11px] text-slate-500">${d.live}/${d.count} live · ${d.alerting} firing · <span class="text-slate-600">${d.source}</span></div></div>
+    ${alerts||'<div class="text-[11px] text-slate-600">no signals firing right now (markets calm)</div>'}`;
+}
 async function loadBuild(){
-  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays();
+  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadMonitors();
   const d=await fetch('/api/knowledge-capital').then(r=>r.json()).catch(()=>null); if(!d) return;
   KCDATA=d; document.getElementById('kc-count').textContent=d.count;
   document.getElementById('kc-passive').innerHTML='<div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1.5">⚡ passive — set up once, pays weekly</div><div class="flex flex-wrap gap-1.5">'+(d.passive||[]).map(p=>`<a href="${p.url}" target="_blank" class="text-[11px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20" title="${(p.requires||'').replace(/"/g,'&#34;')}">${p.name} <span class="text-emerald-400/70">${p.est_value}</span></a>`).join('')+'</div>';

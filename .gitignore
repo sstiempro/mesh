@@ -25,6 +25,11 @@ config/playbook-state.json
 reports/
 data/automation-status.json
 
+# autonomous builder loop — live state regenerates every tick; the SEED + code are committed
+config/monitors.json
+config/monitor-state.json
+data/monitor-feed.json
+
 # agent wallet PRIVATE keys — never commit, lives only on this machine
 config/agent-wallet.key.json
 config/*.key.json
