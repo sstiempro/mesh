@@ -34,7 +34,9 @@ data/actions-feed.json
 data/execution-plan.json
 data/public-feed.json
 data/digest-latest.md
+data/paper-book.json
 config/delivery.local.json
+config/vault.local.json
 
 # agent wallet PRIVATE keys — never commit, lives only on this machine
 config/agent-wallet.key.json

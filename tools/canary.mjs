@@ -33,6 +33,8 @@ const queue = jsonl('data/build-queue.jsonl');
 const pendingSpecs = queue.filter(o => o.kind === 'spec' && !doneSig.has(o.sig)).sort((a, b) => (b.score || 0) - (a.score || 0));
 const monitors = await get('/api/monitors');
 const exec = await get('/api/execution');
+const paper = await get('/api/paper');
+const creds = await get('/api/credentials');
 
 console.log('🐤 CANARY — cpu-miner-lab build pass\n');
 console.log(trips.length ? '⚠️  TRIPPED:\n' + trips.map(t => '   - ' + t).join('\n') : '✅ healthy — the loop is alive and knocking down avenues on its own');
@@ -40,6 +42,8 @@ console.log('');
 if (builder) console.log(`loop:     ${builder.monitors_active} monitors · ${builder.built_by_loop} built by loop · ${builder.ideas_generated} ideas · ${builder.ticks_run} ticks · last tick ${ageMin ?? '?'}min ago`);
 if (monitors) console.log(`monitors: ${monitors.live}/${monitors.count} live · ${monitors.alerting} firing`);
 if (exec) console.log(`actions:  ${exec.routed || 0} routed/tick · ${exec.deliver?.published || 0} published to /api/feed${exec.deliver?.webhooks_sent ? ` · ${exec.deliver.webhooks_sent} webhook push` : ' (pro webhook off)'} · ${exec.pending_count || 0} cards awaiting your click`);
+if (paper) console.log(`paper:    $${paper.equity} equity (${paper.return_pct >= 0 ? '+' : ''}${paper.return_pct}%) · ${paper.open_positions} open · ${paper.closed_trades} closed · win ${paper.win_rate ?? '—'}% ← signals actually TRADE`);
+if (creds) console.log(`vault:    ${creds.count} saved keys wired (secrets external, never in repo)`);
 const spentSpecs = ledger.filter(e => e.action === 'spec-built').length;
 console.log(`specs:    ${pendingSpecs.length} pending · ${spentSpecs} already built\n`);
 console.log(`🎯 NEXT TO KNOCK DOWN (highest-scored pending specs):`);

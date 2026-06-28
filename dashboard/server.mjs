@@ -11,6 +11,8 @@ import { fileURLToPath } from 'node:url';
 import { isPro, gate, tierInfo, proArtifact, pricing } from './premium.mjs';
 import { runAll as runMonitors, loadRegistry as loadMonitorRegistry } from './monitors.mjs';
 import { executionView, resolveAction, publicFeed, signalTapeView, digest } from './execution.mjs';
+import { paperView } from './paper-engine.mjs';
+import { credSummary } from './credentials.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LAB = path.resolve(__dirname, '..');
@@ -1092,6 +1094,8 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/signal-tape') return J(200, await signalTapeView());
     if(u.pathname==='/api/digest'){ if(u.searchParams.get('format')==='md'){ const d=await digest(); res.writeHead(200,{'content-type':'text/markdown; charset=utf-8'}); res.end(d.markdown); return; } return J(200, await digest()); }
     if(u.pathname==='/api/pricing') return J(200, await pricing());
+    if(u.pathname==='/api/paper') return J(200, await paperView());
+    if(u.pathname==='/api/credentials') return J(200, credSummary());
     if(u.pathname==='/api/feed'){ if(u.searchParams.get('format')==='rss'){ const xml=await publicFeed('rss'); res.writeHead(200,{'content-type':'application/rss+xml; charset=utf-8'}); res.end(xml); return; } return J(200, await publicFeed('json')); }
     if(u.pathname==='/api/check') return J(200, await checkAddress(u.searchParams.get('address')));
     if(u.pathname==='/api/bounties') return J(200, await (async()=>{

@@ -222,6 +222,7 @@
       </section>
       <section data-page="build" hidden>
         <div id="builder-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.10] to-sky-500/[.04] p-5 mb-4"></div>
+        <div id="paper-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.10] to-emerald-500/[.04] p-5 mb-4"></div>
         <div id="execution-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-amber-500/[.08] to-rose-500/[.04] p-5 mb-4"></div>
         <div id="product-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-violet-500/[.08] to-emerald-500/[.04] p-5 mb-4"></div>
         <div id="monitors-panel" class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4"></div>
@@ -881,6 +882,22 @@ async function loadMonitors(){
       <div class="text-[11px] text-slate-500">${d.live}/${d.count} live · ${d.alerting} firing · <span class="text-slate-600">${d.source}</span></div></div>
     ${alerts||'<div class="text-[11px] text-slate-600">no signals firing right now (markets calm)</div>'}`;
 }
+async function loadPaper(){
+  const el=document.getElementById('paper-panel'); if(!el) return;
+  const [d,cr]=await Promise.all([fetch('/api/paper').then(r=>r.json()).catch(()=>null),fetch('/api/credentials').then(r=>r.json()).catch(()=>null)]);
+  if(!d){ el.innerHTML='<div class="text-[11px] text-rose-400">paper engine offline</div>'; return; }
+  const up=d.return_pct>=0; const credline=cr?`<span class="text-[10px] text-slate-500">🔑 vault: ${cr.count} keys, secrets external</span>`:'';
+  const pos=(d.positions||[]).map(p=>`<div class="flex items-center justify-between py-1 border-b border-slate-800/40 text-[11px]"><div><span class="${p.side==='long'?'text-emerald-400':'text-rose-400'} font-mono">${p.side.toUpperCase()}</span> <span class="text-slate-200">${p.symbol}</span> <span class="text-slate-600">@${p.entry} · $${p.size}</span></div><div class="font-mono ${(p.upnl||0)>=0?'text-emerald-400':'text-rose-400'}">${p.upnl!=null?(p.upnl>=0?'+':'')+'$'+p.upnl:'—'}</div></div>`).join('');
+  const closed=(d.recent_closed||[]).map(t=>`<span class="text-[10px] px-1.5 py-0.5 rounded ${t.pnl_usd>=0?'bg-emerald-500/15 text-emerald-300':'bg-rose-500/15 text-rose-300'}">${t.symbol} ${t.pnl_usd>=0?'+':''}$${t.pnl_usd} (${t.exit})</span>`).join(' ');
+  el.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-1"><div class="text-sm font-semibold">📈 Paper execution <span class="text-[10px] text-slate-500 font-normal">— signals actually TRADE (paper), live P&amp;L</span></div>${credline}</div>
+    <div class="flex items-end gap-4 my-2">
+      <div><div class="text-2xl font-bold ${up?'text-emerald-400':'text-rose-400'}">$${d.equity}</div><div class="text-[10px] text-slate-500">equity (from $${d.base}) · ${up?'+':''}${d.return_pct}%</div></div>
+      <div class="text-[11px] text-slate-400"><div>realized <span class="${d.realized_pnl>=0?'text-emerald-400':'text-rose-400'}">${d.realized_pnl>=0?'+':''}$${d.realized_pnl}</span> · unreal <span class="${d.unrealized_pnl>=0?'text-emerald-400':'text-rose-400'}">${d.unrealized_pnl>=0?'+':''}$${d.unrealized_pnl}</span></div><div>${d.open_positions} open · ${d.closed_trades} closed · win ${d.win_rate??'—'}%</div></div></div>
+    <div class="text-[10px] uppercase tracking-wider text-sky-400 mb-1">open positions (signal → trade)</div>
+    ${pos||'<div class="text-[11px] text-slate-600">no open positions</div>'}
+    ${closed?'<div class="text-[10px] uppercase tracking-wider text-slate-500 mt-2 mb-1">recently closed</div><div class="flex flex-wrap gap-1">'+closed+'</div>':''}
+    <div class="text-[10px] text-slate-600 mt-2">${d.note}</div>`;
+}
 async function loadExecution(){
   const el=document.getElementById('execution-panel'); if(!el) return;
   const d=await fetch('/api/execution').then(r=>r.json()).catch(()=>null); if(!d){ el.innerHTML='<div class="text-[11px] text-rose-400">execution offline</div>'; return; }
@@ -915,7 +932,7 @@ async function loadProduct(){
     ${post||'<div class="text-[11px] text-slate-600">warming up…</div>'}`;
 }
 async function loadBuild(){
-  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadExecution(); loadProduct(); loadMonitors();
+  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadPaper(); loadExecution(); loadProduct(); loadMonitors();
   const d=await fetch('/api/knowledge-capital').then(r=>r.json()).catch(()=>null); if(!d) return;
   KCDATA=d; document.getElementById('kc-count').textContent=d.count;
   document.getElementById('kc-passive').innerHTML='<div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1.5">⚡ passive — set up once, pays weekly</div><div class="flex flex-wrap gap-1.5">'+(d.passive||[]).map(p=>`<a href="${p.url}" target="_blank" class="text-[11px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20" title="${(p.requires||'').replace(/"/g,'&#34;')}">${p.name} <span class="text-emerald-400/70">${p.est_value}</span></a>`).join('')+'</div>';
