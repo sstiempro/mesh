@@ -12,6 +12,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generate } from './idea-gen.mjs';
 import { runMonitor, runAll, loadRegistry, REGISTRY } from '../dashboard/monitors.mjs';
+import { orchestrate } from '../dashboard/execution.mjs';
 
 const LAB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const QUEUE = path.join(LAB, 'data', 'build-queue.jsonl');
@@ -44,9 +45,12 @@ async function knockDown() {
   const knock = await knockDown();
   const feed = await runAll();
   await writeFile(FEED, JSON.stringify(feed, null, 2));
+  // ORCHESTRATE: route signals → actions (auto-execute / deliver / queue-for-approval)
+  let plan = null; try { plan = await orchestrate(); } catch (e) { plan = { error: String(e).slice(0, 80) }; }
   const summary = { ts: new Date().toISOString(), action: 'tick', new_ideas: ideas.length,
     knocked: knock?.built || (knock?.failed ? `FAILED:${knock.failed}` : 'none'),
-    monitors_live: feed.live, monitors_total: feed.count, alerting: feed.alerting };
+    monitors_live: feed.live, monitors_total: feed.count, alerting: feed.alerting,
+    actions_routed: plan?.routed ?? 0, auto_executed: plan?.auto?.executed ?? 0, delivered: plan?.deliver?.sent ?? 0, approve_queued: plan?.approve?.added ?? 0, confluence: plan?.confluence ?? 0 };
   await appendFile(LEDGER, JSON.stringify(summary) + '\n');
-  console.log(`tick ✓  +${ideas.length} ideas · knocked: ${summary.knocked} · monitors ${feed.live}/${feed.count} live · ${feed.alerting} alerting`);
+  console.log(`tick ✓  +${ideas.length} ideas · knocked: ${summary.knocked} · monitors ${feed.live}/${feed.count} · actions ${summary.actions_routed} (auto ${summary.auto_executed}, deliver ${summary.delivered}, approve+${summary.approve_queued}, conf ${summary.confluence})`);
 })();

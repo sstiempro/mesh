@@ -222,6 +222,7 @@
       </section>
       <section data-page="build" hidden>
         <div id="builder-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.10] to-sky-500/[.04] p-5 mb-4"></div>
+        <div id="execution-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-amber-500/[.08] to-rose-500/[.04] p-5 mb-4"></div>
         <div id="monitors-panel" class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4"></div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.08] to-violet-500/[.04] p-6">
@@ -879,8 +880,26 @@ async function loadMonitors(){
       <div class="text-[11px] text-slate-500">${d.live}/${d.count} live · ${d.alerting} firing · <span class="text-slate-600">${d.source}</span></div></div>
     ${alerts||'<div class="text-[11px] text-slate-600">no signals firing right now (markets calm)</div>'}`;
 }
+async function loadExecution(){
+  const el=document.getElementById('execution-panel'); if(!el) return;
+  const d=await fetch('/api/execution').then(r=>r.json()).catch(()=>null); if(!d){ el.innerHTML='<div class="text-[11px] text-rose-400">execution offline</div>'; return; }
+  const a=d.auto||{}, dv=d.deliver||{}, ap=d.approve||{};
+  const cards=(d.pending_actions||[]).map(c=>`<div class="flex items-start justify-between gap-2 py-1.5 border-b border-slate-800/40 text-[11px]">
+      <div class="min-w-0"><span class="text-[9px] uppercase px-1.5 py-0.5 rounded ${c.priority==='high'?'bg-rose-500/20 text-rose-300':'bg-slate-700 text-slate-300'} mr-1">${c.type}</span><span class="text-slate-200">${(c.action||c.msg||'').replace(/</g,'&lt;')}</span><div class="text-[10px] text-slate-500">${c.why||''}${c.needs?' · needs: '+c.needs:''}</div></div>
+      <div class="shrink-0 flex gap-1"><button onclick="resolveAct('${c.sig}','done')" class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">✓ did it</button><button onclick="resolveAct('${c.sig}','dismissed')" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400">skip</button></div></div>`).join('');
+  el.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-1"><div class="text-sm font-semibold">🎯 Execution orchestration <span class="text-[10px] text-slate-500 font-normal">— signals → actions, not just docs</span></div>
+      <div class="text-[11px] text-slate-500">${d.routed||0} routed/tick</div></div>
+    <div class="grid grid-cols-3 gap-2 my-2 text-center">
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2"><div class="text-base font-bold text-sky-400">${a.executed||0}</div><div class="text-[9px] text-slate-500">AUTO executed<br><span class="text-slate-600">signal-tape</span></div></div>
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2"><div class="text-base font-bold text-violet-400">${dv.sent||0}/${dv.count||0}</div><div class="text-[9px] text-slate-500">DELIVERED<br><span class="text-slate-600">${dv.destinations?dv.destinations+' webhooks':'arm: delivery.local.json'}</span></div></div>
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2"><div class="text-base font-bold text-amber-400">${d.pending_count||0}</div><div class="text-[9px] text-slate-500">YOUR CARDS<br><span class="text-slate-600">click to resolve</span></div></div></div>
+    <div class="text-[10px] uppercase tracking-wider text-amber-400 mb-1">action cards — you sign money moves</div>
+    ${cards||'<div class="text-[11px] text-slate-600">no pending actions</div>'}
+    <div class="text-[10px] text-slate-600 mt-2">auto = run now (no money) · deliver = push to your webhook · cards = real-money/identity, your click. No trade/transfer/claim auto-executes.</div>`;
+}
+async function resolveAct(sig,status){ await fetch('/api/action',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sig,status})}).catch(()=>{}); loadExecution(); }
 async function loadBuild(){
-  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadMonitors();
+  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadExecution(); loadMonitors();
   const d=await fetch('/api/knowledge-capital').then(r=>r.json()).catch(()=>null); if(!d) return;
   KCDATA=d; document.getElementById('kc-count').textContent=d.count;
   document.getElementById('kc-passive').innerHTML='<div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1.5">⚡ passive — set up once, pays weekly</div><div class="flex flex-wrap gap-1.5">'+(d.passive||[]).map(p=>`<a href="${p.url}" target="_blank" class="text-[11px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20" title="${(p.requires||'').replace(/"/g,'&#34;')}">${p.name} <span class="text-emerald-400/70">${p.est_value}</span></a>`).join('')+'</div>';
