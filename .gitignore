@@ -1,0 +1,31 @@
+engine/*/build/
+engine/*/src/
+engine/xmrig-linux/
+dist/xmrig
+logs/
+*.log
+ENGINE
+STOP
+node_modules/
+# secrets — backed up in the tarball, never in git
+wallet/
+gridcoin-wallet/
+
+# runtime telemetry (regenerable, machine-specific) — keep on disk, out of git
+data/*.jsonl
+
+# DePIN account credentials + runtime state (never commit secrets)
+config/depin.local.env
+config/*.local.json
+config/free-streams-state.json
+config/knowledge-capital-state.json
+config/playbook-state.json
+
+# autonomous content output (regenerates daily; the GENERATOR is committed, not its output)
+reports/
+data/automation-status.json
+
+# agent wallet PRIVATE keys — never commit, lives only on this machine
+config/agent-wallet.key.json
+config/*.key.json
+node_modules/

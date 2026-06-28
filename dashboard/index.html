@@ -1,0 +1,928 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>xyzmining</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:'class',theme:{extend:{fontFamily:{sans:['-apple-system','BlinkMacSystemFont','Segoe UI','system-ui','sans-serif'],mono:['ui-monospace','SFMono-Regular','Menlo','monospace']}}}}</script>
+<style>
+  html{background:#06090f}
+  body{font-variant-numeric:tabular-nums}
+  ::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:9px}::-webkit-scrollbar-track{background:transparent}
+  .nav.on{background:rgba(16,185,129,.12);color:#34d399}
+  @keyframes pl{70%{box-shadow:0 0 0 6px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+  .pdot.go{animation:pl 1.8s infinite}
+</style>
+<div class="flex min-h-screen text-slate-200 font-sans selection:bg-emerald-500/30">
+
+  <aside class="w-[232px] shrink-0 fixed h-screen bg-[#080c14]/90 border-r border-slate-800/70 flex flex-col">
+    <div class="h-16 px-5 flex items-center gap-2.5 border-b border-slate-800/70">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-indigo-500 grid place-items-center text-slate-950 font-bold text-sm">◆</div>
+      <span class="font-semibold tracking-tight">xyzmining</span>
+    </div>
+    <nav class="p-3 flex-1 space-y-1" id="nav">
+      <button data-nav="overview" onclick="route('overview')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Overview</button>
+      <button data-nav="plan" onclick="route('plan')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Plan</button>
+      <button data-nav="income" onclick="route('income')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-5"/></svg>Income</button>
+      <button data-nav="ledger" onclick="route('ledger')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 13l3-3 3 3 5-6"/></svg>Ledger</button>
+      <button data-nav="farm" onclick="route('farm')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22c0-6 0-9 5-12M12 22c0-5 0-8-5-11"/><path d="M17 4c-3 0-5 1-5 4 3 0 5-1 5-4zM7 6c2.5 0 4 1 4 3.5C8.5 9.5 7 8.5 7 6z"/></svg>Farm</button>
+      <button data-nav="edges" onclick="route('edges')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-9"/><path d="M16 7h5v5"/></svg>Edges</button>
+      <button data-nav="yield" onclick="route('yield')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 21c0-6 2.5-9 7-10-1 5-4 8-7 10z"/><path d="M12 21c0-5-2-7.5-6-8.5 1 4 3 6.5 6 8.5z"/><path d="M12 21v-7"/></svg>Yield</button>
+      <button data-nav="pulse" onclick="route('pulse')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 12h4l2-7 4 14 2-7h4"/></svg>Pulse</button>
+      <button data-nav="build" onclick="route('build')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 7l-1.5-1.5a2.8 2.8 0 00-4 4L10 11M10 17l1.5 1.5a2.8 2.8 0 004-4L19 13"/><path d="M8 8l-4 4M16 16l4-4"/></svg>Build</button>
+      <button data-nav="wallet" onclick="route('wallet')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 7h16a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V6a1 1 0 011-1h13"/><circle cx="17" cy="13" r="1"/></svg>Wallet</button>
+      <button data-nav="mining" onclick="route('mining')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg>Mining</button>
+      <button data-nav="fleet" onclick="route('fleet')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Fleet</button>
+      <button data-nav="vitals" onclick="route('vitals')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4.2 17.5a9 9 0 1 1 15.6 0"/><path d="M12 14a1.6 1.6 0 1 0 0-3.2A1.6 1.6 0 0 0 12 14z"/><path d="M13.1 11.1 16 8.5"/></svg>Vitals</button>
+      <button data-nav="earn" onclick="route('earn')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 3h6M10 3v5L5.5 17a2 2 0 001.8 3h9.4a2 2 0 001.8-3L14 8V3"/></svg>Earn</button>
+      <button data-nav="controls" onclick="route('controls')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="#06090f"/><circle cx="15" cy="12" r="2" fill="#06090f"/><circle cx="9" cy="18" r="2" fill="#06090f"/></svg>Controls</button>
+      <button data-nav="settings" onclick="route('settings')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</button>
+    </nav>
+    <div class="p-4 border-t border-slate-800/70 text-xs text-slate-500" id="sidestatus">connecting…</div>
+  </aside>
+
+  <main class="flex-1 ml-[232px]">
+    <header class="h-16 sticky top-0 z-10 bg-[#06090f]/75 backdrop-blur border-b border-slate-800/70 flex items-center justify-between px-7">
+      <h1 class="text-lg font-semibold tracking-tight" id="ptitle">Overview</h1>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 text-[13px] bg-slate-900/70 border border-slate-800 rounded-full px-3 py-1.5"><span class="pdot w-2 h-2 rounded-full bg-slate-600" id="livedot"></span><span id="livetxt">—</span></div>
+        <div class="text-[13px] bg-slate-900/70 border border-slate-800 rounded-full px-3 py-1.5"><span class="text-slate-500">Bal</span> <span class="font-mono" id="balchip">0.000000</span> <span class="text-slate-500">XMR</span></div>
+        <button onclick="fctl('pause')" class="ctl" style="padding:5px 11px" title="Pause every miner">⏸ All</button>
+        <button onclick="fctl('resume')" class="ctl" style="padding:5px 11px;border-color:#065f46;color:#34d399" title="Resume every miner">▶ All</button>
+        <button onclick="location.reload()" class="text-slate-400 hover:text-white px-2 py-1.5 text-base" title="reload">↻</button>
+      </div>
+    </header>
+
+    <div class="p-7 max-w-6xl">
+      <section data-page="overview">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.07] to-indigo-500/[.04] p-6">
+            <div class="flex items-center justify-between">
+              <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">Fleet · live hashrate</div>
+              <div class="text-[11px] text-slate-500" id="ovsub2">—</div>
+            </div>
+            <div class="text-5xl font-bold tracking-tight mt-2"><span id="hr">0</span> <span class="text-lg font-medium text-slate-400">H/s</span></div>
+            <div class="text-sm text-slate-400 mt-1" id="herosub">starting…</div>
+            <div class="h-[120px] mt-3"><canvas id="spark" class="w-full h-full block"></canvas></div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 grid grid-cols-2 gap-y-4 gap-x-3 content-start" id="ovstats"></div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 mt-4 grid grid-cols-2 md:grid-cols-4 gap-4" id="earnstrip"></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Path to $100 · scale the fleet to cut the time</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="scaleplan"></div>
+        <div class="flex items-center gap-2 mt-3 text-xs"><span class="text-slate-500 shrink-0">Add a Mac node:</span><code class="font-mono bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-300 flex-1 truncate">curl -fsSL http://TAILNET_IP:8799/ausra-install.sh | bash</code><button onclick="copyNode()" class="ctl" style="padding:4px 10px">copy</button></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">What the fleet is mining</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="ovcoins"></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Machines</div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden"><table class="w-full text-sm"><thead><tr class="text-[11px] uppercase tracking-wider text-slate-500"><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Machine</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Mining</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Output</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Status</th></tr></thead><tbody id="ovmachines"></tbody></table></div>
+      </section>
+
+      <section data-page="ledger" hidden>
+        <div id="revenue-hero" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.08] to-amber-500/[.04] p-6 mb-4"></div>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4" id="ledger-kpi"></div>
+        <div id="ns-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-purple-500/[.07] to-emerald-500/[.03] p-5 mb-4"></div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4">
+          <div class="text-sm font-semibold mb-3">Earnings over time <span class="text-slate-500 font-normal" id="ledger-sub"></span></div>
+          <canvas id="ledgerChart" class="w-full block" style="height:180px"></canvas>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+          <div class="text-sm font-semibold mb-3">Daily breakdown <span class="text-slate-500 font-normal">— real accrual, not estimates</span></div>
+          <div id="ledger-table" class="text-xs"></div>
+        </div>
+      </section>
+      <section data-page="plan" hidden>
+        <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.08] to-sky-500/[.04] p-6 mb-4">
+          <div class="flex items-baseline justify-between flex-wrap gap-2">
+            <div><div class="text-[11px] text-slate-400 uppercase tracking-wider">The playbook — money from thin air, in order</div>
+              <div class="text-2xl font-bold tracking-tight mt-1">What to do, sequenced by the test</div></div>
+            <div class="text-right"><div id="plan-pct" class="text-3xl font-bold text-emerald-400">0%</div><div id="plan-frac" class="text-[11px] text-slate-500">0 / 0 done</div></div>
+          </div>
+          <div class="pbar mt-3"><div id="plan-bar" style="width:0%;background:linear-gradient(90deg,#34d399,#38bdf8)"></div></div>
+          <div id="plan-next" class="text-xs text-slate-400 mt-3"></div>
+          <div class="text-[11px] text-slate-500 mt-2 border-t border-slate-800 pt-2.5">Ordered by the Monte-Carlo stack test: <span class="text-emerald-300">foundations first (they multiply everything)</span> → concentrate the dominant core → passive stack → create + compound. <span class="text-sky-300">AI does the drafting/building/auditing; you hold the keys + sign.</span></div>
+        </div>
+        <div id="plan-phases" class="space-y-4"></div>
+      </section>
+      <section data-page="income" hidden>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.07] to-indigo-500/[.04] p-6">
+            <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">Total income · all streams</div>
+            <div class="text-5xl font-bold tracking-tight mt-2"><span id="inc-total">$0</span> <span class="text-lg font-medium text-slate-400">/ day</span></div>
+            <div class="text-sm text-slate-400 mt-1" id="inc-sub">realized now · staged streams light up as you enable them</div>
+            <div class="mt-4"><div class="flex justify-between text-xs text-slate-500 mb-1"><span>Progress to $1/day</span><span id="inc-pct">0%</span></div><div class="pbar"><div id="inc-bar" style="width:0%;background:linear-gradient(90deg,#6366f1,#34d399)"></div></div></div>
+            <div class="mt-4 flex flex-wrap gap-2" id="inc-cats"></div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 grid grid-cols-2 gap-y-4 gap-x-3 content-start" id="inc-kpi"></div>
+        </div>
+        <div id="free-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-amber-500/[.07] to-emerald-500/[.03] p-5 mt-6"></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Every stream · the machine</div>
+        <div id="inc-streams" class="space-y-5"></div>
+      </section>
+
+      <section data-page="farm" hidden>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-purple-500/[.08] to-emerald-500/[.04] p-6">
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">Wealth from thin air — potential</div>
+            <div class="text-3xl font-bold tracking-tight mt-1"><span id="farm-pot">—</span> <span class="text-sm text-slate-500 font-normal">/yr (speculative — many never pay)</span></div>
+            <div id="farm-next" class="text-sm text-slate-300 mt-2"></div>
+            <div id="farm-strategy" class="text-xs text-slate-500 mt-3 leading-relaxed border-t border-slate-800 pt-3"></div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div id="farm-kpi" class="grid grid-cols-2 gap-3"></div>
+            <div id="farm-cats" class="flex flex-wrap gap-1.5 mt-3"></div>
+          </div>
+        </div>
+        <div id="farm-eligibility" class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 mb-4 text-xs"></div>
+        <div id="farm-targets" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+      <section data-page="edges" hidden>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-indigo-500/[.08] to-cyan-500/[.04] p-6">
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">Edge matrix — fringe · arbitrage · fee-capture · MEV</div>
+            <div class="text-2xl font-bold tracking-tight mt-1"><span id="edge-count">—</span> mechanisms <span class="text-sm text-slate-500 font-normal">· ranked by what WE can build now</span></div>
+            <div id="edge-top" class="flex flex-wrap gap-1.5 mt-3"></div>
+            <div class="text-xs text-slate-500 mt-3 border-t border-slate-800 pt-3">Scored: buildable × legal × low-capital × connects-to-our-stack. ⭐ = plugs into omnione / mesh / farm. <span class="text-red-400">AVOID</span> = predatory/illegal — catalogued for awareness, never built.</div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div id="edge-kpi" class="grid grid-cols-2 gap-3"></div>
+          </div>
+        </div>
+        <div id="edge-filters" class="flex flex-wrap gap-1.5 mb-3"></div>
+        <div id="edge-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+      <section data-page="yield" hidden>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.08] to-cyan-500/[.03] p-6">
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">Opportunity engine — real DeFi yield + live arbitrage</div>
+            <div class="text-2xl font-bold tracking-tight mt-1"><span id="yld-count">—</span> real pools <span class="text-sm text-slate-500 font-normal">· keyless · ranked for $100 capital</span></div>
+            <div id="yld-actions" class="mt-3 space-y-2"></div>
+            <div class="text-xs text-slate-500 mt-3 border-t border-slate-800 pt-3">Organic = APY from real fees (not decaying emissions). Persistence = snapshots a pool held in the top list — trust grows with it (forward-is-backward). <span class="text-emerald-400">The engine ranks + tracks; you sign every deposit.</span></div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div id="yld-kpi" class="grid grid-cols-2 gap-3"></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div class="text-sm font-semibold mb-1">🌱 Real yield — the $100 base layer</div>
+            <div class="text-[11px] text-slate-500 mb-3">Single-sided stablecoin lending · cheap chains · blue-chip. No impermanent loss, withdraw anytime.</div>
+            <div id="yld-base"></div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div class="text-sm font-semibold mb-1">⚖️ Arbitrage monitor — honest</div>
+            <div class="text-[11px] text-slate-500 mb-3">Net of BOTH taker fees. Most won't clear — that result IS the signal.</div>
+            <div id="yld-arb"></div>
+            <div id="yld-verdict" class="text-[11px] text-slate-500 mt-3 border-t border-slate-800 pt-3"></div>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mt-4">
+          <div class="text-sm font-semibold mb-3">Top ranked pools (all chains)</div>
+          <div id="yld-top"></div>
+        </div>
+      </section>
+      <section data-page="pulse" hidden>
+        <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-purple-500/[.08] via-fuchsia-500/[.04] to-emerald-500/[.03] p-6 mb-4">
+          <div class="text-[11px] text-slate-400 uppercase tracking-wider">The pulse — humanity · world · market, one signal</div>
+          <div class="flex items-end gap-6 flex-wrap mt-2">
+            <div><div id="pulse-fng" class="text-5xl font-bold tracking-tight">—</div><div id="pulse-fng-label" class="text-sm text-slate-400">loading…</div></div>
+            <div class="flex-1 min-w-[200px]"><div id="pulse-bar" class="h-2 rounded-full bg-slate-800 overflow-hidden mb-2"><div id="pulse-fill" class="h-full rounded-full transition-all" style="width:0%"></div></div><div class="flex justify-between text-[10px] text-slate-600"><span>Extreme Fear</span><span>Neutral</span><span>Extreme Greed</span></div></div>
+            <div id="pulse-stats" class="flex gap-4"></div>
+          </div>
+          <div id="pulse-regime" class="text-xs text-slate-400 mt-3 border-t border-slate-800 pt-3"></div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-4">
+          <div class="lg:col-span-3 rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div class="flex items-center gap-2 flex-wrap mb-1"><span class="text-sm font-semibold">100 edge formulations — tested against live data</span><span class="text-[10px] text-slate-500">the operator's pulse thesis, actualized & honest</span></div>
+            <div class="text-[11px] text-slate-500 mb-3">Each thought translated into a unique, complementary edge — then run against the live keyless engine. <span class="text-emerald-400">RUNNING</span> = infra live + learning · <span class="text-cyan-400">TESTABLE</span> = data reads it now · <span class="text-amber-400">OPERATOR</span> = needs your signup/deposit/claim.</div>
+            <div id="pulse-filters" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div id="pulse-kpi" class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 grid grid-cols-2 gap-3 content-start"></div>
+        </div>
+        <div id="pulse-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+      <section data-page="build" hidden>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.08] to-violet-500/[.04] p-6">
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">Knowledge → money · zero starting capital</div>
+            <div class="text-2xl font-bold tracking-tight mt-1"><span id="kc-count">—</span> researched targets <span class="text-sm text-slate-500 font-normal">· you build → it pays</span></div>
+            <div class="text-[11px] text-slate-500 mt-2">The truest thin-air money for someone who builds a lot: get paid for work already done (grants), for the GitHub signal you already produce (passive builder-pay), and for skill (audits, hackathons, bounties). <span class="text-sky-300">The AI does the heavy lifting — drafts, audits, solves.</span></div>
+            <div id="kc-passive" class="mt-3"></div>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div class="text-sm font-semibold mb-2">✎ What AI can do <span class="text-[10px] text-slate-500 font-normal">— say the word</span></div>
+            <div id="kc-ai" class="space-y-2 max-h-60 overflow-auto"></div>
+          </div>
+        </div>
+        <div id="strategy-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-amber-500/[.07] via-slate-900/40 to-sky-500/[.05] p-5 mb-4"></div>
+        <div id="auto-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.07] to-slate-900/40 p-5 mb-4"></div>
+        <div id="report-card" class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4"></div>
+        <div id="fringe-lab" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-fuchsia-500/[.06] to-sky-500/[.03] p-5 mb-4"></div>
+        <div id="kc-filters" class="flex flex-wrap gap-1.5 mb-3"></div>
+        <div id="kc-cards" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </section>
+      <section data-page="wallet" hidden>
+        <div id="agent-wallet" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-violet-500/[.08] to-emerald-500/[.04] p-6 mb-4"></div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4" id="walletkpi"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+            <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">Monero balance · on-chain</div>
+            <div class="text-4xl font-bold tracking-tight mt-2 font-mono"><span id="bal">0.000000</span> <span class="text-base font-medium text-slate-400">XMR</span></div>
+            <div class="text-xs text-slate-500 mt-1" id="balnote">—</div>
+            <div class="font-mono text-xs break-all bg-slate-950 border border-slate-800 rounded-lg p-3 my-4 text-slate-400" id="addr">—</div>
+            <button onclick="copyAddr()" class="text-sm bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-4 py-2">Copy address</button>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+            <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">Withdraw to Binance</div>
+            <label class="block text-xs text-slate-500 mt-4 mb-1.5">Binance XMR deposit address</label>
+            <input id="to" class="font-mono w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-500 outline-none" placeholder="4...">
+            <label class="block text-xs text-slate-500 mt-4 mb-1.5">Amount · <span id="avail">avail 0</span></label>
+            <div class="flex gap-2"><input id="amt" inputmode="decimal" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-500 outline-none" placeholder="0.00"><button onclick="send()" class="px-5 rounded-lg font-semibold text-slate-950 bg-gradient-to-br from-emerald-400 to-emerald-500 hover:opacity-90">Send</button></div>
+            <div class="text-xs mt-2 min-h-[16px] text-slate-400" id="sendmsg"></div>
+            <div class="text-[11px] text-slate-500 mt-2">Signed locally on this Mac — keys never leave it.</div>
+          </div>
+        </div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Payout history · MoneroOcean</div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="flex items-center justify-between mb-3"><div class="text-sm text-slate-400">Total paid out: <span id="paytotal" class="text-emerald-400 font-mono">0</span> XMR</div><div class="text-xs text-slate-500" id="paycount">—</div></div><canvas id="paychart" class="w-full h-[140px] block"></canvas><div id="payempty" class="text-xs text-slate-500 text-center py-8 hidden">No payouts yet — MoneroOcean pays out once you cross the minimum threshold. Mining accrues to “pending” until then.</div></div>
+      </section>
+
+      <section data-page="mining" hidden>
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="coins"></div>
+      </section>
+
+      <section data-page="fleet" hidden>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-2.5">Fleet topology · live</div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 mb-7"><svg id="topo" viewBox="0 0 820 300" class="w-full" style="height:300px"></svg></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-2.5">Mesh — every machine</div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden"><table class="w-full text-sm"><thead><tr class="text-[11px] uppercase tracking-wider text-slate-500"><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Machine</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">OS</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Tailnet IP</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Status</th></tr></thead><tbody id="mesh"></tbody></table></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Mining workers</div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden"><table class="w-full text-sm"><thead><tr class="text-[11px] uppercase tracking-wider text-slate-500"><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Worker</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Hashrate</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Total hashes</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Shares</th><th class="text-left font-semibold px-5 py-3.5 border-b border-slate-800">Last seen</th></tr></thead><tbody id="workers"></tbody></table></div>
+      </section>
+
+      <section data-page="vitals" hidden>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+          <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.07] to-indigo-500/[.04] p-6 flex flex-col items-center justify-center">
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider mb-1">Mesh Health</div>
+            <div id="mesh-gauge" class="w-48"></div>
+            <div id="mesh-meta" class="text-center text-sm text-slate-400 mt-1"></div>
+          </div>
+          <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+            <div class="text-sm font-semibold mb-1">Live node vitals <span class="text-slate-500 font-normal">— protect the hardware, don't burn an M1 for pennies</span></div>
+            <div id="vitals-summary" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3"></div>
+            <div id="vitals-note" class="text-xs text-slate-500 mt-4 leading-relaxed"></div>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4">
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-sm font-semibold">🛡 Auto-protect governor</span>
+            <span id="gov-status" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">—</span>
+            <button id="gov-toggle" onclick="govToggle()" class="ml-auto text-[11px] px-3 py-1 rounded border border-slate-700 bg-slate-800 hover:bg-slate-700 transition">toggle</button>
+          </div>
+          <div class="text-xs text-slate-500 mb-3">Holds each node in a healthy envelope automatically — backs a machine off the instant it's busy with its own work, resumes mining only in the gaps. Pure protection by default (never beyond <span class="text-slate-400">gentle</span> on in-use Macs).</div>
+          <div id="gov-recent" class="space-y-1 text-xs"></div>
+        </div>
+        <div id="vitals-nodes" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </section>
+      <section data-page="earn" hidden>
+        <div class="rounded-2xl border border-indigo-500/20 bg-indigo-500/[.05] p-5 mb-4">
+          <div class="text-sm font-semibold text-slate-100 mb-2.5">How Gridcoin (GRC) earnings work — why this isn't instant</div>
+          <div class="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-slate-300">
+            <span class="px-2 py-1 rounded bg-slate-800">1 · VPS crunch Asteroids@home tasks</span><span class="text-slate-600">→</span>
+            <span class="px-2 py-1 rounded bg-slate-800">2 · a task <b>completes + validates</b></span><span class="text-slate-600">→</span>
+            <span class="px-2 py-1 rounded bg-slate-800">3 · grants <b>BOINC credit</b></span><span class="text-slate-600">→</span>
+            <span class="px-2 py-1 rounded bg-slate-800">4 · grcpool converts credit → <b>GRC</b></span>
+          </div>
+          <div class="text-xs text-slate-400 mt-3" id="grcnote">checking task status…</div>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4" id="grckpi"></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Gridcoin crunchers · what each box is earning</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="grcboxes"></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Boosters · turn up the fleet</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="boosters"></div>
+      </section>
+
+      <section data-page="controls" hidden>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-2.5">Whole fleet · every machine at once</div><div class="flex flex-wrap gap-2"><button onclick="fctl('pause')" class="ctl">⏸ Pause all</button><button onclick="fctl('resume')" class="ctl" style="border-color:#065f46;color:#34d399">▶ Resume all</button><button onclick="fctl('restart')" class="ctl">↻ Restart Macs</button><span id="fctlmsg" class="text-xs text-slate-500 self-center"></span></div></div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4" id="ctlstatus"></div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 space-y-3.5">
+          <div class="flex flex-wrap items-center gap-2"><span class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold w-16">Power</span><button onclick="ctl('flatout')" class="ctl">Flat-out</button><button onclick="ctl('idle')" class="ctl">Idle-only</button><button onclick="miner('pause')" class="ctl">Pause</button><button onclick="miner('resume')" class="ctl">Resume</button><button onclick="miner('restart')" class="ctl">Restart</button><button onclick="ctl('stop')" class="ctl">Stop</button></div>
+          <div class="flex flex-wrap items-center gap-2"><span class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold w-16">Threads</span><button onclick="setcfg({threads:1})" class="ctl">1</button><button onclick="setcfg({threads:2})" class="ctl">2</button><button onclick="setcfg({threads:4})" class="ctl">4</button><button onclick="setcfg({threads:6})" class="ctl">6</button><button onclick="setcfg({threads:8})" class="ctl">8</button></div>
+          <div class="flex flex-wrap items-center gap-2"><span class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold w-16">Mode</span><button onclick="setcfg({mode:'light'})" class="ctl">Light</button><button onclick="setcfg({mode:'fast'})" class="ctl">Fast</button><button onclick="setcfg({mode:'auto'})" class="ctl">Auto</button><button onclick="setcfg({mode:'fast',threads:4})" class="ctl" style="border-color:#a3530a;color:#fbbf24;font-weight:600">⚡ Turbo</button><span class="text-[11px] text-slate-600">Turbo = fast dataset · 4 P-cores · ~4–5× light (watch RAM)</span></div>
+          <div class="text-xs min-h-[16px] text-slate-400" id="ctlmsg"></div>
+        </div>
+      </section>
+
+      <section data-page="settings" hidden>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+            <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-4">Alerts & thresholds</div>
+            <label class="block text-xs text-slate-500 mb-1.5">Hashrate-drop alert threshold (%)</label>
+            <input id="set-hrdrop" type="number" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm mb-4 focus:border-emerald-500 outline-none" value="30">
+            <label class="block text-xs text-slate-500 mb-1.5">Dashboard refresh interval (seconds)</label>
+            <input id="set-interval" type="number" min="2" max="60" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm mb-4 focus:border-emerald-500 outline-none" value="5">
+            <label class="flex items-center gap-2 text-sm text-slate-300 mb-5"><input id="set-alerts" type="checkbox" checked class="accent-emerald-500"> Enable offline / hashrate-drop toasts</label>
+            <button onclick="saveSettings()" class="text-sm bg-gradient-to-br from-emerald-400 to-emerald-500 text-slate-950 font-semibold rounded-lg px-4 py-2">Save settings</button>
+            <span id="setmsg" class="text-xs text-emerald-400 ml-2"></span>
+          </div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+            <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-4">System</div>
+            <div class="text-sm text-slate-400 space-y-2.5">
+              <div class="flex justify-between"><span>Price source</span><span class="text-slate-200">Kraken XMRUSD · keyless</span></div>
+              <div class="flex justify-between"><span>Pool</span><span class="text-slate-200 font-mono text-xs">gulf.moneroocean.stream</span></div>
+              <div class="flex justify-between"><span>Dashboard</span><span class="text-slate-200">launchd · 127.0.0.1:8787</span></div>
+              <div class="flex justify-between"><span>Watchdog</span><span class="text-emerald-400">engine-aware · 20s</span></div>
+            </div>
+            <div class="text-[11px] uppercase tracking-wider text-rose-400/80 font-semibold mt-6 mb-2.5">Kill switch</div>
+            <div class="flex flex-wrap gap-2"><button onclick="fctl('pause')" class="ctl" style="border-color:#7f1d1d;color:#fca5a5">⏹ Stop ALL mining</button><button onclick="fctl('resume')" class="ctl" style="border-color:#065f46;color:#34d399">▶ Resume ALL</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div id="toasts" class="fixed bottom-5 right-5 z-50 space-y-2 w-[320px]"></div>
+<div id="drawer" class="fixed inset-0 z-30 hidden">
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]" onclick="closeDrawer()"></div>
+  <aside id="drawerPanel" class="absolute right-0 top-0 h-full w-full max-w-[470px] bg-[#0a0e16] border-l border-slate-800 shadow-2xl overflow-y-auto translate-x-full transition-transform duration-300 ease-out">
+    <div id="drawerBody" class="p-6"></div>
+  </aside>
+</div>
+<style>
+  .ctl{font-size:13px;background:#1e293b;border:1px solid #334155;border-radius:9px;padding:8px 14px;color:#e2e8f0;cursor:pointer}.ctl:hover{background:#334155}
+  .clickrow{cursor:pointer;transition:background .12s}
+  .pbar{height:8px;border-radius:9px;background:#1e293b;overflow:hidden}.pbar>div{height:100%;border-radius:9px;transition:width .7s ease}
+</style>
+<script>
+let WALLET={}, hist=[], PAGE='overview', LASTO=null;
+const XMR=n=>Number(n||0)/1e12, f6=n=>XMR(n).toFixed(6), nf=n=>Number(n||0).toLocaleString();
+const ago=ts=>ts?Math.max(0,Math.round((Date.now()/1000-ts)/60))+'m ago':'—';
+const titles={overview:'Overview',plan:'Plan',income:'Income',ledger:'Ledger',farm:'Farm',edges:'Edges',yield:'Yield',pulse:'Pulse',build:'Build',wallet:'Wallet',mining:'Mining',fleet:'Fleet',vitals:'Vitals',earn:'Earn',controls:'Controls',settings:'Settings'};
+function route(p){ PAGE=p; document.querySelectorAll('[data-page]').forEach(s=>s.hidden=s.dataset.page!==p); document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('on',n.dataset.nav===p)); document.getElementById('ptitle').textContent=titles[p]; if(p==='overview') drawChart(); if(p==='fleet'&&LASTO) drawTopology(LASTO); if(p==='wallet') loadPayments(); if(p==='income') loadIncome(); if(p==='vitals') loadVitals(); if(p==='farm') loadFarm(); if(p==='edges') loadEdges(); if(p==='yield') loadYield(); if(p==='pulse') loadPulse(); if(p==='build') loadBuild(); if(p==='plan') loadPlan(); if(p==='ledger') loadLedger(); }
+const ccolor=n=>({Monero:'#f60',Bitcoin:'#f7931a',Zephyr:'#7b61ff',Salvium:'#1d9e75',Verus:'#3165d4',Gridcoin:'#10b981',Wownero:'#df4',ArQmA:'#1abc9c',Yada:'#e84',Raptoreum:'#b22',Conceal:'#5b8',Tari:'#a06bf5',DERO:'#0bd','Quantum Resistant Ledger':'#ffb000',Equilibria:'#16a085',Xolentum:'#8e44ad',Talecoin:'#e67e22',Sugarchain:'#ec4899',Yenten:'#2ecc71',CPUchain:'#0ea5e9',Bellscoin:'#eab308',Magi:'#dc2626'}[n]||'#6366f1');
+function copyAddr(){ if(WALLET.address) navigator.clipboard.writeText(WALLET.address); }
+async function ctl(a){ document.getElementById('ctlmsg').textContent='switching…'; await fetch('/api/control?action='+a); setTimeout(refresh,1000); }
+async function miner(a){ const m=document.getElementById('ctlmsg'); m.textContent=a+'…'; await fetch('/api/miner?action='+a); setTimeout(refresh,1300); }
+async function setcfg(o){ const m=document.getElementById('ctlmsg'); m.className='text-xs text-slate-400'; m.textContent='applying '+JSON.stringify(o)+'…'; try{ await fetch('/api/config',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(o)}); m.textContent='applied '+JSON.stringify(o); }catch(e){ m.textContent=String(e); } setTimeout(refresh,4000); }
+async function send(){ const to=document.getElementById('to').value.trim(),amount=document.getElementById('amt').value.trim(),m=document.getElementById('sendmsg'); m.className='text-xs mt-2 text-slate-400'; m.textContent='sending…'; if(!to||!amount){ m.className='text-xs mt-2 text-red-400'; m.textContent='enter address + amount'; return; } try{ const r=await fetch('/api/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({to,amount})}).then(r=>r.json()); if(r.ok){ m.className='text-xs mt-2 text-emerald-400'; m.textContent='sent · tx '+r.tx_hash.slice(0,18)+'… fee '+r.fee; } else { m.className='text-xs mt-2 text-red-400'; m.textContent=r.error||'failed'; } }catch(e){ m.className='text-xs mt-2 text-red-400'; m.textContent=String(e); } }
+async function loadCoins(){ const d=await fetch('/api/coins').then(r=>r.json()).catch(()=>({coins:[]})); document.getElementById('coins').innerHTML=(d.coins||[]).map(c=>{ const active=d.active===c.id, oneclick=c.engine==='xmrig', needIn=!c.address||!oneclick, eng={xmrig:'1-click',['xmrig-merge']:'merge proxy',['cpuminer-opt']:'cpuminer',verus:'verus miner',node:'own miner',boinc:'BOINC'}[c.engine]||c.engine||''; return `<div class="rounded-2xl border ${active?'border-emerald-500/50 bg-emerald-500/[.06]':'border-slate-800 bg-slate-900/40'} p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl grid place-items-center font-bold text-white text-sm" style="background:${ccolor(c.name)}">${c.name[0]}</div><div class="flex-1 min-w-0"><div class="font-semibold truncate">${c.name} <span class="text-slate-500 font-normal text-xs">${c.ticker||''}</span></div><div class="text-xs text-slate-500 truncate">${c.chain}</div></div><span class="text-[11px] px-2 py-1 rounded-md font-semibold ${c.ready?'bg-emerald-500/15 text-emerald-400':'bg-amber-500/15 text-amber-400'}">${c.ready?'ready':'setup'}</span></div><div class="text-xs text-slate-500 my-3 flex flex-wrap items-center gap-1.5"><span>pays ${c.payout}</span><span class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] ${oneclick?'text-slate-400':'text-amber-400/90'}">${eng}</span>${active?'<span class="text-emerald-400">· mining now</span>':''}</div>${needIn?`<input class="font-mono w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs mb-2.5 focus:border-emerald-500 outline-none" id="ca-${c.id}" placeholder="${c.payout} address" value="${c.address||''}">`:''}<button onclick="switchCoin('${c.id}')" class="w-full text-sm rounded-lg py-2 ${active?'bg-gradient-to-br from-emerald-400 to-emerald-500 text-slate-950 font-semibold':'bg-slate-800 hover:bg-slate-700 border border-slate-700'}">${active?'Mining':'Mine this'}</button></div>`; }).join(''); }
+async function switchCoin(id){ const inp=document.getElementById('ca-'+id), address=inp?inp.value.trim():undefined, m=document.getElementById('ctlmsg'); if(m){m.textContent='switching…';} const r=await fetch('/api/coin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id,address})}).then(r=>r.json()); if(m) m.textContent=r.ok?(r.coin?('now mining '+r.coin):(r.note||'saved')):(r.error||'failed'); setTimeout(()=>{loadCoins();refresh();},3500); }
+async function loadBoinc(){ const b=await fetch('/api/boinc').then(r=>r.json()).catch(()=>({})); const el=document.getElementById('boinc'); if(!el) return; const boxes=b.boxes||[]; const dot=x=>x.project?'#34d399':(x.am?'#fbbf24':'#ef4444'); el.innerHTML=(boxes.length?boxes.map(x=>`<div class="flex items-center gap-2 py-0.5"><span class="w-2 h-2 rounded-full shrink-0" style="background:${dot(x)}"></span><span class="text-slate-100 font-semibold w-16 shrink-0">${x.name}</span><span class="text-slate-400">${x.status}</span>${x.project?`<span class="text-slate-600 truncate">· ${x.project}</span>`:''}</div>`).join(''):'<span class="text-slate-500">—</span>')+`<div class="text-slate-500 text-xs mt-2">${b.summary||''} — scientific compute for Gridcoin (GRC), throttled, ToS-legal.</div>`; }
+const bar=(label,pct,cls)=>`<div class="mt-3"><div class="flex justify-between text-xs text-slate-500 mb-1"><span>${label}</span><span>${pct}%</span></div><div class="h-2 rounded-full bg-slate-800 overflow-hidden"><div class="h-full ${cls} transition-all duration-700" style="width:${Math.max(0,Math.min(100,pct))}%"></div></div></div>`;
+async function loadEarn(){
+  const b=await fetch('/api/boinc').then(r=>r.json()).catch(()=>({boxes:[]})); const boxes=b.boxes||[];
+  const t=(LASTO&&LASTO.totals)||{};
+  const avgcpu=boxes.length?Math.round(boxes.reduce((s,x)=>s+(x.cpu_pct||0),0)/boxes.length):0;
+  const avgprog=boxes.length?Math.round(boxes.reduce((s,x)=>s+(x.progress||0),0)/boxes.length*100):0;
+  const credit=boxes.reduce((s,x)=>s+(x.credit||0),0);
+  const K=(k,v,s,c)=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"><div class="text-[11px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-2xl font-semibold tracking-tight mt-1 ${c||''}">${v}</div><div class="text-xs text-slate-500 mt-0.5">${s}</div></div>`;
+  const gk=document.getElementById('grckpi'); if(gk) gk.innerHTML=[K('GRC earned','$'+(t.grc_earned_usd??0),(t.grc_earned??0)+' GRC so far','text-emerald-400'),K('Projected / day','~'+(t.grc_proj_per_day??0)+' GRC','≈ $'+(t.grc_proj_usd_day??0)+'/day · est','text-emerald-400'),K('GRC price','$'+(+(t.grc_price||0)).toFixed(5),'live · CoinGecko'),K('BOINC credit',nf(credit),'RAC '+nf(t.grc_rac||0)+'/day')].join('');
+  const note=document.getElementById('grcnote'); if(note){ note.innerHTML = credit>0 ? `Earned <b class="text-emerald-300">${nf(credit)}</b> credit ≈ <b class="text-emerald-300">${t.grc_earned} GRC</b> (~$${t.grc_earned_usd}). grcpool pays it to your wallet — exact balance on grcpool.com.` : `<b class="text-amber-300">$0 so far — and that's normal.</b> No task has finished yet: each Asteroids@home work unit takes hours, then validates on a 2nd machine, THEN grants credit. Your VPS are at ${avgcpu}% CPU, avg task <b>${avgprog}% done</b>. Credit (→ GRC) appears once a task hits 100% + validates. Projected steady-state: <b class="text-emerald-300">~${t.grc_proj_per_day} GRC/day ≈ $${t.grc_proj_usd_day}/day</b> from ${t.grc_cores} cores. GRC ≈ $${(+(t.grc_price||0)).toFixed(4)}, so it's pennies — the VPS value is legitimacy + real science, not income.`; }
+  const gb=document.getElementById('grcboxes'); if(gb) gb.innerHTML=boxes.map(x=>{
+    const prog=Math.round((x.progress||0)*100), cpu=x.cpu_pct||0, ok=/comput/.test(x.status||'');
+    return `<div class="rounded-2xl border ${ok?'border-emerald-500/40':'border-slate-800'} bg-slate-900/40 p-5"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full ${ok?'bg-emerald-400 pdot go':'bg-amber-400'}"></span><span class="font-semibold">${x.name}</span><span class="text-xs text-slate-500">${x.nproc||'?'} cores</span></div><span class="text-[11px] px-2 py-0.5 rounded ${ok?'bg-emerald-500/15 text-emerald-400':'bg-amber-500/15 text-amber-400'}">${x.project||'—'}</span></div><div class="grid grid-cols-3 gap-3 mt-4"><div><div class="text-xs text-slate-500">Tasks</div><div class="text-xl font-semibold">${x.running||0}<span class="text-slate-500 text-sm font-normal">/${nf(x.queued||0)}</span></div></div><div><div class="text-xs text-slate-500">Credit</div><div class="text-xl font-semibold ${(x.credit||0)>0?'text-emerald-400':''}">${nf(x.credit||0)}</div></div><div><div class="text-xs text-slate-500">Credit/day</div><div class="text-xl font-semibold">${nf(x.rac||0)}</div></div></div>${bar('CPU on GRC',cpu,'bg-gradient-to-r from-indigo-400 to-emerald-400')}${bar('Avg task progress',prog,'bg-emerald-400')}<div class="text-[11px] text-slate-600 mt-2">${(x.credit||0)>0?'earning credit ✓':'no completed task yet — credit is granted when a work unit reaches 100% + validates'}</div></div>`;
+  }).join('')||'<div class="text-slate-500 text-sm">no crunchers reporting</div>';
+  const bo=document.getElementById('boosters'); if(bo) bo.innerHTML=[
+    {t:'Merge-mine XMR + Tari',d:'Same hashes, two coins — ~double reward per hash, zero extra CPU.',a:'merge'},
+    {t:'Asahi Linux · ~2×',d:'Boot a Mac into Linux → huge pages + 1GB pages unlock on the same silicon.',a:'asahi'},
+    {t:'Add a node',d:'One line on any Mac joins the fleet and adds ~1,800 H/s of XMR.',a:'node'},
+  ].map(c=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 flex flex-col"><div class="font-semibold mb-1.5">${c.t}</div><p class="text-sm text-slate-400 flex-1">${c.d}</p><div class="text-xs text-emerald-400 mt-3 font-semibold">staged →</div></div>`).join('');
+}
+const coinCol=c=>ccolor(c==='XMR'?'Monero':c==='GRC'?'Gridcoin':c);
+async function loadOverview(){
+  const o=await fetch('/api/overview').then(r=>r.json()).catch(()=>null); if(!o) return;
+  LASTO=o; checkAlerts(o); if(PAGE==='fleet') drawTopology(o);
+  const t=o.totals||{}; renderScalePlan(t);
+  document.getElementById('hr').textContent=nf(t.xmr_hashrate||0);
+  document.getElementById('herosub').textContent=(t.xmr_machines||0)+' mining XMR · '+(t.grc_machines||0)+' crunching GRC for Gridcoin';
+  document.getElementById('ovsub2').textContent=(t.nodes_online||0)+'/'+(t.nodes_total||0)+' nodes online';
+  hist.push(t.xmr_hashrate||0); if(hist.length>70)hist.shift(); drawChart();
+  const S=(k,v,c)=>`<div><div class="text-[11px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold tracking-tight mt-0.5 ${c||''}">${v}</div></div>`;
+  document.getElementById('ovstats').innerHTML=[
+    S('XMR rigs',t.xmr_machines||0,'text-emerald-400'),
+    S('GRC crunchers',t.grc_machines||0,'text-indigo-300'),
+    S('Pending',(t.pending_xmr??0)+' XMR'),
+    S('Paid out',(t.paid_xmr??0)+' XMR'),
+  ].join('');
+  const E=(k,v,s,c)=>`<div><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-2xl font-semibold tracking-tight mt-0.5 ${c||''}">${v}</div><div class="text-[11px] text-slate-600">${s||''}</div></div>`;
+  const eta=t.eta_100_days; const etaStr=eta==null?'—':(eta>365?(eta/365).toFixed(1)+' yr':eta+' days');
+  const es=document.getElementById('earnstrip'); if(es) es.innerHTML=[
+    E('Est. revenue','$'+(t.fleet_usd_day??t.usd_per_day??0),'per day · XMR+GRC','text-emerald-400'),
+    E('Pending value','$'+(t.pending_usd||0).toFixed(3),(t.pending_xmr??0)+' XMR','text-amber-300'),
+    E('$100 milestone',etaStr,'whole fleet rate'),
+    E('Prices','$'+(t.xmr_price||0).toFixed(0)+' / $'+(+(t.grc_price||0)).toFixed(4),'XMR / GRC · live'),
+  ].join('');
+  document.getElementById('ovcoins').innerHTML=(o.coins||[]).map(c=>{
+    const metric=c.hashrate!=null?(nf(c.hashrate)+' H/s'):(c.mining?'crunching':'idle');
+    return `<div onclick="openCoin('${c.coin}')" class="clickrow rounded-2xl border ${c.mining?'border-emerald-500/40 bg-emerald-500/[.05]':'border-slate-800 bg-slate-900/40'} p-4 flex items-center gap-3.5 hover:bg-white/[.04]"><div class="w-10 h-10 rounded-xl grid place-items-center font-bold text-white shrink-0" style="background:${coinCol(c.coin)}">${c.coin[0]}</div><div class="flex-1 min-w-0"><div class="font-semibold">${c.coin} <span class="text-slate-500 text-xs font-normal">${c.chain}</span></div><div class="text-xs text-slate-500">${c.machines} machine${c.machines===1?'':'s'}</div></div><div class="text-right shrink-0"><div class="font-mono ${c.mining?'text-emerald-400':'text-slate-500'}">${metric}</div><div class="text-[10px] uppercase tracking-wider ${c.mining?'text-emerald-500':'text-slate-600'}">${c.mining?'mining':'—'}</div></div></div>`;
+  }).join('')||'<div class="text-slate-500 text-sm">no active coins</div>';
+  document.getElementById('ovmachines').innerHTML=(o.machines||[]).map(m=>{
+    const out=m.hashrate!=null?(nf(m.hashrate)+' H/s'):(m.tasks?(m.tasks+' tasks'):'—');
+    const live=m.status&&/min|comput/i.test(m.status);
+    return `<tr class="clickrow hover:bg-white/[.04]" onclick="openMachine('${m.name}')"><td class="px-5 py-3 border-b border-slate-800/70"><span class="inline-block w-2 h-2 rounded-full mr-2.5 ${m.online?'bg-emerald-400':'bg-slate-600'}"></span>${m.name} <span class="text-slate-600 text-xs">${m.kind==='vps'?'VPS':'Mac'}</span></td><td class="px-5 py-3 border-b border-slate-800/70"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-xs font-semibold" style="color:${coinCol(m.coin)}">${m.coin}</span> <span class="text-slate-500 text-xs">${m.algo}</span></td><td class="px-5 py-3 border-b border-slate-800/70 font-mono ${live?'text-emerald-400':'text-slate-400'}">${out}</td><td class="px-5 py-3 border-b border-slate-800/70 text-slate-400 text-xs">${m.status||'—'} <span class="text-slate-600 float-right">›</span></td></tr>`;
+  }).join('')||'<tr><td colspan=4 class="px-5 py-4 text-slate-500">no machines reporting</td></tr>';
+}
+function drawChart(){ const cv=document.getElementById('spark'); if(!cv||PAGE!=='overview') return; const dpr=devicePixelRatio||1,w=cv.width=cv.clientWidth*dpr,h=cv.height=cv.clientHeight*dpr,ctx=cv.getContext('2d'); ctx.clearRect(0,0,w,h); if(hist.length<2)return; const mx=Math.max(...hist,1)*1.2,n=hist.length,X=i=>i/(n-1)*w,Y=v=>h-(v/mx)*(h-6*dpr)-3*dpr; const g=ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'rgba(16,185,129,.32)'); g.addColorStop(1,'rgba(16,185,129,0)'); ctx.beginPath();ctx.moveTo(0,h);hist.forEach((v,i)=>ctx.lineTo(X(i),Y(v)));ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=g;ctx.fill(); ctx.beginPath();hist.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));ctx.strokeStyle='#34d399';ctx.lineWidth=2*dpr;ctx.lineJoin='round';ctx.stroke(); ctx.beginPath();ctx.arc(X(n-1),Y(hist[n-1]),3*dpr,0,7);ctx.fillStyle='#34d399';ctx.fill(); }
+async function refresh(){
+  const [st,loc,fl,me,w]=await Promise.all(['state','local','fleet','mesh','wallet'].map(p=>fetch('/api/'+p).then(r=>r.json()).catch(()=>({}))));
+  WALLET=w; const liveHr=Math.round((loc?.hashrate?.total||[0])[0]||0), mining=liveHr>0||(st.state||'').startsWith('MINING'), fs=fl?.stats||{};
+  document.getElementById('livedot').className='pdot w-2 h-2 rounded-full '+(mining?'bg-emerald-400 go':'bg-slate-600');
+  document.getElementById('livetxt').textContent=mining?('Mining · '+nf(liveHr)+' H/s'):'idle';
+  document.getElementById('balchip').textContent=f6(w.balance);
+  document.getElementById('sidestatus').textContent=(me.nodes? me.nodes.filter(n=>n.online).length+' / '+me.nodes.length+' nodes online':'—');
+  document.getElementById('bal').textContent=f6(w.balance); document.getElementById('addr').textContent=w.address||'wallet starting…';
+  document.getElementById('balnote').textContent=w.err?('node: '+w.err):('unlocked '+f6(w.unlocked)+' XMR'); document.getElementById('avail').textContent='avail '+f6(w.unlocked);
+  const KV=(k,v,s,c)=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"><div class="text-[11px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold tracking-tight mt-1 ${c||''}">${v}</div><div class="text-xs text-slate-500 mt-0.5">${s||''}</div></div>`;
+  const wk=document.getElementById('walletkpi'); if(wk) wk.innerHTML=[KV('Balance',f6(w.balance),'on-chain XMR','font-mono'),KV('Pending',f6(fs.amtDue),'unpaid at pool','font-mono text-amber-300'),KV('Unlocked',f6(w.unlocked),'spendable now','font-mono'),KV('Lifetime paid',f6(fs.amtPaid),'to your wallet','font-mono text-emerald-400')].join('');
+  const thr=(loc?.hashrate?.threads||[]).length;
+  const cs=document.getElementById('ctlstatus'); if(cs) cs.innerHTML=[KV('Hashrate',nf(liveHr),'H/s this node','text-emerald-400'),KV('Status',mining?'mining':'idle',st.state||'—',mining?'text-emerald-400':'text-amber-300'),KV('Threads',thr||'—','active workers'),KV('Accepted',nf(loc?.results?.shares_good||0),'pool shares')].join('');
+  document.getElementById('mesh').innerHTML=(me.nodes||[]).map(n=>`<tr class="hover:bg-white/[.02]"><td class="px-5 py-3 border-b border-slate-800/70"><span class="inline-block w-2 h-2 rounded-full mr-2.5 ${n.online?'bg-emerald-400':'bg-slate-600'}"></span>${n.name||'?'}${n.self?' <span class="text-emerald-400 text-xs">· this</span>':''}</td><td class="px-5 py-3 border-b border-slate-800/70 text-slate-400">${n.os||''}</td><td class="px-5 py-3 border-b border-slate-800/70 font-mono text-slate-400">${n.ip||''}</td><td class="px-5 py-3 border-b border-slate-800/70 ${n.online?'text-emerald-400':'text-slate-500'}">${n.online?'online':'offline'}</td></tr>`).join('')||`<tr><td colspan=4 class="px-5 py-4 text-slate-500">${me.error||'no mesh data'}</td></tr>`;
+  document.getElementById('workers').innerHTML=(fl.workers||[]).map(x=>`<tr class="clickrow hover:bg-white/[.04]" onclick="openMachine('${x.id}')"><td class="px-5 py-3 border-b border-slate-800/70">${x.id} <span class="text-slate-600">›</span></td><td class="px-5 py-3 border-b border-slate-800/70 font-mono">${nf(x.hash||0)} H/s</td><td class="px-5 py-3 border-b border-slate-800/70 font-mono text-slate-400">${nf(x.totalHashes||0)}</td><td class="px-5 py-3 border-b border-slate-800/70 font-mono">${x.validShares||0}</td><td class="px-5 py-3 border-b border-slate-800/70 text-slate-500">${ago(x.lastHash)}</td></tr>`).join('')||`<tr><td colspan=5 class="px-5 py-4 text-slate-500">no pool shares yet — first lands ~15–25 min after mining starts</td></tr>`;
+}
+let DRAWER=null, mhist={};
+function fmtUp(s){ s=Math.round(s||0); const h=Math.floor(s/3600),m=Math.floor(s%3600/60); return h?h+'h '+m+'m':m+'m '+(s%60)+'s'; }
+function openMachine(name){ DRAWER=name; const d=document.getElementById('drawer'); d.classList.remove('hidden'); requestAnimationFrame(()=>document.getElementById('drawerPanel').classList.remove('translate-x-full')); document.getElementById('drawerBody').innerHTML='<div class="text-slate-500 text-sm py-10 text-center">loading '+name+'…</div>'; renderMachine(); }
+function closeDrawer(){ DRAWER=null; document.getElementById('drawerPanel').classList.add('translate-x-full'); setTimeout(()=>document.getElementById('drawer').classList.add('hidden'),300); }
+addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+async function mctl(name,action){ const m=document.getElementById('mctlmsg'); if(m)m.textContent=action+'…'; try{ const r=await fetch('/api/machine-control?name='+encodeURIComponent(name)+'&action='+action).then(r=>r.json()); if(m)m.textContent=r.ok?(r.note||action+'d ✓'):(r.error||'failed'); }catch(e){ if(m)m.textContent='failed'; } setTimeout(renderMachine,1200); }
+async function fctl(action){ const m=document.getElementById('fctlmsg'); if(m)m.textContent=action+' all…'; try{ const r=await fetch('/api/fleet-control?action='+action).then(r=>r.json()); toast('Fleet '+action+' — '+r.ok+'/'+r.total+' machines','ok'); if(m)m.textContent=r.ok+'/'+r.total+' done'; }catch(e){ toast('fleet '+action+' failed','err'); } setTimeout(()=>{loadOverview();refresh();},1500); }
+async function openCoin(coin){ DRAWER='coin:'+coin; document.getElementById('drawer').classList.remove('hidden'); requestAnimationFrame(()=>document.getElementById('drawerPanel').classList.remove('translate-x-full')); const o=LASTO||await fetch('/api/overview').then(r=>r.json()).catch(()=>null); const b=document.getElementById('drawerBody'); if(!o){b.innerHTML='<div class="text-red-400">failed</div>';return;} const t=o.totals||{}, ms=(o.machines||[]).filter(m=>m.coin===coin);
+  const head=`<div class="flex items-start justify-between mb-5"><div><div class="text-xl font-bold tracking-tight flex items-center gap-2"><span class="w-7 h-7 rounded-lg grid place-items-center text-white text-xs font-bold" style="background:${coinCol(coin)}">${coin[0]}</span>${coin}</div><div class="text-xs text-slate-500 mt-1">${coin==='XMR'?'Monero · RandomX':'Gridcoin · BOINC useful-work'}</div></div><button onclick="closeDrawer()" class="text-slate-500 hover:text-white text-xl px-1">✕</button></div>`;
+  const tile=(k,v,s)=>`<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-lg font-semibold mt-0.5 font-mono">${v}</div><div class="text-[11px] text-slate-600">${s||''}</div></div>`;
+  const stats=coin==='XMR'?`<div class="grid grid-cols-2 gap-3">${tile('Hashrate',nf(t.xmr_hashrate)+' H/s',(t.xmr_machines||0)+' rigs')}${tile('Revenue','$'+(t.usd_per_day||0).toFixed(3),'per day')}${tile('Pending',(t.pending_xmr||0)+'','$'+(t.pending_usd||0))}${tile('Price','$'+(t.xmr_price||0).toFixed(0),'Kraken')}</div>`:`<div class="grid grid-cols-2 gap-3">${tile('Crunchers',(t.grc_machines||0)+'','VPS on GRC')}${tile('Work','useful-compute','ToS-legal')}</div>`;
+  const rows=ms.map(m=>`<div onclick="openMachine('${m.name}')" class="clickrow rounded-xl border border-slate-800 bg-slate-900/40 p-3 flex items-center justify-between hover:bg-white/[.04]"><div><div class="font-semibold text-sm">${m.name} <span class="text-slate-600 text-xs">${m.kind==='vps'?'VPS':'Mac'}</span></div><div class="text-xs text-slate-500">${m.status}</div></div><div class="font-mono text-sm ${/min|comput/.test(m.status||'')?'text-emerald-400':'text-slate-500'}">${m.hashrate!=null?nf(m.hashrate)+' H/s':(m.tasks||0)+' tasks'} ›</div></div>`).join('');
+  b.innerHTML=head+stats+`<div class="text-[11px] uppercase tracking-wider text-slate-500 mt-5 mb-2">Machines on ${coin}</div><div class="space-y-2">${rows||'<div class="text-slate-500 text-sm">none active</div>'}</div>`; }
+function toast(msg,type){ const c=document.getElementById('toasts'); if(!c)return; const col=type==='err'?'#ef4444':type==='warn'?'#fbbf24':'#34d399'; const el=document.createElement('div'); el.className='rounded-xl border bg-[#0d1119] px-4 py-3 text-sm shadow-lg'; el.style.borderColor=col+'55'; el.innerHTML='<span style="color:'+col+'">●</span> <span class="text-slate-200">'+msg+'</span>'; el.style.cssText+=';opacity:0;transition:opacity .25s,transform .25s;transform:translateY(8px)'; c.appendChild(el); requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateY(0)';}); setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},6000); }
+let _prev={hr:null,online:{}};
+function checkAlerts(o){ if(!SETTINGS.alerts)return; const t=o.totals||{}; (o.machines||[]).forEach(m=>{ const was=_prev.online[m.name], is=m.online&&!/unreachable/.test(m.status||''); if(was===true&&!is) toast(m.name+' went offline','warn'); _prev.online[m.name]=is; }); const hr=t.xmr_hashrate||0; if(_prev.hr!=null&&_prev.hr>0){ const drop=(_prev.hr-hr)/_prev.hr*100; if(drop>=SETTINGS.hrdrop) toast('Hashrate dropped '+Math.round(drop)+'% ('+nf(_prev.hr)+'→'+nf(hr)+')','warn'); } _prev.hr=hr; }
+function drawTopology(o){ const sv=document.getElementById('topo'); if(!sv||!o)return; const ms=o.machines||[], macs=ms.filter(m=>m.kind==='cpu'), vps=ms.filter(m=>m.kind==='vps'), W=820; let s=''; const node=(x,y,label,sub,col,on)=>{ s+='<circle cx="'+x+'" cy="'+y+'" r="26" fill="'+col+'22" stroke="'+(on?col:'#475569')+'" stroke-width="2"/><text x="'+x+'" y="'+(y+4)+'" text-anchor="middle" fill="'+(on?col:'#64748b')+'" font-size="13" font-weight="700">'+label[0]+'</text><text x="'+x+'" y="'+(y+44)+'" text-anchor="middle" fill="#94a3b8" font-size="11">'+label+'</text><text x="'+x+'" y="'+(y+58)+'" text-anchor="middle" fill="#475569" font-size="10">'+sub+'</text>'; };
+  const line=(x1,y1,x2,y2,on)=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+(on?'#34d39966':'#33415566')+'" stroke-width="2"/>'; const moX=W*0.32,grcHX=W*0.68,hubY=64,rowY=236;
+  macs.forEach((m,i)=>{ s+=line(110+i*150,rowY,moX,hubY,m.online); }); vps.forEach((m,i)=>{ s+=line(W-110-i*150,rowY,grcHX,hubY,/comput/.test(m.status||'')); });
+  node(moX,hubY,'MoneroOcean','XMR pool','#ff6600',macs.some(m=>m.status==='mining')); node(grcHX,hubY,'grcpool','Gridcoin','#10b981',vps.some(m=>/comput/.test(m.status||'')));
+  macs.forEach((m,i)=>node(110+i*150,rowY,m.name.length>11?m.name.slice(0,10)+'…':m.name,(m.hashrate||0)+' H/s','#6366f1',m.status==='mining')); vps.forEach((m,i)=>node(W-110-i*150,rowY,m.name,(m.running||0)+' tasks','#10b981',/comput/.test(m.status||''))); sv.innerHTML=s; }
+async function loadAgentWallet(){
+  const w=await fetch('/api/agent-wallet').then(r=>r.json()).catch(()=>null); const el=document.getElementById('agent-wallet'); if(!el) return;
+  if(!w||!w.exists){ el.innerHTML='<div class="text-sm font-semibold">🔐 Agent wallet</div><div class="text-[11px] text-slate-500 mt-1">not created yet — run node dashboard/wallet-gen.mjs</div>'; return; }
+  const eco=(w.ecosystems||[]).map(e=>`<div class="bg-slate-950/40 rounded-xl p-3 border border-slate-800">
+    <div class="flex items-center justify-between"><span class="text-[11px] uppercase tracking-wider text-slate-300">${e.id}</span><span class="text-[11px] font-mono ${/[1-9]/.test(e.summary)?'text-emerald-400':'text-slate-500'}">${e.summary}</span></div>
+    <button onclick="navigator.clipboard.writeText('${e.address}');this.textContent='✓ copied';setTimeout(()=>this.textContent='${e.address.slice(0,10)}…${e.address.slice(-6)} ⧉',1200)" class="text-[10px] font-mono text-slate-500 hover:text-slate-300 mt-1 break-all text-left">${e.address.slice(0,10)}…${e.address.slice(-6)} ⧉</button>
+    <div class="text-[9px] text-slate-600 mt-0.5">${e.covers||''}</div></div>`).join('');
+  const route=(w.routing||[]).map(r=>`<div class="flex items-start gap-2 text-[10px] py-0.5"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 uppercase tracking-wider shrink-0 min-w-[58px] text-center">${r.lands.split(' ')[0]}</span><span class="text-slate-500">${r.stream} <span class="text-slate-600">(${r.token})</span></span></div>`).join('');
+  el.innerHTML=`<div class="flex items-start justify-between gap-3 flex-wrap mb-3">
+      <div><div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">${w.label}</div>
+        <div class="text-2xl font-bold tracking-tight mt-1 text-slate-200">${(w.ecosystems||[]).length} ecosystems · one seed</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">${w.architecture}</div></div>
+      <span class="px-2 py-1 rounded-lg text-[10px] uppercase tracking-wider ${w.funded?'bg-emerald-500/15 text-emerald-300':'bg-slate-700/40 text-slate-400'} shrink-0">${w.funded?'● funded':'○ empty + ready'}</span></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">${eco}</div>
+    <div class="mt-3 pt-3 border-t border-slate-800"><div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1.5">Revenue routing — which stream lands where (the "hundreds of coins" made tractable)</div>${route}</div>
+    <div class="text-[10px] text-amber-200/70 mt-3 bg-amber-500/[.06] rounded-lg px-2 py-1.5">🔐 ${w.security}</div>`;
+}
+async function loadPayments(){ loadAgentWallet(); const d=await fetch('/api/payments').then(r=>r.json()).catch(()=>({payments:[]})); const ps=d.payments||[]; const pt=document.getElementById('paytotal'),pc=document.getElementById('paycount'),empty=document.getElementById('payempty'),cv=document.getElementById('paychart'); if(pt)pt.textContent=d.total||0; if(pc)pc.textContent=ps.length+' payouts'; if(!ps.length){ if(empty)empty.classList.remove('hidden'); if(cv)cv.style.display='none'; return; } if(empty)empty.classList.add('hidden'); if(cv)cv.style.display='block'; let cum=0; const pts=ps.map(p=>{cum+=p.amount;return cum;}); drawBars(cv,pts); }
+function drawBars(cv,vals){ if(!cv)return; const dpr=devicePixelRatio||1,w=cv.width=cv.clientWidth*dpr,h=cv.height=cv.clientHeight*dpr,ctx=cv.getContext('2d'); ctx.clearRect(0,0,w,h); const mx=Math.max(...vals,1)*1.1,n=vals.length,X=i=>i/((n-1)||1)*w,Y=v=>h-(v/mx)*(h-6*dpr)-3*dpr; const g=ctx.createLinearGradient(0,0,0,h); g.addColorStop(0,'rgba(52,211,153,.3)'); g.addColorStop(1,'rgba(52,211,153,0)'); ctx.beginPath();ctx.moveTo(0,h);vals.forEach((v,i)=>ctx.lineTo(X(i),Y(v)));ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle=g;ctx.fill(); ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));ctx.strokeStyle='#34d399';ctx.lineWidth=2*dpr;ctx.stroke(); }
+let SETTINGS={hrdrop:30,interval:5,alerts:true};
+function loadSettings(){ try{ SETTINGS={...SETTINGS,...JSON.parse(localStorage.getItem('xyzset')||'{}')}; }catch{} const a=document.getElementById('set-hrdrop'),b=document.getElementById('set-interval'),c=document.getElementById('set-alerts'); if(a)a.value=SETTINGS.hrdrop; if(b)b.value=SETTINGS.interval; if(c)c.checked=SETTINGS.alerts; }
+function saveSettings(){ SETTINGS.hrdrop=+document.getElementById('set-hrdrop').value||30; SETTINGS.interval=Math.max(2,+document.getElementById('set-interval').value||5); SETTINGS.alerts=document.getElementById('set-alerts').checked; localStorage.setItem('xyzset',JSON.stringify(SETTINGS)); const m=document.getElementById('setmsg'); if(m)m.textContent='saved ✓'; toast('Settings saved','ok'); applyInterval(); }
+let _iv=null; function applyInterval(){ if(_iv)clearInterval(_iv); _iv=setInterval(()=>{loadOverview();refresh();},(SETTINGS.interval||5)*1000); }
+function renderScalePlan(t){ const el=document.getElementById('scaleplan'); if(!el||!t||!t.xmr_hashrate) return;
+  const pending=t.pending_usd||0, usdPerHps=(t.usd_per_day||0)/(t.xmr_hashrate||1);
+  const eta=hps=>{ const day=hps*usdPerHps; return day>0?Math.max(1,Math.round((100-pending)/day)):null; };
+  const fmt=d=>d==null?'—':(d>365?(d/365).toFixed(1)+' yr':d+' days');
+  const cur=t.xmr_hashrate, NODE=1800;
+  const rows=[ {l:'Now · live fleet',h:cur,n:(t.xmr_machines||0)+' Macs mining'}, {l:'+ Asahi on all Macs (~2×)',h:cur*2,n:'boot Macs into Asahi Linux'}, {l:'+ 2 more M1 nodes',h:cur*2+2*NODE,n:'one-liner per Mac'}, {l:'+ 5 more M1 nodes (mesh)',h:cur*2+5*NODE,n:'scale the fleet'} ];
+  el.innerHTML=rows.map((r,i)=>{ const day=r.h*usdPerHps; return `<div class="flex items-center justify-between rounded-xl border ${i===0?'border-slate-800':'border-emerald-500/25'} bg-slate-900/40 p-3.5"><div class="min-w-0"><div class="font-semibold text-sm">${r.l}</div><div class="text-xs text-slate-500 truncate">${nf(Math.round(r.h))} H/s · $${day.toFixed(3)}/day · ${r.n}</div></div><div class="text-right shrink-0 ml-3"><div class="font-mono ${i===0?'text-slate-300':'text-emerald-400'}">${fmt(eta(r.h))}</div><div class="text-[10px] uppercase tracking-wider text-slate-600">to $100</div></div></div>`; }).join(''); }
+function copyNode(){ navigator.clipboard.writeText('curl -fsSL http://TAILNET_IP:8799/ausra-install.sh | bash').then(()=>toast('Onboarding command copied — paste it on any Mac','ok')); }
+async function renderMachine(){ if(!DRAWER) return; const m=await fetch('/api/machine?name='+encodeURIComponent(DRAWER)).then(r=>r.json()).catch(()=>null); const b=document.getElementById('drawerBody'); if(!DRAWER||!b) return; if(!m){ b.innerHTML='<div class="text-red-400 text-sm">failed to load</div>'; return; }
+  const head=sub=>`<div class="flex items-start justify-between mb-5"><div><div class="text-xl font-bold tracking-tight">${DRAWER}</div><div class="text-xs text-slate-500 mt-0.5">${sub}</div></div><button onclick="closeDrawer()" class="text-slate-500 hover:text-white text-xl leading-none px-1">✕</button></div>`;
+  const tile=(k,v,s)=>`<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-lg font-semibold mt-0.5 font-mono">${v}</div><div class="text-[11px] text-slate-600 truncate">${s||''}</div></div>`;
+  const ctlbar=`<div class="flex flex-wrap gap-2 mb-4"><button onclick="mctl('${DRAWER}','pause')" class="ctl">⏸ ${m.kind==='vps'?'Suspend':'Pause'}</button><button onclick="mctl('${DRAWER}','resume')" class="ctl">▶ Resume</button>${m.kind==='cpu'?`<button onclick="mctl('${DRAWER}','restart')" class="ctl">↻ Restart</button>`:''}<span id="mctlmsg" class="text-xs text-slate-500 self-center"></span></div>`;
+  if(m.kind==='cpu'){
+    if(!m.online){ b.innerHTML=head('Mac · XMR')+`<div class="rounded-xl border border-amber-500/30 bg-amber-500/[.06] p-4 text-sm text-amber-300">${m.error||'miner unreachable'}</div>`; return; }
+    const hr=m.hashrate?.total?.[0]||0; mhist[DRAWER]=(mhist[DRAWER]||[]).concat(hr).slice(-60);
+    const thr=m.hashrate?.threads||[], mx=Math.max(...thr,1);
+    const threadBars=thr.length?`<div class="text-[11px] uppercase tracking-wider text-slate-500 mt-5 mb-2">Per-thread · ${thr.length} workers</div><div class="space-y-1.5">`+thr.map((t,i)=>`<div class="flex items-center gap-2"><span class="text-[10px] text-slate-600 w-4">${i}</span><div class="pbar flex-1"><div style="width:${t/mx*100}%;background:linear-gradient(90deg,#6366f1,#34d399)"></div></div><span class="font-mono text-xs text-slate-400 w-12 text-right">${nf(t)}</span></div>`).join('')+`</div>`:'';
+    b.innerHTML=head(`Mac · ${m.cpu?.brand||''} · ${m.algo}`)+ctlbar+
+      `<div class="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/[.08] to-transparent p-5"><div class="text-[11px] uppercase tracking-widest text-slate-500">Live hashrate</div><div class="text-4xl font-bold tracking-tight mt-1">${nf(hr)} <span class="text-base text-slate-400 font-medium">H/s</span></div><canvas id="dspark" class="w-full h-[56px] block mt-2"></canvas></div>`+
+      `<div class="grid grid-cols-2 gap-3 mt-4">${tile('Uptime',fmtUp(m.uptime),'session')}${tile('Accepted',nf(m.shares?.good),(m.pool?.rejected||0)+' rejected')}${tile('Difficulty',nf(m.shares?.diff||m.pool?.diff),'current')}${tile('Pool ping',(m.pool?.ping||0)+'ms',(m.pool?.host||'').split(':')[0])}</div>`+
+      `<div class="text-[11px] uppercase tracking-wider text-slate-500 mt-5 mb-2">Pool</div><div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3 text-xs font-mono break-all text-slate-400">${m.pool?.host||'—'}</div>`+
+      `<div class="grid grid-cols-2 gap-3 mt-3">${tile('CPU',(m.cpu?.cores||0)+'c / '+(m.cpu?.threads||0)+'t',m.cpu?.arch||'')}${tile('Session hashes',nf(m.shares?.hashes),'computed')}</div>`+threadBars;
+    drawDspark(mhist[DRAWER]);
+  } else if(m.kind==='vps'){
+    if(!m.online){ b.innerHTML=head('VPS · GRC')+`<div class="text-amber-300 text-sm">${m.error||'unreachable'}</div>`; return; }
+    const cpu=m.cpu_pct||0;
+    const taskRows=(m.tasks||[]).map(t=>{ const p=Math.round((t.progress||0)*100), ex=t.state==='EXECUTING'; return `<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3"><div class="flex justify-between items-center mb-1.5 gap-2"><span class="font-mono text-[11px] text-slate-400 truncate">${t.wu}</span><span class="text-[10px] px-1.5 py-0.5 rounded shrink-0 ${ex?'bg-emerald-500/15 text-emerald-400':'bg-slate-700/50 text-slate-400'}">${t.state||'—'}</span></div><div class="pbar"><div style="width:${p}%;background:${ex?'#34d399':'#475569'}"></div></div><div class="text-[10px] text-slate-500 mt-1">${p}% done</div></div>`; }).join('');
+    b.innerHTML=head(`VPS · ${m.project||'BOINC'} · Gridcoin useful-work`)+ctlbar+
+      `<div class="grid grid-cols-2 gap-3">${tile('Crunching',m.running+' / '+m.total,'work units')}${tile('Cores',m.nproc||'—','on GRC')}</div>`+
+      `<div class="mt-4"><div class="flex justify-between text-xs text-slate-500 mb-1"><span>CPU on GRC</span><span>${cpu}%</span></div><div class="pbar"><div style="width:${cpu}%;background:linear-gradient(90deg,#6366f1,#34d399)"></div></div><div class="text-[11px] text-slate-500 mt-1.5">load ${m.load||'—'}</div></div>`+
+      `<div class="text-[11px] uppercase tracking-wider text-slate-500 mt-5 mb-2">Work units · live progress</div><div class="space-y-2">${taskRows||'<div class="text-slate-500 text-sm">no tasks reported</div>'}</div>`;
+  } else { b.innerHTML=head('')+`<div class="text-red-400 text-sm">${m.error||'unknown machine'}</div>`; }
+}
+function drawDspark(h){ const cv=document.getElementById('dspark'); if(!cv||!h||h.length<2)return; const dpr=devicePixelRatio||1,w=cv.width=cv.clientWidth*dpr,ht=cv.height=cv.clientHeight*dpr,ctx=cv.getContext('2d'); ctx.clearRect(0,0,w,ht); const mx=Math.max(...h,1)*1.15,n=h.length,X=i=>i/(n-1)*w,Y=v=>ht-(v/mx)*(ht-4*dpr)-2*dpr; const g=ctx.createLinearGradient(0,0,0,ht); g.addColorStop(0,'rgba(52,211,153,.3)'); g.addColorStop(1,'rgba(52,211,153,0)'); ctx.beginPath();ctx.moveTo(0,ht);h.forEach((v,i)=>ctx.lineTo(X(i),Y(v)));ctx.lineTo(w,ht);ctx.closePath();ctx.fillStyle=g;ctx.fill(); ctx.beginPath();h.forEach((v,i)=>i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v)));ctx.strokeStyle='#34d399';ctx.lineWidth=2*dpr;ctx.lineJoin='round';ctx.stroke(); }
+async function loadFree(){
+  const f=await fetch('/api/free-streams').then(r=>r.json()).catch(()=>null); const el=document.getElementById('free-panel'); if(!f||!el) return;
+  const grp=(title,arr,color,hint)=>arr&&arr.length?`<div class="mb-3"><div class="text-[10px] uppercase tracking-wider ${color} mb-1.5">${title} <span class="text-slate-600 normal-case tracking-normal">${hint||''}</span></div><div class="flex flex-wrap gap-1.5">${arr.map(s=>`<span class="text-[11px] px-2 py-1 rounded-lg bg-slate-800/70 border border-slate-700 text-slate-300" title="${(s.note||'').replace(/"/g,'&#34;')}">${s.name}${s.est_day_high>0?` <span class='text-slate-500'>$${s.est_day_low}-${s.est_day_high}/d</span>`:''}</span>`).join('')}</div></div>`:'';
+  el.innerHTML=`<div class="flex items-baseline justify-between flex-wrap gap-2 mb-3">
+      <div class="text-sm font-semibold">💸 Free / thin-air streams <span class="text-[11px] text-slate-500 font-normal">· zero-capital · idle resources → money + airdrops · ${f.mesh_macs} Mac(s)</span></div>
+      <div class="text-xs text-slate-400">live drip <span class="text-emerald-400 font-mono">$${f.daily_drip_usd.live[0]}-${f.daily_drip_usd.live[1]}/d</span> · full potential <span class="text-slate-300 font-mono">$${f.daily_drip_usd.full_potential[0]}-${f.daily_drip_usd.full_potential[1]}/d</span></div></div>
+    ${grp('● running',f.groups.running,'text-emerald-400')}
+    ${grp('○ one command',f.groups.one_command,'text-cyan-400','bin/depin-deploy.sh up — your creds, gitignored')}
+    ${grp('◇ airdrop nodes (vet first)',f.groups.airdrop_nodes,'text-fuchsia-400','the real thin-air bet = early-node token')}
+    ${grp('✎ paid for work already DONE',f.groups.paid_for_work,'text-amber-400','PGF grants for the dashboard · bug bounties — I help draft/audit')}
+    <div class="text-[11px] text-slate-500 mt-1 border-t border-slate-800 pt-2.5">${f.honest}</div>`;
+}
+async function loadIncome(){
+  loadFree();
+  const d=await fetch('/api/income').then(r=>r.json()).catch(()=>null); if(!d) return;
+  const total=d.total_daily_usd||0, pct=Math.min(100,Math.round(total*100)), streams=d.streams||[];
+  document.getElementById('inc-total').textContent='$'+total.toFixed(3);
+  document.getElementById('inc-pct').textContent=pct+'%'; document.getElementById('inc-bar').style.width=pct+'%';
+  const liveN=streams.filter(s=>s.status==='live').length, stagedN=streams.filter(s=>!['live','hold','separate'].includes(s.status)).length;
+  document.getElementById('inc-sub').textContent=liveN+' live · '+stagedN+' staged · $'+(d.held_value_usd||0).toLocaleString()+' held (untouched on Binance)';
+  const catCol={mining:'#ff6600',depin:'#22d3ee',airdrop:'#a855f7',degen:'#ef4444',hold:'#64748b',trading:'#6366f1'};
+  document.getElementById('inc-cats').innerHTML=Object.entries(d.by_category||{}).map(([c,v])=>`<span class="text-xs px-2 py-1 rounded-lg" style="background:${(catCol[c]||'#334155')}22;color:${catCol[c]||'#94a3b8'}">${c} $${(+v).toFixed(3)}/d</span>`).join('');
+  const K=(k,v,s,c)=>`<div><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold tracking-tight mt-0.5 ${c||''}">${v}</div><div class="text-[11px] text-slate-600">${s||''}</div></div>`;
+  document.getElementById('inc-kpi').innerHTML=[K('Realized','$'+total.toFixed(3),'per day','text-emerald-400'),K('Held','$'+(d.held_value_usd||0).toLocaleString(),'untouched'),K('Live',liveN,'earning now','text-emerald-400'),K('Staged',stagedN,'ready to enable')].join('');
+  const order=['mining','depin','airdrop','degen','hold','trading'];
+  const catLabel={mining:'⛏ Mining',depin:'📡 Bandwidth DePIN',airdrop:'🎰 Airdrop / farming',degen:'🤠 Degen · $100',hold:'🔒 Holdings · untouched',trading:'🤖 Trading · separate'};
+  const stCol=s=>({live:'#34d399',configure:'#fbbf24',farming:'#a855f7',planned:'#64748b',hold:'#64748b',separate:'#6366f1'}[s]||'#64748b');
+  document.getElementById('inc-streams').innerHTML=order.filter(c=>streams.some(s=>s.category===c)).map(c=>{
+    const items=streams.filter(s=>s.category===c);
+    return `<div><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-2">${catLabel[c]||c}</div><div class="grid grid-cols-1 md:grid-cols-2 gap-3">`+items.map(s=>{
+      const right=s.value_usd?('$'+(+s.value_usd).toLocaleString()):(s.daily_usd>0?'$'+(+s.daily_usd).toFixed(3)+'/d':'—');
+      return `<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4 flex items-center justify-between gap-3"><div class="min-w-0"><div class="font-semibold text-sm truncate">${s.label}</div><div class="text-xs text-slate-500 truncate">${s.note||s.signup||''}</div></div><div class="text-right shrink-0"><div class="font-mono text-sm ${s.daily_usd>0?'text-emerald-400':'text-slate-400'}">${right}</div><span class="text-[10px] px-1.5 py-0.5 rounded mt-0.5 inline-block" style="background:${stCol(s.status)}22;color:${stCol(s.status)}">${s.status}</span></div></div>`;
+    }).join('')+`</div></div>`;
+  }).join('');
+}
+// ── Vitals: mesh + per-node speedometers ──────────────────────────────────
+const HC={good:'#34d399',strain:'#fbbf24',hot:'#fb923c',critical:'#ef4444',offline:'#475569'};
+function arcGauge(frac,color,big,sub,big2){
+  frac=Math.max(0,Math.min(1,frac||0));
+  const r=54,cx=70,cy=66, p=a=>[cx+r*Math.cos(a),cy-r*Math.sin(a)];
+  const [sx,sy]=p(Math.PI),[ex,ey]=p(0);
+  const d=`M${sx.toFixed(1)} ${sy.toFixed(1)} A${r} ${r} 0 0 1 ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+  return `<svg viewBox="0 0 140 84" class="w-full block"><path d="${d}" fill="none" stroke="#1e293b" stroke-width="11" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${color}" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="${(frac*100).toFixed(1)} 100" style="transition:stroke-dasharray .6s ease,stroke .4s"/><text x="70" y="58" text-anchor="middle" font-size="23" font-weight="700" fill="#e2e8f0">${big}</text><text x="70" y="76" text-anchor="middle" font-size="9.5" letter-spacing=".5" fill="#64748b">${sub}</text>${big2?`<text x="70" y="20" text-anchor="middle" font-size="9" fill="#475569">${big2}</text>`:''}</svg>`;
+}
+function miniG(label,frac,color,big){ return `<div class="bg-slate-950/40 rounded-xl px-2 pt-1 pb-0.5"><div class="text-center text-[9px] uppercase tracking-wider text-slate-500">${label}</div>${arcGauge(frac,color,big,'')}</div>`; }
+function nodeCard(n){
+  const role=n.role||n.kind, c=HC[n.status]||HC.offline;
+  if(!n.online){
+    return `<div class="rounded-2xl border border-slate-800 bg-slate-900/30 p-5"><div class="flex items-center gap-2 mb-2"><span class="w-2.5 h-2.5 rounded-full" style="background:${HC.critical}"></span><span class="font-semibold">${n.name}</span><span class="ml-auto text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">${role}</span></div><div class="text-sm text-amber-400/90 mb-2">⚠ ${n.advice||'agent unreachable'}</div><div class="text-[11px] text-slate-500">Run on that node:</div><div class="text-xs text-slate-300 font-mono bg-slate-950 rounded-lg px-2.5 py-1.5 mt-1">bash bin/install-health-agent.sh</div></div>`;
+  }
+  const ld=n.load||{}, mi=n.miner||{}, ratio=ld.ratio??0;
+  const rcol=ratio<1?HC.good:ratio<1.5?HC.strain:ratio<2?HC.hot:HC.critical;
+  const gauges=[ miniG('Health',n.score/100,c,n.score), miniG('Load',Math.min(1,ratio/2),rcol,(ratio).toFixed(2)+'×') ];
+  if(n.kind==='mac'){ const mem=n.mem_free_pct??0, mcol=mem>30?HC.good:mem>15?HC.strain:HC.critical; gauges.push(miniG('RAM free',mem/100,mcol,mem+'%')); }
+  else { const crunch=n.miner?.mining?1:(n.project?1:0); gauges.push(miniG('Crunch',crunch,n.project?HC.good:HC.strain,n.project?'ON':'idle')); }
+  const hr=mi.h60s||mi.h10s||0, th=n.thermal||{};
+  const chips=[];
+  if(n.kind==='mac'){ chips.push(`⚡ ${hr.toFixed(0)} H/s`); if(mi.threads!=null) chips.push(`${mi.threads} thr`); chips.push(th.temp_c?`${th.temp_c}°C`:(th.warn||th.speed_limit<100?'thermal-limited':'thermal ok')); }
+  else { chips.push(`${n.ncpu||'?'} cores`); if(n.project) chips.push(n.project); }
+  const ctrl = n.kind==='mac' ? `<div data-node="${(n.name||'').replace(/"/g,'&quot;')}" class="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-slate-800/70"><span class="text-[10px] uppercase tracking-wider text-slate-500 mr-0.5">tune</span>${['off','gentle','balanced','turbo'].map(p=>`<button onclick="tune(this,'${p}')" class="tunebtn text-[11px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 capitalize transition">${p}</button>`).join('')}</div>` : '';
+  const mr=n.mining_risk||{}; const mrCol={SAFE:'#34d399',CAUTION:'#fbbf24',RISKY:'#fb923c',UNSAFE:'#ef4444',BLOCKED:'#64748b',UNKNOWN:'#64748b'}[mr.level]||'#64748b';
+  const mrBlock = mr.level ? `<div class="mt-3 pt-2 border-t border-slate-800/70"><div class="flex items-center gap-2"><span class="text-[10px] uppercase tracking-wider text-slate-500">⛏ mine risk</span><span class="text-[11px] px-2 py-0.5 rounded font-semibold" style="background:${mrCol}22;color:${mrCol}">${mr.level}</span>${mr.worth_it===false?'<span class="text-[10px] text-amber-400/80">· not worth the wear</span>':''}</div><div class="text-[11px] mt-1" style="color:${mrCol}">${mr.rec||''}</div>${(mr.factors&&mr.factors.length)?`<div class="text-[10px] text-slate-600 mt-1 leading-relaxed">${mr.factors.slice(0,3).join(' · ')}</div>`:''}</div>` : '';
+  return `<div class="rounded-2xl border p-5" style="border-color:${c}40;background:${c}0a"><div class="flex items-center gap-2 mb-3"><span class="w-2.5 h-2.5 rounded-full" style="background:${c}"></span><span class="font-semibold">${n.name}</span><span class="ml-auto text-[10px] px-2 py-0.5 rounded" style="background:${c}22;color:${c}">${n.status}</span><span class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400">${role}</span></div><div class="grid grid-cols-3 gap-2">${gauges.join('')}</div><div class="flex flex-wrap gap-1.5 mt-3">${chips.map(x=>`<span class="text-[11px] px-2 py-0.5 rounded bg-slate-800/70 text-slate-300">${x}</span>`).join('')}</div><div class="text-xs mt-3" style="color:${c}">▸ ${n.advice||''}</div>${mrBlock}${ctrl}</div>`;
+}
+async function loadRevenue(){
+  const r=await fetch('/api/revenue').then(x=>x.json()).catch(()=>null); const el=document.getElementById('revenue-hero'); if(!r||!el) return;
+  const er=r.eta_realized, ep=r.eta_projected;
+  const fmtY=y=> y==null?'—' : y>=100?Math.round(y)+'yr':y+'yr';
+  el.innerHTML=`<div class="flex flex-wrap items-end justify-between gap-4">
+      <div><div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">Revenue realized · all-time</div>
+        <div class="text-5xl font-bold tracking-tight mt-1 text-emerald-400">$${r.realized.total.toFixed(4)}</div>
+        <div class="text-xs text-slate-400 mt-1">today $${r.realized.today.toFixed(4)} · week $${r.realized.week.toFixed(4)} · ${r.realized.source}</div></div>
+      <div class="text-right"><div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold">Rate now</div>
+        <div class="text-2xl font-semibold text-slate-200">$${r.rate.usd_day.toFixed(4)}<span class="text-sm text-slate-500">/day</span></div>
+        <div class="text-[11px] text-slate-500">${r.rate.hashrate} H/s</div></div></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+      <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-800">
+        <div class="text-[10px] uppercase tracking-wider text-slate-500">ETA at this rate <span class="text-red-400/70">— hash only</span></div>
+        <div class="text-lg font-semibold text-slate-300 mt-0.5">$100 in <span class="text-amber-400">${fmtY(er.to_100.years)}</span> · $1k in <span class="text-amber-400">${fmtY(er.to_1000.years)}</span></div>
+        <div class="text-[10px] text-slate-600">mining is the worst transform — this is why</div></div>
+      <div class="bg-slate-950/40 rounded-xl p-3 border border-emerald-500/20">
+        <div class="text-[10px] uppercase tracking-wider text-slate-500">ETA if value monetized <span class="text-emerald-400/70">— high-ratio transforms</span></div>
+        <div class="text-lg font-semibold text-slate-300 mt-0.5">$1k in <span class="text-emerald-400">${ep.to_1000?fmtY(ep.to_1000.years):'—'}</span> · $10k in <span class="text-emerald-400">${ep.to_10000?fmtY(ep.to_10000.years):'—'}</span></div>
+        <div class="text-[10px] text-slate-600">${ep.to_1000?ep.to_1000.prob+'% / '+ep.to_10000.prob+'% probability':''} · the 4 foundation clicks unlock this</div></div></div>
+    <div class="text-[11px] text-slate-500 mt-3 border-t border-slate-800 pt-2.5">${r.gap}</div>`;
+  loadAutonomous();
+}
+async function loadAutonomous(){
+  const a=await fetch('/api/autonomous').then(x=>x.json()).catch(()=>null); const el=document.getElementById('revenue-hero'); if(!a||!el) return;
+  const badge={running:'bg-emerald-500/15 text-emerald-300','setup-once':'bg-amber-500/15 text-amber-300','human-each':'bg-slate-700/40 text-slate-500',stopped:'bg-red-500/15 text-red-300/70'};
+  const lbl={running:'AUTONOMOUS NOW','setup-once':'1 SETUP → AUTONOMOUS','human-each':'needs a human',stopped:'STOPPED'};
+  const rows=a.streams.map(s=>`<div class="flex items-start justify-between gap-2 py-1.5 border-b border-slate-800/40 text-[11px]">
+    <div><span class="text-slate-300">${s.name}</span><div class="text-[10px] text-slate-600">${s.autonomy==='running'?'✓ running, zero input':s.setup}</div></div>
+    <div class="text-right shrink-0"><span class="px-1.5 py-0.5 rounded ${badge[s.autonomy]} text-[9px] uppercase tracking-wider">${lbl[s.autonomy]}</span>${s.usd_day>0?`<div class="text-emerald-400 font-mono text-[10px] mt-0.5">$${s.usd_day}/d</div>`:''}</div></div>`).join('');
+  const wrap=document.createElement('div'); wrap.className='mt-3 border-t border-slate-800 pt-3';
+  wrap.innerHTML=`<div class="flex items-center justify-between mb-1.5"><div class="text-[11px] uppercase tracking-wider text-slate-500">Autonomous revenue — watch, don't approve</div><div class="text-[11px] text-emerald-400">${a.counts.running} running · ${a.counts.setup_once} one-setup-away</div></div>${rows}<div class="text-[11px] text-amber-200/80 mt-2 bg-amber-500/[.06] rounded-lg px-2 py-1.5">${a.truth}</div>`;
+  el.appendChild(wrap);
+}
+async function loadLedger(){
+  loadRevenue();
+  const cp=await fetch('/api/compound').then(r=>r.json()).catch(()=>null);
+  const ns=document.getElementById('ns-panel');
+  if(ns&&cp&&cp.outcome_at_horizon){
+    const o=cp.outcome_at_horizon, yr=Math.round(cp.horizon_days/365);
+    const ms=cp.milestones.map(m=>`<div class="text-center"><div class="text-[10px] uppercase tracking-wider text-slate-500">$${m.target.toLocaleString()}</div><div class="text-lg font-semibold ${m.prob_reach>0.5?'text-emerald-400':m.prob_reach>0?'text-amber-400':'text-slate-600'}">${Math.round(m.prob_reach*100)}%</div><div class="text-[10px] text-slate-600">${m.median_years?m.median_years+'yr':'rarely'}</div></div>`).join('');
+    ns.innerHTML=`<div class="flex items-center gap-2 mb-1 flex-wrap"><span class="text-sm font-semibold">🌟 Path to the north star</span><span class="text-[10px] text-slate-500">$100 → millions · ${cp.paths.toLocaleString()} Monte-Carlo paths · ${yr}yr · stress-tested</span></div><div class="grid grid-cols-4 gap-2 my-3">${ms}</div><div class="text-xs text-slate-400">Capital at ${yr}yr (distribution): <span class="text-slate-300">p10 $${o.p10.toLocaleString()}</span> · <span class="text-emerald-400 font-semibold">p50 $${o.p50.toLocaleString()}</span> · <span class="text-slate-300">p90 $${o.p90.toLocaleString()}</span></div><div class="text-[11px] text-slate-600 mt-2">${cp.honest}</div>`;
+  }
+  const d=await fetch('/api/ledger').then(r=>r.json()).catch(()=>null); if(!d) return;
+  const K=(k,v,s,c)=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold mt-0.5 ${c||''}">${v}</div><div class="text-[11px] text-slate-600">${s||''}</div></div>`;
+  if(d.empty){ document.getElementById('ledger-kpi').innerHTML=K('Collecting…','—','first snapshots recording hourly'); document.getElementById('ledger-table').innerHTML='<span class="text-slate-500">No data yet — the recorder writes a snapshot every hour. Check back tomorrow for day-over-day.</span>'; return; }
+  document.getElementById('ledger-kpi').innerHTML=[
+    K('Today','$'+(d.today.earned||0).toFixed(4),(d.today.hashrate||0)+' H/s now','text-emerald-400'),
+    K('This week','$'+(d.week.earned||0).toFixed(4),'avg $'+(d.week.avg_rate||0).toFixed(3)+'/d'),
+    K('This month','$'+(d.month.earned||0).toFixed(4),'30-day mined'),
+    K('Cumulative','$'+(d.cumulative||0).toFixed(4),'all-time mined','text-emerald-400'),
+    K('Held','$'+(d.held||0).toLocaleString(),'untouched'),
+  ].join('');
+  document.getElementById('ledger-sub').textContent='— '+d.day_count+' day(s) · '+(d.recent?.length||0)+' snapshots';
+  const cv=document.getElementById('ledgerChart');
+  let pts=(d.recent||[]).map(r=>+r.mining_earned_usd||0); if(pts.length<2) pts=[pts[0]||0,pts[0]||0];
+  drawLedgerLine(cv,pts);
+  document.getElementById('ledger-table').innerHTML='<div class="grid grid-cols-5 gap-2 text-[10px] uppercase tracking-wider text-slate-500 pb-2 border-b border-slate-800"><span>Date</span><span>Earned</span><span>Rate/d</span><span>Hashrate</span><span>Held</span></div>'+
+    d.series.slice().reverse().map(s=>`<div class="grid grid-cols-5 gap-2 py-1.5 border-b border-slate-800/50"><span class="text-slate-300">${s.date}</span><span class="text-emerald-400 font-mono">$${(s.earned||0).toFixed(4)}</span><span class="text-slate-400 font-mono">$${(s.rate||0).toFixed(4)}</span><span class="text-slate-400 font-mono">${s.hashrate||0} H/s</span><span class="text-slate-500 font-mono">$${(s.held||0).toLocaleString()}</span></div>`).join('');
+}
+function drawLedgerLine(cv,pts){
+  const dpr=window.devicePixelRatio||1, w=cv.clientWidth||600, h=180;
+  cv.width=w*dpr; cv.height=h*dpr; const x=cv.getContext('2d'); x.setTransform(dpr,0,0,dpr,0,0); x.clearRect(0,0,w,h);
+  if(!pts.length) return;
+  const min=Math.min(...pts), max=Math.max(...pts), rng=(max-min)||1;
+  const X=i=>pts.length>1?(i/(pts.length-1))*(w-8)+4:w/2, Y=v=>h-10-((v-min)/rng)*(h-28);
+  x.beginPath(); pts.forEach((v,i)=>{ const px=X(i),py=Y(v); i?x.lineTo(px,py):x.moveTo(px,py); });
+  x.strokeStyle='#34d399'; x.lineWidth=2; x.stroke();
+  x.lineTo(X(pts.length-1),h); x.lineTo(X(0),h); x.closePath(); x.fillStyle='rgba(52,211,153,.08)'; x.fill();
+}
+let EDGEFILTER='buildable';
+async function loadEdges(){
+  const d=await fetch('/api/edges').then(r=>r.json()).catch(()=>null); if(!d) return;
+  document.getElementById('edge-count').textContent=d.count;
+  const K=(k,v,c)=>`<div class="bg-slate-950/40 rounded-xl p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold mt-0.5 ${c||''}">${v}</div></div>`;
+  document.getElementById('edge-kpi').innerHTML=[K('Buildable now',d.buildable,'text-emerald-400'),K('Our stack',d.ours,'text-cyan-400'),K('Total',d.count),K('Avoid',d.avoid,'text-red-400')].join('');
+  document.getElementById('edge-top').innerHTML=(d.top||[]).map(t=>`<span class="text-[11px] px-2 py-1 rounded-lg bg-slate-800 text-slate-300">⭐ ${t.name} <span class="text-slate-500">${t.score}</span></span>`).join('');
+  const cats=[...new Set(d.mechanisms.map(x=>x.cat))];
+  const lab={buildable:'✅ buildable',ours:'⭐ our stack',all:'all'};
+  document.getElementById('edge-filters').innerHTML=['buildable','ours','all',...cats].map(f=>`<button onclick="edgeFilter('${f}')" class="text-[11px] px-2 py-1 rounded-lg border capitalize ${EDGEFILTER===f?'border-slate-400 bg-slate-700 text-slate-100':'border-slate-700 bg-slate-800 text-slate-400'}">${lab[f]||f}</button>`).join('');
+  const catCol={arb:'#22d3ee',mev:'#f59e0b',mm:'#34d399',yield:'#10b981',feecap:'#a855f7',deriv:'#6366f1',points:'#ec4899',predmkt:'#eab308',nft:'#f472b6',fringe:'#8b5cf6'};
+  const lglCol={legal:'#34d399',gray:'#fbbf24',AVOID:'#ef4444'};
+  let list=d.mechanisms;
+  if(EDGEFILTER==='buildable') list=list.filter(x=>x.build==='yes');
+  else if(EDGEFILTER==='ours') list=list.filter(x=>x.ours);
+  else if(EDGEFILTER!=='all') list=list.filter(x=>x.cat===EDGEFILTER);
+  document.getElementById('edge-cards').innerHTML=list.map(x=>{
+    const cc=catCol[x.cat]||'#64748b', lc=lglCol[x.legal]||'#64748b';
+    return `<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"><div class="flex items-center gap-2"><span class="text-[11px] font-mono text-slate-500" title="build-now score">${x.score}</span><span class="text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase" style="background:${cc}22;color:${cc}">${x.cat}</span><span class="font-semibold text-sm">${x.name}</span>${x.ours?'<span class="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400">OURS</span>':''}<span class="ml-auto text-[10px] px-1.5 py-0.5 rounded" style="background:${lc}22;color:${lc}">${x.legal}</span></div><div class="text-xs text-slate-400 mt-2">${x.how}</div><div class="flex flex-wrap gap-x-2.5 gap-y-1 mt-2 text-[10px] text-slate-500"><span>cap ${x.cap}</span><span>skill ${x.skill}</span><span>risk ${x.risk}</span><span>build ${x.build}</span>${x.stack&&x.stack!=='-'?`<span class="text-cyan-400/80">↪ ${x.stack}</span>`:''}</div><div class="text-[11px] text-slate-500 mt-2 italic">${x.note||''}</div></div>`;
+  }).join('');
+}
+function edgeFilter(f){ EDGEFILTER=f; loadEdges(); }
+let PLANDATA=null;
+const PLAN_NEXT={todo:'doing',doing:'done',done:'todo'};
+async function loadPlan(){
+  const d=await fetch('/api/playbook').then(r=>r.json()).catch(()=>null); if(!d) return; PLANDATA=d;
+  document.getElementById('plan-pct').textContent=d.pct+'%';
+  document.getElementById('plan-bar').style.width=d.pct+'%';
+  document.getElementById('plan-frac').textContent=d.done+' / '+d.total+' done · '+d.doing+' in progress';
+  document.getElementById('plan-next').innerHTML=d.next?`<span class="text-slate-500">next up:</span> <span class="text-slate-200 font-semibold">${d.next.name}</span> <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-300 uppercase tracking-wider">${d.next.who}</span>`:'<span class="text-emerald-400">all steps actioned 🎉</span>';
+  const who={operator:'bg-amber-500/15 text-amber-300',ai:'bg-sky-500/15 text-sky-300',both:'bg-violet-500/15 text-violet-300'};
+  const stc={todo:'bg-slate-700/40 text-slate-400',doing:'bg-cyan-500/15 text-cyan-300',done:'bg-emerald-500/15 text-emerald-300'};
+  document.getElementById('plan-phases').innerHTML=d.phases.map(ph=>`
+    <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+      <div class="text-sm font-semibold text-slate-200">${ph.name}</div>
+      <div class="text-[11px] text-slate-500 mt-0.5 mb-3">${ph.why}</div>
+      <div class="space-y-2">${ph.steps.map(s=>`
+        <div class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-950/40 border border-slate-800/60">
+          <button onclick="planSet('${s.id}')" class="shrink-0 mt-0.5 text-[10px] px-2 py-1 rounded-lg ${stc[s.status]} uppercase tracking-wider w-16 text-center">${s.status}</button>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap"><span class="text-sm text-slate-200 font-medium">${s.n}. ${s.name}</span><span class="text-[9px] px-1.5 py-0.5 rounded ${who[s.who]} uppercase tracking-wider">${s.who}</span><span class="text-[10px] text-slate-600">${s.time}</span></div>
+            <div class="text-[11px] text-sky-300/80 mt-1">✎ AI: ${s.ai_does}</div>
+            <div class="text-[11px] text-amber-300/80">→ you: ${s.op_does}</div>
+            <div class="text-[10px] text-slate-600 mt-0.5">${s.source}</div>
+          </div></div>`).join('')}</div>
+    </div>`).join('');
+}
+async function planSet(id){
+  let cur='todo'; PLANDATA.phases.forEach(ph=>ph.steps.forEach(s=>{ if(s.id===id) cur=s.status; }));
+  const nx=PLAN_NEXT[cur]||'doing';
+  await fetch('/api/playbook-status?id='+id+'&status='+nx).catch(()=>{});
+  loadPlan();
+}
+let KCDATA=null, KCFILTER='all';
+async function loadStrategy(){
+  const s=await fetch('/api/strategy').then(r=>r.json()).catch(()=>null); const el=document.getElementById('strategy-panel'); if(!s||!el) return;
+  const bar=r=>`<div class="h-1.5 rounded-full bg-slate-800 overflow-hidden"><div class="h-full rounded-full" style="width:${r}%;background:${r>=70?'#34d399':r>=40?'#fbbf24':'#64748b'}"></div></div>`;
+  const led=(s.energy_ledger||[]).map(e=>`<div class="py-1"><div class="flex justify-between text-[11px]"><span class="text-slate-300">${e.transform.split('(')[0].trim()}</span><span class="font-mono ${e.ratio>=70?'text-emerald-400':e.ratio>=40?'text-amber-400':'text-slate-500'}">${e.ratio}</span></div>${bar(e.ratio)}<div class="text-[9px] text-slate-600 mt-0.5">${e.autonomy}</div></div>`).join('');
+  const wf=(s.optimal_workflow||[]).map(w=>`<div class="flex items-start gap-2 text-[11px] py-0.5"><span class="px-1.5 py-0.5 rounded ${w.autonomous?'bg-emerald-500/15 text-emerald-300':'bg-sky-500/15 text-sky-300'} text-[9px] uppercase tracking-wider shrink-0">${w.autonomous?'machine':'you'}</span><span class="text-slate-400"><b class="text-slate-300">${w.name}</b> — ${w.detail}</span></div>`).join('');
+  el.innerHTML=`<div class="text-[11px] text-amber-300/90 uppercase tracking-wider mb-1">⚡ The strategist — the machine thinking</div>
+    <div class="text-sm text-slate-200 mb-3">${s.law}</div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div><div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Energy ledger — value per joule·effort</div>${led}</div>
+      <div><div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Optimal workflow (energy → value → money)</div>${wf}</div></div>
+    <div class="text-[11px] text-amber-200/90 mt-3 bg-amber-500/[.06] rounded-lg px-2 py-1.5">▶ Now: ${s.now}</div>
+    <div class="text-[10px] text-slate-600 mt-2">${s.honest}</div>`;
+}
+async function loadAutomation(){
+  const a=await fetch('/api/automation').then(r=>r.json()).catch(()=>null); const el=document.getElementById('auto-panel'); if(!el) return;
+  if(!a||!a.tasks){ el.innerHTML='<div class="text-sm font-semibold">⚙️ Automation</div><div class="text-[11px] text-slate-500 mt-1">orchestrator warming up…</div>'; return; }
+  const ago=ts=>{ if(!ts)return''; const s=Math.floor((Date.now()-ts)/1000); return s<90?s+'s ago':s<5400?Math.floor(s/60)+'m ago':Math.floor(s/3600)+'h ago'; };
+  const chip=(ok,id,sum,last)=>`<div class="bg-slate-950/40 rounded-lg px-2.5 py-1.5"><div class="flex items-center gap-1.5"><span class="${ok?'text-emerald-400':ok===false?'text-red-400':'text-slate-500'}">${ok?'●':ok===false?'✗':'○'}</span><span class="text-[11px] text-slate-300">${id}</span><span class="text-[9px] text-slate-600 ml-auto">${ago(last)}</span></div>${sum?`<div class="text-[10px] text-slate-500 mt-0.5 leading-tight">${sum}</div>`:''}</div>`;
+  el.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+      <div class="text-sm font-semibold">⚙️ Automation — everything runs itself <span class="text-[11px] text-slate-500 font-normal">· ${a.healthy}/${a.automated} healthy</span></div>
+      <div class="text-[11px] text-emerald-400">● all income functions on cadence + ${a.daemons?.length||0} daemons</div></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1.5">${(a.tasks||[]).map(t=>chip(t.ok,t.id,t.summary,t.last)).join('')}${(a.daemons||[]).map(d=>chip(d.ok,d.id,'daemon')).join('')}</div>`;
+}
+async function loadReport(){
+  const r=await fetch('/api/report').then(x=>x.json()).catch(()=>null); const el=document.getElementById('report-card'); if(!el) return;
+  if(!r||!r.ok){ el.innerHTML='<div class="text-sm font-semibold">📰 Daily brief</div><div class="text-[11px] text-slate-500 mt-1">Content engine warming up…</div>'; return; }
+  window.__REPORT_MD=r.markdown;
+  el.innerHTML=`<div class="flex items-center justify-between gap-2 flex-wrap mb-2">
+      <div class="text-sm font-semibold">📰 Daily brief — autonomously generated <span class="text-[11px] text-slate-500 font-normal">· ${r.meta?.date||''} · publish-ready content</span></div>
+      <div class="flex gap-2"><button onclick="copyReport(this)" class="text-[11px] px-2 py-1 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20">⧉ Copy markdown</button><a href="/api/report" target="_blank" class="text-[11px] px-2 py-1 rounded-lg border border-slate-700 bg-slate-800 text-slate-300">raw ↗</a></div></div>
+    <div class="text-[11px] text-slate-500 mb-2">${r.note}</div>
+    <pre class="text-[11px] text-slate-300 bg-slate-950/50 rounded-lg p-3 max-h-72 overflow-auto whitespace-pre-wrap font-mono leading-relaxed">${(r.markdown||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</pre>`;
+}
+function copyReport(btn){ navigator.clipboard.writeText(window.__REPORT_MD||'').then(()=>{ const o=btn.textContent; btn.textContent='✓ Copied'; setTimeout(()=>btn.textContent=o,1500); }); }
+async function loadFringe(){
+  const f=await fetch('/api/fringe').then(r=>r.json()).catch(()=>null); const el=document.getElementById('fringe-lab'); if(!f||!el) return;
+  const mc=f.mc; if(!mc){ el.innerHTML=`<div class="text-sm font-semibold">🧪 Fringe lab — ${f.count} zero-capital concepts</div><div class="text-[11px] text-slate-500 mt-1">Run <code class="text-slate-400">node tools/fringe-mc.mjs</code> to populate the stack test.</div>`; return; }
+  const B=mc.budgets||[];
+  const row=b=>`<div class="bg-slate-950/40 rounded-xl p-3">
+    <div class="text-[10px] uppercase tracking-wider text-slate-500">${b.weekly} h/week · ${b.plays} plays</div>
+    <div class="text-sm mt-1"><span class="text-slate-500">median</span> <span class="text-slate-200 font-mono">$${b.dist.p50}/mo</span></div>
+    <div class="text-[11px] text-slate-500">p10 $${b.dist.p10} · <span class="text-emerald-400">p90 $${b.dist.p90}</span> · tail $${b.dist.p99}</div></div>`;
+  const lift=mc.foundation_lift;
+  el.innerHTML=`<div class="flex items-baseline justify-between flex-wrap gap-2 mb-2">
+      <div class="text-sm font-semibold">🧪 Fringe lab — ${f.count} concepts · Monte-Carlo stack test</div>
+      <div class="text-[11px] text-slate-500">${(mc.trials||0).toLocaleString()} trials/portfolio · ${mc.horizon}-mo · tested combinations</div></div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">${B.map(row).join('')}</div>
+    <div class="text-[11px] text-slate-400 mb-2"><span class="text-amber-300">What dominates</span> (across winning stacks): ${(mc.dominant||[]).slice(0,8).map(d=>d.name).join(' · ')}</div>
+    ${lift?`<div class="text-[11px] text-emerald-300/90 bg-emerald-500/[.06] rounded-lg px-2 py-1.5">⚡ Foundations first (build-in-public · Basename · Farcaster-PoH) lift the stack <b>+${Math.round((lift.with.p50/Math.max(1,lift.without.p50)-1)*100)}% median · +${Math.round((lift.with.p90/Math.max(1,lift.without.p90)-1)*100)}% upside</b> — set them up before anything else.</div>`:''}
+    <div class="text-[11px] text-slate-500 mt-2 border-t border-slate-800 pt-2">Honest: tail-driven — most months modest, the EV lives in the rare big hit (viral coin · big airdrop · crit bug). Priors are rough; the test shows the SHAPE + what dominates, not a promise.</div>`;
+}
+async function loadBuild(){
+  loadStrategy(); loadAutomation(); loadReport(); loadFringe();
+  const d=await fetch('/api/knowledge-capital').then(r=>r.json()).catch(()=>null); if(!d) return;
+  KCDATA=d; document.getElementById('kc-count').textContent=d.count;
+  document.getElementById('kc-passive').innerHTML='<div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1.5">⚡ passive — set up once, pays weekly</div><div class="flex flex-wrap gap-1.5">'+(d.passive||[]).map(p=>`<a href="${p.url}" target="_blank" class="text-[11px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20" title="${(p.requires||'').replace(/"/g,'&#34;')}">${p.name} <span class="text-emerald-400/70">${p.est_value}</span></a>`).join('')+'</div>';
+  document.getElementById('kc-ai').innerHTML=(d.ai_now||[]).map(a=>`<div class="text-[11px] text-slate-400 flex gap-1.5"><span class="text-sky-400 shrink-0">✎</span><span><span class="text-slate-200">${a.name}</span> — ${a.does}</span></div>`).join('');
+  const cats=Object.keys(d.byCat||{});
+  const opts=['all',...cats];
+  document.getElementById('kc-filters').innerHTML=opts.map(f=>`<button onclick="kcFilter('${f}')" class="text-[11px] px-2 py-1 rounded-lg border ${KCFILTER===f?'border-slate-400 bg-slate-700 text-slate-100':'border-slate-700 bg-slate-800 text-slate-400'}">${d.catLabel&&d.catLabel[f]?d.catLabel[f]:(f==='all'?'All':f)}</button>`).join('');
+  renderKcCards();
+}
+function kcFilter(f){ KCFILTER=f; loadBuild(); }
+const KC_NEXT={open:'queued',queued:'in-progress','in-progress':'submitted',submitted:'earning',earning:'open'};
+async function kcSet(id){ const cur=(KCDATA.targets.find(t=>t.id===id)||{}).status||'open'; const nx=KC_NEXT[cur]||'queued'; await fetch('/api/knowledge-status?id='+id+'&status='+nx).catch(()=>{}); const t=KCDATA.targets.find(x=>x.id===id); if(t)t.status=nx; renderKcCards(); }
+function renderKcCards(){
+  if(!KCDATA) return;
+  const stc={open:'bg-slate-700/40 text-slate-400',queued:'bg-amber-500/15 text-amber-300','in-progress':'bg-cyan-500/15 text-cyan-300',submitted:'bg-violet-500/15 text-violet-300',earning:'bg-emerald-500/15 text-emerald-300'};
+  let list=KCDATA.targets; if(KCFILTER!=='all') list=list.filter(t=>t.category===KCFILTER);
+  document.getElementById('kc-cards').innerHTML=list.map(t=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+    <div class="flex items-start justify-between gap-2">
+      <div><div class="text-sm font-semibold text-slate-200">${t.name}${t.automatic?' <span class="text-[9px] px-1 py-0.5 rounded bg-emerald-500/15 text-emerald-300 align-middle">AUTO</span>':''}</div>
+        <div class="text-[11px] text-slate-500">${(d2(t.category))} · ${t.recurring} · effort: ${t.effort}</div></div>
+      <div class="text-right shrink-0"><div class="text-base font-mono ${t.score>=65?'text-emerald-400':t.score>=50?'text-amber-400':'text-slate-400'}">${t.score}</div><div class="text-[9px] text-slate-600">EV score</div></div></div>
+    <div class="text-xs text-emerald-300/90 mt-2">${t.est_value}</div>
+    <div class="text-[11px] text-slate-400 mt-1.5">${t.note}</div>
+    <div class="text-[11px] text-sky-300/90 mt-2 bg-sky-500/[.06] rounded-lg px-2 py-1.5">✎ AI: ${t.ai_leverage}</div>
+    <div class="text-[10px] text-slate-600 mt-1.5">needs: ${t.requires||'—'}</div>
+    <div class="flex items-center justify-between mt-2.5">
+      <button onclick="kcSet('${t.id}')" class="text-[10px] px-2 py-1 rounded-lg ${stc[t.status]||stc.open} uppercase tracking-wider">${t.status}</button>
+      <a href="${t.url}" target="_blank" class="text-[11px] text-slate-400 hover:text-slate-200">open ↗</a></div></div>`).join('')||'<span class="text-slate-500 text-xs">none in this filter</span>';
+}
+function d2(c){ return (KCDATA&&KCDATA.catLabel&&KCDATA.catLabel[c])?KCDATA.catLabel[c]:c; }
+let PULSEDATA=null, PULSEFILTER='all';
+async function loadPulse(){
+  const d=await fetch('/api/formulations-test').then(r=>r.json()).catch(()=>null); if(!d) return;
+  PULSEDATA=d; const p=d.pulse||{};
+  // world-pulse hero
+  document.getElementById('pulse-fng').textContent=p.fng??'—';
+  document.getElementById('pulse-fng-label').textContent=p.fng_label||'';
+  const fill=document.getElementById('pulse-fill'); fill.style.width=(p.fng??50)+'%';
+  fill.style.background = p.fng==null?'#475569' : p.fng<=25?'#ef4444' : p.fng<=45?'#f59e0b' : p.fng>=75?'#f43f5e' : p.fng>=55?'#22c55e' : '#64748b';
+  const S=(k,v,c)=>`<div><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-lg font-semibold ${c||''}">${v}</div></div>`;
+  document.getElementById('pulse-stats').innerHTML=S('mcap 24h',(p.mcap_24h>=0?'+':'')+(p.mcap_24h??'—')+'%',p.mcap_24h>=0?'text-emerald-400':'text-red-400')+S('BTC dom',(p.btc_dom??'—')+'%');
+  document.getElementById('pulse-regime').innerHTML=`Regime: <span class="text-slate-200">${p.regime||'—'}</span> · ${d.note}`;
+  // kpi rollup
+  const c=d.counts||{}, K=(k,v,cl)=>`<div class="bg-slate-950/40 rounded-xl p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-2xl font-semibold mt-0.5 ${cl||''}">${v}</div></div>`;
+  document.getElementById('pulse-kpi').innerHTML=K('Running',c.RUNNING||0,'text-emerald-400')+K('Testable',c.TESTABLE||0,'text-cyan-400')+K('Operator',c.OPERATOR||0,'text-amber-400')+K('Total',d.count||0);
+  // filters
+  const cats=[...new Set(d.formulations.map(f=>f.cat))];
+  const opts=['all','RUNNING','TESTABLE','OPERATOR',...cats];
+  const lab={all:'All',RUNNING:'● Running',TESTABLE:'● Testable',OPERATOR:'● Operator'};
+  document.getElementById('pulse-filters').innerHTML=opts.map(f=>`<button onclick="pulseFilter('${f}')" class="text-[11px] px-2 py-1 rounded-lg border capitalize ${PULSEFILTER===f?'border-slate-400 bg-slate-700 text-slate-100':'border-slate-700 bg-slate-800 text-slate-400'}">${lab[f]||f}</button>`).join('');
+  renderPulseCards();
+}
+function pulseFilter(f){ PULSEFILTER=f; loadPulseFilters(); renderPulseCards(); }
+function loadPulseFilters(){ if(!PULSEDATA) return; const d=PULSEDATA; const cats=[...new Set(d.formulations.map(f=>f.cat))]; const opts=['all','RUNNING','TESTABLE','OPERATOR',...cats]; const lab={all:'All',RUNNING:'● Running',TESTABLE:'● Testable',OPERATOR:'● Operator'}; document.getElementById('pulse-filters').innerHTML=opts.map(f=>`<button onclick="pulseFilter('${f}')" class="text-[11px] px-2 py-1 rounded-lg border capitalize ${PULSEFILTER===f?'border-slate-400 bg-slate-700 text-slate-100':'border-slate-700 bg-slate-800 text-slate-400'}">${lab[f]||f}</button>`).join(''); }
+function renderPulseCards(){
+  if(!PULSEDATA) return;
+  const bdg={RUNNING:'bg-emerald-500/15 text-emerald-300',TESTABLE:'bg-cyan-500/15 text-cyan-300',OPERATOR:'bg-amber-500/15 text-amber-300'};
+  let list=PULSEDATA.formulations;
+  if(['RUNNING','TESTABLE','OPERATOR'].includes(PULSEFILTER)) list=list.filter(f=>f.status===PULSEFILTER);
+  else if(PULSEFILTER!=='all') list=list.filter(f=>f.cat===PULSEFILTER);
+  const order={RUNNING:0,TESTABLE:1,OPERATOR:2};
+  list=list.slice().sort((a,b)=>(order[a.status]-order[b.status]));
+  document.getElementById('pulse-cards').innerHTML=list.map(f=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4">
+    <div class="flex items-start justify-between gap-2"><div class="text-sm font-semibold text-slate-200">${f.name}</div><span class="px-1.5 py-0.5 rounded ${bdg[f.status]||'bg-slate-700/30 text-slate-400'} text-[10px] uppercase tracking-wider shrink-0">${f.status}</span></div>
+    <div class="text-[11px] text-slate-500 mt-0.5">${f.cat}${f.mesh?' · mesh':''} · capital: ${f.cap}</div>
+    <div class="text-xs text-slate-400 mt-2">${f.thesis}</div>
+    <div class="text-[11px] text-emerald-300/90 mt-2 bg-emerald-500/[.06] rounded-lg px-2 py-1.5">${f.evidence}</div>
+    <div class="text-[11px] text-slate-500 mt-2">→ ${f.action}</div></div>`).join('')||'<span class="text-slate-500 text-xs">none in this filter</span>';
+}
+async function loadYield(){
+  const [o,y,s]=await Promise.all([
+    fetch('/api/opportunities').then(r=>r.json()).catch(()=>null),
+    fetch('/api/yields').then(r=>r.json()).catch(()=>null),
+    fetch('/api/spreads').then(r=>r.json()).catch(()=>null) ]);
+  if(!y) return;
+  document.getElementById('yld-count').textContent=y.count||0;
+  const best=(y.base&&y.base[0])||(y.top&&y.top[0]);
+  const K=(k,v,sub,c)=>`<div class="bg-slate-950/40 rounded-xl p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold mt-0.5 ${c||''}">${v}</div><div class="text-[10px] text-slate-600">${sub||''}</div></div>`;
+  document.getElementById('yld-kpi').innerHTML=[
+    K('Best safe APY', best?best.apy+'%':'—', best?best.project+' · '+best.chain:'', 'text-emerald-400'),
+    K('Real pools', y.count||0, 'TVL+APY filtered'),
+    K('Best arb (net)', s?(s.cross?.[0]?.net_bps??0)+'bps':'—', s&&s.any_profitable?'verify live':'fees eat it', s&&s.any_profitable?'text-amber-400':'text-slate-500'),
+    K('Engine', 'live', 'scans every 45–180s', 'text-emerald-400'),
+  ].join('');
+  // action cards
+  const pill=p=>({ready:'bg-emerald-500/15 text-emerald-300',watch:'bg-amber-500/15 text-amber-300','verify-live':'bg-amber-500/15 text-amber-300',none:'bg-slate-700/30 text-slate-400'}[p]||'bg-slate-700/30 text-slate-400');
+  document.getElementById('yld-actions').innerHTML=((o&&o.actions)||[]).map(a=>`<div class="flex items-start gap-2 text-xs"><span class="px-1.5 py-0.5 rounded ${pill(a.priority)} text-[10px] uppercase tracking-wider shrink-0">${a.priority}</span><span class="text-slate-300">${a.text}</span></div>`).join('')||'<span class="text-slate-500 text-xs">scanning…</span>';
+  // base layer rows
+  const row=x=>`<div class="grid grid-cols-12 gap-2 py-1.5 border-b border-slate-800/50 items-center text-xs">
+    <span class="col-span-4 text-slate-200 truncate">${x.project}<div class="text-[10px] text-slate-500">${x.symbol}</div></span>
+    <span class="col-span-2 text-slate-400">${x.chain}</span>
+    <span class="col-span-2 text-emerald-400 font-mono font-semibold">${x.apy}%</span>
+    <span class="col-span-2 text-slate-400 font-mono">${Math.round(x.organic*100)}%<div class="text-[9px] text-slate-600">organic</div></span>
+    <span class="col-span-2 text-right"><span class="font-mono ${x.score>=50?'text-emerald-400':x.score>=35?'text-amber-400':'text-slate-500'}">${x.score}</span><div class="text-[9px] text-slate-600">p${x.persistence}·$${(x.tvlUsd/1e6).toFixed(0)}M</div></span></div>`;
+  const hd=`<div class="grid grid-cols-12 gap-2 text-[10px] uppercase tracking-wider text-slate-500 pb-1 border-b border-slate-800"><span class="col-span-4">Protocol</span><span class="col-span-2">Chain</span><span class="col-span-2">APY</span><span class="col-span-2">Organic</span><span class="col-span-2 text-right">Score</span></div>`;
+  document.getElementById('yld-base').innerHTML=hd+((y.base&&y.base.length)?y.base.map(row).join(''):'<div class="text-slate-500 text-xs py-3">no stablecoin base pools cleared the filter this pass</div>');
+  document.getElementById('yld-top').innerHTML=hd+((y.top||[]).slice(0,15).map(row).join(''));
+  // arb
+  const arbRow=(x,kind)=>`<div class="flex items-center justify-between py-1.5 border-b border-slate-800/50 text-xs"><span class="text-slate-300">${kind==='x'?x.pair+' <span class=\'text-slate-600\'>'+x.buy+'→'+x.sell+'</span>':x.cycle}</span><span class="font-mono ${x.net_bps>=0?'text-emerald-400':'text-slate-500'}">${x.net_bps>=0?'+':''}${x.net_bps}bps ${x.profitable?'✅':''}</span></div>`;
+  const arbHtml=s?('<div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Cross-exchange</div>'+(s.cross||[]).slice(0,5).map(x=>arbRow(x,'x')).join('')+'<div class="text-[10px] uppercase tracking-wider text-slate-500 mt-3 mb-1">Triangular (single venue)</div>'+(s.triangular||[]).slice(0,5).map(x=>arbRow(x,'t')).join('')):'<span class="text-slate-500 text-xs">loading…</span>';
+  document.getElementById('yld-arb').innerHTML=arbHtml;
+  document.getElementById('yld-verdict').textContent=s?s.verdict:'';
+}
+let FARMFILTER='all';
+async function loadFarm(){
+  const d=await fetch('/api/farm').then(r=>r.json()).catch(()=>null); if(!d) return;
+  document.getElementById('farm-pot').textContent='$'+(d.potential_low||0).toLocaleString()+'–$'+(d.potential_high||0).toLocaleString();
+  document.getElementById('farm-next').innerHTML = d.next? `▸ Next best: <b class="text-emerald-400">${d.next.name}</b> — ${d.next.note}` : 'all targets engaged';
+  document.getElementById('farm-strategy').textContent = d.strategy||'';
+  const K=(k,v,c)=>`<div class="bg-slate-950/40 rounded-xl p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold mt-0.5 ${c||''}">${v}</div></div>`;
+  document.getElementById('farm-kpi').innerHTML=[K('Targets',d.count),K('Active',d.active,'text-emerald-400'),K('Claimed',d.claimed,'text-purple-400'),K('Mesh',d.targets.filter(t=>t.mesh).length,'text-cyan-400')].join('');
+  const catCol={depin:'#22d3ee',node:'#a855f7',ai:'#f59e0b',tge:'#34d399',quest:'#6366f1',degen:'#ef4444'};
+  const cats=['all',...Object.keys(d.byCat||{})];
+  document.getElementById('farm-cats').innerHTML=cats.map(c=>`<button onclick="farmFilter('${c}')" class="text-[11px] px-2 py-1 rounded-lg border capitalize ${FARMFILTER===c?'border-slate-400 bg-slate-700 text-slate-100':'border-slate-700 bg-slate-800 text-slate-400'}">${c}</button>`).join('');
+  const sCol={planned:'#64748b',configure:'#fbbf24',active:'#34d399',claimed:'#a855f7'};
+  const syCol={low:'#34d399',med:'#fbbf24',high:'#ef4444'};
+  const list=(d.targets||[]).filter(t=>FARMFILTER==='all'||t.cat===FARMFILTER);
+  const cycle={planned:'configure',configure:'active',active:'claimed',claimed:'planned'};
+  document.getElementById('farm-targets').innerHTML=list.map(t=>{
+    const cc=catCol[t.cat]||'#64748b', nxt=cycle[t.status]||'active';
+    return `<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"><div class="flex items-center gap-2"><span class="text-[10px] px-1.5 py-0.5 rounded font-semibold uppercase" style="background:${cc}22;color:${cc}">${t.cat}</span><span class="font-semibold text-sm">${t.name}</span>${t.mesh?'<span class="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-400">MESH</span>':''}<span class="ml-auto text-[11px] font-mono text-slate-500" title="EV-priority">★${t.priority}</span></div><div class="text-xs text-slate-500 mt-2 leading-relaxed">${t.note||''}</div>${t.window?`<div class="text-[10px] text-amber-400/80 mt-1.5">🗓 ${t.window}</div>`:''}${t.steps?`<details class="mt-2"><summary class="text-[11px] text-indigo-400 cursor-pointer select-none">▸ ${t.steps.length}-step playbook (the moves that score)</summary><ol class="text-[11px] text-slate-400 mt-1.5 ml-1 space-y-1 list-decimal list-inside">${t.steps.map(s=>`<li>${s}</li>`).join('')}</ol></details>`:''}<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5 mt-3 text-[11px]"><span class="text-emerald-400 font-mono">$${t.est_low}–$${t.est_high}${t.recurring?'/mo':''}</span><span class="text-slate-500">effort ${t.effort}</span><span style="color:${syCol[t.sybil]}">sybil ${t.sybil}</span>${t.url?`<a href="${t.url}" target="_blank" rel="noopener" class="text-indigo-400 hover:underline">open ↗</a>`:''}<button onclick="farmSet('${t.id}','${nxt}')" class="ml-auto px-2 py-0.5 rounded border border-slate-700 bg-slate-800 hover:bg-slate-700 capitalize" style="color:${sCol[t.status]}">${t.status} →</button></div></div>`;
+  }).join('');
+  const el=await fetch('/api/eligibility').then(r=>r.json()).catch(()=>null);
+  const eEl=document.getElementById('farm-eligibility');
+  if(eEl){
+    if(!el||!el.ready){ eEl.innerHTML=`<span class="text-slate-500">🔑 Eligibility tracker — ${el?el.msg:'add public addresses to track'} <span class="text-slate-600">(keyless · public receive addresses only · never keys)</span></span>`; }
+    else { eEl.innerHTML=`<div class="font-semibold text-slate-300 mb-1.5">🔎 Wallet activity <span class="text-slate-500 font-normal">— keyless onchain eligibility proxy</span></div>`+el.wallets.map(w=>`<div class="flex items-center gap-2 py-0.5"><span class="w-2 h-2 rounded-full shrink-0" style="background:${w.active?'#34d399':'#64748b'}"></span><span class="text-slate-300 w-32 shrink-0">${w.label}</span><span class="text-slate-500 font-mono w-16 shrink-0">${w.chain}</span><span class="text-slate-400 w-20">${w.tx_count??'—'} txs</span><span class="text-slate-500">${w.native_balance??'—'} native</span></div>`).join(''); }
+  }
+}
+function farmFilter(c){ FARMFILTER=c; loadFarm(); }
+async function farmSet(id,status){ await fetch('/api/farm-status?id='+encodeURIComponent(id)+'&status='+status).catch(()=>{}); if(typeof toast==='function') toast(id+' → '+status,'ok'); setTimeout(loadFarm,300); }
+async function tune(btn,preset){
+  const name=btn.closest('[data-node]')?.dataset.node; if(!name) return;
+  const strip=btn.parentElement; const old=btn.textContent; strip.querySelectorAll('.tunebtn').forEach(b=>b.disabled=true); btn.textContent='…';
+  const r=await fetch('/api/node-tune?name='+encodeURIComponent(name)+'&preset='+preset).then(r=>r.json()).catch(()=>({error:'request failed'}));
+  if(typeof toast==='function') toast(r.error?(name+' tune failed: '+r.error.slice(0,40)):(name+' → '+preset+(r.threads?(' ('+r.threads+' thr '+r.mode+')'):'')), r.error?'err':'ok');
+  btn.textContent=old; setTimeout(loadVitals,1600);
+}
+async function loadVitals(){
+  const d=await fetch('/api/health').then(r=>r.json()).catch(()=>null); if(!d) return;
+  const m=d.mesh||{};
+  document.getElementById('mesh-gauge').innerHTML=arcGauge((m.score||0)/100,HC[m.status]||HC.offline,m.score||0,(m.status||'').toUpperCase());
+  document.getElementById('mesh-meta').innerHTML=`${m.nodes_online}/${m.nodes_total} nodes online · ${(m.hashrate_total||0)}&nbsp;H/s mining`;
+  const K=(k,v,c)=>`<div class="bg-slate-950/40 rounded-xl p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-xl font-semibold mt-0.5 ${c||''}">${v}</div></div>`;
+  const cc=m.counts||{};
+  document.getElementById('vitals-summary').innerHTML=[K('Mesh score',m.score||0,(m.status==='good'?'text-emerald-400':m.status==='critical'?'text-red-400':'text-amber-400')),K('Mining',(m.hashrate_total||0)+' H/s','text-emerald-400'),K('Healthy',(cc.good||0)+'/'+(m.nodes_online||0)),K('Need attention',(cc.hot||0)+(cc.critical||0)+(cc.strain||0),((cc.hot||0)+(cc.critical||0))?'text-amber-400':'')].join('');
+  const rc=m.mining_risk_counts||{}; const rcStr=Object.entries(rc).map(([k,v])=>`${v} ${k.toLowerCase()}`).join(' · ');
+  document.getElementById('vitals-note').innerHTML = `<div class="mb-1.5"><span class="text-slate-400">⛏ Mining posture:</span> <b class="text-slate-200">${m.mining_posture||'—'}</b>${rcStr?` <span class="text-slate-600">(${rcStr})</span>`:''}</div>` + (m.worst ? `Health: watching <b class="text-slate-300">${m.worst.name}</b> (${m.worst.status}) — ${m.worst.advice}` : 'All nodes within healthy envelope.');
+  document.getElementById('vitals-nodes').innerHTML=(d.nodes||[]).map(nodeCard).join('');
+  // auto-protect governor panel
+  const g=await fetch('/api/governor').then(r=>r.json()).catch(()=>null);
+  if(g){
+    const running=g.status!=='not-running', on=g.enabled&&running;
+    const st=document.getElementById('gov-status'), tg=document.getElementById('gov-toggle');
+    if(st){ st.textContent=!running?'not running':(g.enabled?'ON · protecting':'OFF'); const col=on?'#34d399':(running?'#fbbf24':'#64748b'); st.style.background=col+'22'; st.style.color=col; }
+    if(tg) tg.textContent=g.enabled?'Turn off':'Turn on';
+    const ago2=ts=>{const s=Math.max(0,Math.round((Date.now()-ts)/1000));return s<60?s+'s':Math.round(s/60)+'m';};
+    const rec=g.recent||[];
+    document.getElementById('gov-recent').innerHTML=rec.length?rec.slice(0,6).map(r=>`<div class="flex items-center gap-2"><span class="${r.ok?'text-emerald-400':'text-red-400'}">●</span><span class="text-slate-300 font-mono shrink-0">${r.change}</span><span class="text-slate-500 truncate">${r.name} — ${r.why}</span><span class="text-slate-600 ml-auto shrink-0">${ago2(r.ts)} ago</span></div>`).join(''):'<span class="text-slate-500">no actions yet — all nodes steady within their envelope</span>';
+  }
+}
+async function govToggle(){
+  const g=await fetch('/api/governor').then(r=>r.json()).catch(()=>({}));
+  const action=g.enabled?'off':'on';
+  await fetch('/api/governor-toggle?action='+action).catch(()=>{});
+  if(typeof toast==='function') toast('Auto-protect turned '+action.toUpperCase(),'ok');
+  setTimeout(loadVitals,800);
+}
+loadSettings(); route('overview'); loadOverview(); loadCoins(); loadEarn(); refresh(); applyInterval(); setInterval(loadCoins,20000); setInterval(loadEarn,8000); setInterval(()=>{ if(DRAWER && !DRAWER.startsWith('coin:')) renderMachine(); },4000); setInterval(()=>{ if(PAGE==='wallet') loadPayments(); },30000); setInterval(()=>{ if(PAGE==='income') loadIncome(); },10000); setInterval(()=>{ if(PAGE==='vitals') loadVitals(); },5000); setInterval(()=>{ if(PAGE==='farm') loadFarm(); },15000); setInterval(()=>{ if(PAGE==='ledger') loadLedger(); },30000); addEventListener('resize',drawChart);
+</script>

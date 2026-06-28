@@ -1,0 +1,77 @@
+{
+  "_doc": "Per-target action checklists — the exact moves that SCORE, merged into farm targets by id. window = known snapshot/deadline window (advisory; verify on the official site). YOU do these actions + hold keys; I track them.",
+  "playbooks": {
+    "depin-honeygain": { "window": "always-on", "steps": [
+      "Sign up at honeygain.com (referral optional)",
+      "Install the desktop app on BOTH Macs (more devices = more earnings)",
+      "Leave running; it shares idle bandwidth automatically",
+      "Cash out via PayPal/crypto at the $20 minimum",
+      "Mark this card 'active' once installed on both nodes" ] },
+    "depin-grass": { "window": "season live", "steps": [
+      "Go to app.getgrass.io, sign up, install the browser extension on Brave/Chrome",
+      "Run on both Macs; it earns + accrues GRASS points",
+      "Keep uptime high (points scale with consistent connection)",
+      "GRASS is cashable on Binance once claimed" ] },
+    "depin-nodepay": { "window": "points phase", "steps": [
+      "Install the Nodepay extension (Brave/Chrome/Edge) and sign up",
+      "It uses idle bandwidth only (auto-pauses on heavy use)",
+      "Accrue points across both nodes toward the token" ] },
+    "node-alephzero": { "window": "validator program ongoing", "steps": [
+      "Read docs.alephzero.org testnet validator guide",
+      "Provision a node on a Mac (CPU-runnable) — follow their setup",
+      "Register the validator + keep it online (uptime is scored)",
+      "Track your validator in their dashboard for the airdrop allocation",
+      "This is the MESH EDGE — merit-scored far above swaps" ] },
+    "node-shardeum": { "window": "incentivized testnet", "steps": [
+      "Get the Shardeum validator/node software",
+      "Run a node on a Mac; keep it synced + online",
+      "Complete any node-operator tasks they post",
+      "Uptime + participation → airdrop chance" ] },
+    "quest-layer3": { "window": "ongoing (daily)", "steps": [
+      "Connect a wallet at layer3.xyz (HOT wallet only)",
+      "Do curated quests (swap/bridge/stake) to earn XP + level up",
+      "Aim for a few quests weekly — consistency compounds",
+      "XP/levels qualify you for exclusive airdrops" ] },
+    "quest-galxe": { "window": "Season live", "steps": [
+      "Connect HOT wallet at app.galxe.com",
+      "Complete campaigns (follow/like + onchain tasks) for OATs/points",
+      "5 min/day habit; collect credentials across projects" ] },
+    "tge-metamask": { "window": "TGE confirmed, date TBA", "steps": [
+      "Use MetaMask genuinely: Swaps, Bridge, Portfolio — real activity over time",
+      "Consistency + volume across months is what scores",
+      "Hold a non-trivial footprint; don't bot it (sybil-filtered)",
+      "Likely large allocation — one of the highest-potential drops" ] },
+    "tge-polymarket": { "window": "TGE anticipated", "steps": [
+      "Sign up at polymarket.com, fund the HOT wallet with ~$20",
+      "Place genuine bets on real markets (volume + recency scored)",
+      "DOUBLE DUTY: your positions become omnione's world-song sentiment feed",
+      "Spread activity over weeks, not one big bet" ] },
+    "ai-zama": { "window": "multi-phase testnet", "steps": [
+      "Join the Zama fhEVM testnet (zama.ai)",
+      "Do encrypted interactions + deploy a test contract (merit-scored high)",
+      "Contribute regularly across phases",
+      "GitHub-linked wallet boosts sybil resistance" ] },
+    "biproduct-lolli": { "window": "always-on", "steps": [
+      "Install the Lolli browser extension",
+      "Shop as normal at the 1000+ partner stores → BTC cashback (up to 30%)",
+      "Withdraw BTC at the threshold. Pure bi-product of spending you'd do anyway" ] },
+    "biproduct-learn": { "window": "rotating campaigns", "steps": [
+      "Binance Academy + Coinbase Earn + CoinMarketCap Learn",
+      "Watch the short lesson, pass the quiz → free tokens",
+      "Repeat each new campaign across all three platforms" ] },
+    "work-immunefi": { "window": "always-open", "steps": [
+      "Browse live bug bounties at immunefi.com (sorted by payout)",
+      "Pick a protocol in your skill range; read the scope carefully",
+      "Audit + submit a clear PoC for any vuln found",
+      "Critical smart-contract finds pay up to $200k. Skill-gated but zero-capital" ] },
+    "pgf-retropgf": { "window": "round-based (watch announcements)", "steps": [
+      "Keep the lab/dashboard OPEN-SOURCE with a clear public-goods framing",
+      "Register the project on retrofunding.optimism.io when a round opens",
+      "Document impact (it funds proven outcomes retroactively)",
+      "Get paid for what we already built" ] },
+    "pgf-gitcoin-grants": { "window": "Grants rounds (~quarterly)", "steps": [
+      "List the open-source dashboard as a Gitcoin project",
+      "Share it during an active Grants round for quadratic matching",
+      "Small donations get matched from the pool" ] }
+  }
+}

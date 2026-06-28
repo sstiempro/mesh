@@ -1,0 +1,7 @@
+# GitHub Sponsors + funding links. Fill in your own handles, then this renders a "Sponsor"
+# button on the repo (0% fee). One of the empirically-#1 foundation moves (build-in-public
+# unlocks Base Builder Rewards + Gitcoin + OP Retro + tea.xyz + Sponsors off one signal).
+github: [OPERATOR-github-username]
+custom:
+  - "https://gitcoin.co/[OPERATOR-grants-profile]"   # Gitcoin grant page once you apply
+  # - "https://your-other-funding-link"

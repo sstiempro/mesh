@@ -1,0 +1,44 @@
+{
+  "_doc": "Bounded autonomous-action policy for the agent wallet. The agent may ONLY do what's allowed here. Destinations are a FIXED allowlist in THIS file — never taken from live/web data — so a prompt-injection or poisoned feed cannot redirect funds. Worst case = the capped amount sitting in vetted, audited yield pools. The agent plans continuously (dry-run) and only MOVES money when enabled:true AND the wallet is funded. Funding the wallet is the one step only the operator can do (move money in).",
+  "enabled": false,
+  "_enabled_doc": "MASTER ARM SWITCH. false = DRY-RUN: the agent plans + logs exactly what it WOULD do, moves NOTHING. Flip to true (via the dashboard button) only after funding the wallet — then the agent acts within the bounds below.",
+  "caps": {
+    "max_total_deployed_usd": 100,
+    "max_per_action_usd": 50,
+    "min_native_reserve": 0.0015,
+    "_doc": "Never deploy more than max_total across all pools; never more than max_per_action in one move; always keep min_native (ETH) per chain for gas — never spend it down."
+  },
+  "allowlist": {
+    "_doc": "The ONLY addresses the agent can ever interact with. Hardcoded here, not from data. Withdrawals can only ever return to the operator's OWN wallet. Pools are battle-tested organic-yield (Aave V3) — the agent picks among THESE based on the live yield ranking, but cannot invent a destination.",
+    "withdraw_to": "0xYOUR_WALLET",
+    "pools": [
+      {
+        "name": "Aave V3 USDC",
+        "chain": "base",
+        "pool": "0xA238Dd80C259a72e81d7e4664a9801593F98d1c5",
+        "asset": "USDC",
+        "asset_addr": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "asset_decimals": 6,
+        "verify": "confirm against aave.com before arming"
+      },
+      {
+        "name": "Aave V3 USDC",
+        "chain": "arbitrum",
+        "pool": "0x794a61358D6845594F94dc1DB02A252b5b4814aD",
+        "asset": "USDC",
+        "asset_addr": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+        "asset_decimals": 6,
+        "verify": "confirm against aave.com before arming"
+      }
+    ]
+  },
+  "strategy": {
+    "_doc": "How the agent decides: among allowlisted pools, deploy idle USDC into the one with the best LIVE organic APY (from the keyless yield engine), respecting caps + gas reserve. Re-evaluates each cycle. Pure organic stablecoin lending — no IL, withdraw anytime.",
+    "prefer": "highest-organic-apy-allowlisted",
+    "rebalance_threshold_apy_delta": 1,
+    "reeval_minutes": 180
+  },
+  "honest": "This makes the agent a bounded autonomous yield steward, not a free-roaming spender. It earns real organic yield (~4-6%/yr on stables) on whatever you fund it with — small but genuinely autonomous + compounding, and the worst case is bounded to your funded amount in audited pools. It is NOT a magic money machine; it's knowledge (which yield is real) × your capital × autonomous execution, safely fenced.",
+  "shelved": true,
+  "shelved_reason": "Operator has $0 starting capital — nothing to deploy. This bounded-yield module stays dormant + disarmed. It reactivates ONLY if real capital ever lands in the wallet. From $0 the earners are the free streams, not capital deployment."
+}

@@ -1,0 +1,4 @@
+{
+  "_doc": "Per-node manual flags the telemetry can't auto-detect. Keyed by node name. Feeds the mining-risk model.",
+  "Ausra-The-Fool": { "av_flagged": true, "note": "Antivirus quarantines xmrig as PUA/GM.Miner; she also runs her own heavy programs. Mine gentle/off only." }
+}

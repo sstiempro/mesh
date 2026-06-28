@@ -1,0 +1,134 @@
+{
+ "ts": 1782509233653,
+ "trials": 5000,
+ "horizon": 12,
+ "budgets": [
+  {
+   "weekly": 5,
+   "plays": 6,
+   "dist": {
+    "p10": 0,
+    "p50": 24,
+    "p90": 5005,
+    "p99": 28787,
+    "mean": 1511
+   },
+   "top": [
+    "Launch an AI agent (Virtuals/Base)",
+    "Testnet node operator",
+    "Base ecosystem history",
+    "Retroactive protocol usage",
+    "Points programs (Eigen/Rainbow)",
+    "Early-protocol LP/usage"
+   ]
+  },
+  {
+   "weekly": 15,
+   "plays": 8,
+   "dist": {
+    "p10": 0,
+    "p50": 103,
+    "p90": 8222,
+    "p99": 80656,
+    "mean": 4356
+   },
+   "top": [
+    "Launch an AI agent (Virtuals/Base)",
+    "Testnet node operator",
+    "Base ecosystem history",
+    "Retroactive protocol usage",
+    "NFT collection with real utility",
+    "Immunefi bug bounties",
+    "Run a public RPC / relay",
+    "Airdrop DePIN nodes"
+   ]
+  },
+  {
+   "weekly": 40,
+   "plays": 23,
+   "dist": {
+    "p10": 301,
+    "p50": 2091,
+    "p90": 21226,
+    "p99": 84713,
+    "mean": 8790
+   },
+   "top": [
+    "Launch an AI agent (Virtuals/Base)",
+    "Testnet node operator",
+    "Base ecosystem history",
+    "Retroactive protocol usage",
+    "NFT collection with real utility",
+    "Immunefi bug bounties",
+    "Points programs (Eigen/Rainbow)",
+    "Early-protocol LP/usage"
+   ]
+  }
+ ],
+ "dominant": [
+  {
+   "name": "Launch an AI agent (Virtuals/Base)",
+   "in_stacks": 9
+  },
+  {
+   "name": "Testnet node operator",
+   "in_stacks": 9
+  },
+  {
+   "name": "Base ecosystem history",
+   "in_stacks": 9
+  },
+  {
+   "name": "Retroactive protocol usage",
+   "in_stacks": 9
+  },
+  {
+   "name": "Points programs (Eigen/Rainbow)",
+   "in_stacks": 6
+  },
+  {
+   "name": "Early-protocol LP/usage",
+   "in_stacks": 6
+  },
+  {
+   "name": "NFT collection with real utility",
+   "in_stacks": 6
+  },
+  {
+   "name": "Immunefi bug bounties",
+   "in_stacks": 6
+  },
+  {
+   "name": "Run a public RPC / relay",
+   "in_stacks": 6
+  },
+  {
+   "name": "Airdrop DePIN nodes",
+   "in_stacks": 6
+  },
+  {
+   "name": "Deploy a fee-earning contract",
+   "in_stacks": 3
+  },
+  {
+   "name": "Tokenize a real utility",
+   "in_stacks": 3
+  }
+ ],
+ "foundation_lift": {
+  "with": {
+   "p10": 0,
+   "p50": 98,
+   "p90": 8144,
+   "p99": 80655,
+   "mean": 4038
+  },
+  "without": {
+   "p10": 0,
+   "p50": 82,
+   "p90": 5033,
+   "p99": 50124,
+   "mean": 2599
+  }
+ }
+}

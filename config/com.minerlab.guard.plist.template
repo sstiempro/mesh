@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Optional: auto-start the idle-gated guard at login.
+     Install:  sed "s|LAB_PATH|$HOME/Developer/cpu-miner-lab|g" \
+                 config/com.minerlab.guard.plist.template \
+                 > ~/Library/LaunchAgents/com.minerlab.guard.plist
+               launchctl load ~/Library/LaunchAgents/com.minerlab.guard.plist
+     Remove:   launchctl unload ~/Library/LaunchAgents/com.minerlab.guard.plist
+     The guard still only mines when on AC + idle + cool, so login auto-start is safe. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.minerlab.guard</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>LAB_PATH/bin/miner-guard.sh</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>StandardOutPath</key><string>LAB_PATH/logs/guard.log</string>
+  <key>StandardErrorPath</key><string>LAB_PATH/logs/guard.log</string>
+  <key>ProcessType</key><string>Background</string>
+  <key>Nice</key><integer>10</integer>
+</dict>
+</plist>

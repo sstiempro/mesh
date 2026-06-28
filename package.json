@@ -1,0 +1,25 @@
+{
+  "name": "cpu-miner-lab",
+  "version": "1.0.0",
+  "description": "Idle-gated CPU mining harness for the MacBook Air M1 (and, later, a mesh dashboard). **Separate from the omnione trading repo on purpose — nothing here touches the production VPSes.**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@noble/curves": "^2.2.0",
+    "@noble/hashes": "^2.2.0",
+    "@scure/base": "^2.2.0",
+    "@scure/bip32": "^2.2.0",
+    "@solana/web3.js": "^1.98.4",
+    "bip39": "^3.1.0",
+    "ed25519-hd-key": "^2.0.0",
+    "ethers": "^6.17.0"
+  }
+}

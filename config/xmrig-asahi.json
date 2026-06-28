@@ -1,0 +1,30 @@
+{
+  "_comment": "Asahi Linux (Fedora Asahi Remix) config — unlocks what macOS blocks: huge pages + 1GB pages + MSR. Expect ~2x the macOS RandomX hashrate on the SAME M1. Run setup-asahi.sh first to reserve hugepages.",
+  "autosave": false, "background": false, "colors": true, "donate-level": 0,
+  "cpu": {
+    "enabled": true,
+    "huge-pages": true,
+    "huge-pages-jit": true,
+    "hw-aes": true,
+    "priority": 5,
+    "yield": false,
+    "asm": true,
+    "max-threads-hint": 100
+  },
+  "randomx": {
+    "init": -1,
+    "mode": "fast",
+    "1gb-pages": true,
+    "rdmsr": true,
+    "wrmsr": true,
+    "cache_qos": false,
+    "numa": true,
+    "scratchpad_prefetch_mode": 1
+  },
+  "http": { "enabled": true, "host": "127.0.0.1", "port": 18000, "access-token": "REPLACE_WITH_LOCAL_TOKEN", "restricted": false },
+  "pools": [
+    { "algo": "rx/0", "coin": "monero", "url": "gulf.moneroocean.stream:10128",
+      "user": "XMR_ADDRESS",
+      "pass": "asahi-m1", "rig-id": "asahi-m1", "keepalive": true, "tls": false }
+  ]
+}

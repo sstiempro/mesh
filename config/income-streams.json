@@ -1,0 +1,27 @@
+{
+  "_doc": "Config-driven income model. Strategy: prove on $0 + $100 (HOT wallet), Binance holdings UNTOUCHED until system proven (see CUSTODY-SECURITY.md). 'live' pulls real $/day; others use est_daily_usd. Wallets are RECEIVE addresses only; keys stay on your devices.",
+  "streams": [
+    {"id":"mine-xmr",        "category":"mining", "label":"Monero (RandomX, 2 Macs)", "source":"live:moneroocean", "wallet":"XMR_ADDRESS", "est_daily_usd":0.15, "status":"live"},
+    {"id":"mine-btc-bitaxe", "category":"mining", "label":"Bitcoin (Bitaxe ASIC)", "source":"manual", "wallet":"", "est_daily_usd":0, "status":"planned", "note":"pool-mine when the Bitaxe arrives; need a BTC receive address"},
+
+    {"id":"depin-honeygain", "category":"depin", "label":"Honeygain (bandwidth, cash)", "source":"manual", "signup":"https://www.honeygain.com", "est_daily_usd":0, "status":"configure"},
+    {"id":"depin-earnapp",   "category":"depin", "label":"EarnApp (bandwidth, cash)",  "source":"manual", "signup":"https://earnapp.com",        "est_daily_usd":0, "status":"configure"},
+    {"id":"depin-pawns",     "category":"depin", "label":"Pawns.app (bandwidth, cash)","source":"manual", "signup":"https://pawns.app",          "est_daily_usd":0, "status":"configure"},
+
+    {"id":"farm-testnet",    "category":"airdrop", "label":"Testnet farming (mesh runs nodes)", "source":"manual", "est_daily_usd":0, "status":"planned", "note":"highest-EV free play; nodes + quests on the Macs → mainnet airdrops"},
+    {"id":"farm-quests",     "category":"airdrop", "label":"Quest platforms (Galxe/Layer3/Zealy)", "source":"manual", "est_daily_usd":0, "status":"planned", "note":"social + on-chain tasks → points → airdrops"},
+    {"id":"farm-points",     "category":"airdrop", "label":"Points farming (Solana/Base, $100)", "source":"manual", "est_daily_usd":0, "status":"planned", "note":"consistency > volume; $100 from the HOT wallet"},
+    {"id":"farm-learn",      "category":"airdrop", "label":"Learn-and-earn + faucets", "source":"manual", "est_daily_usd":0, "status":"planned", "note":"watch/quiz/drip — pure free"},
+    {"id":"depin-airdrop",   "category":"airdrop", "label":"Bandwidth airdrops (Grass/Nodepay/Gradient)", "source":"manual", "est_daily_usd":0, "status":"farming", "note":"points now, token payout later"},
+
+    {"id":"degen-100",       "category":"degen", "label":"$100 moonshot (HOT wallet)", "source":"manual", "est_daily_usd":0, "status":"planned", "note":"~$30 meme/momentum lottery ticket; expendable"},
+
+    {"id":"hold-xrp",  "category":"hold", "label":"XRP (on Binance — NOT deployed)", "asset":"XRP",  "amount":1045, "price_id":"ripple",          "est_daily_usd":0, "status":"hold", "note":"stays on Binance until wallet + system proven; biggest bag, protect it"},
+    {"id":"hold-sui",  "category":"hold", "label":"SUI (hold)",   "asset":"SUI",  "amount":50,  "price_id":"sui",             "est_daily_usd":0, "status":"hold"},
+    {"id":"hold-hbar", "category":"hold", "label":"HBAR (hold)",  "asset":"HBAR", "amount":300, "price_id":"hedera-hashgraph", "est_daily_usd":0, "status":"hold"},
+    {"id":"hold-xlm",  "category":"hold", "label":"XLM (hold)",   "asset":"XLM",  "amount":300, "price_id":"stellar",         "est_daily_usd":0, "status":"hold"},
+    {"id":"hold-pengu","category":"hold", "label":"PENGU (meme hold)", "asset":"PENGU","amount":250, "price_id":"pudgy-penguins", "est_daily_usd":0, "status":"hold"},
+
+    {"id":"omnione-trading", "category":"trading", "label":"omnione/TRADEZYX (separate system)", "source":"external", "est_daily_usd":0, "status":"separate", "note":"its own platform; shown as a stream, engineered separately"}
+  ]
+}

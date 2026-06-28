@@ -1,0 +1,44 @@
+{
+  "_doc": "Auto-protect governor policy. Holds each node in a healthy envelope by live-retuning miner intensity (Off/Gentle/Balanced/Turbo) via the dashboard control channel. PURELY PROTECTIVE by default: drops a node to 'off' when it's stressed or busy with its own work, restores to 'gentle' when it frees up. Raise a node's 'max' to make it a real miner. Back off fast (holdDown=1), ramp up slow (holdUp).",
+  "enabled": true,
+  "intervalSec": 20,
+  "dashboard": "http://127.0.0.1:8787",
+  "ladder": [
+    "off",
+    "gentle",
+    "balanced",
+    "turbo"
+  ],
+  "threadsFor": {
+    "off": 0,
+    "gentle": 2,
+    "balanced": 4,
+    "turbo": 8
+  },
+  "default": {
+    "enabled": true,
+    "min": "off",
+    "max": "balanced",
+    "ceiling": 1.2,
+    "floor": 0.7,
+    "memFloor": 15,
+    "holdDown": 1,
+    "holdUp": 3
+  },
+  "nodes": {
+    "Air": {
+      "max": "gentle",
+      "ceiling": 1.25,
+      "floor": 0.7,
+      "holdUp": 3,
+      "_note": "fanless daily-driver — never beyond gentle; drop to off if I'm loading the machine"
+    },
+    "Ausra": {
+      "max": "gentle",
+      "ceiling": 1.05,
+      "floor": 0.55,
+      "holdUp": 4,
+      "_note": "her OWN heavy rig — mine only the gaps; back off the instant her programs spike"
+    }
+  }
+}

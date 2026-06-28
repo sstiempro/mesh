@@ -1,0 +1,50 @@
+{
+  "_doc": "Opportunity Engine config — keyless, honest, capital-aware. Drives /api/yields (real DeFi yield from DefiLlama public API), /api/spreads (cross-exchange + triangular arb from public exchange tickers), and the opportunity-scanner daemon. The engine RANKS + TRACKS; the operator SIGNS every deposit/trade. Nothing here moves money. Tuned for the $100 early-capital phase: prefer single-sided stablecoin lending on cheap chains (gas would eat a mainnet LP), prefer ORGANIC yield (real fees) over EMISSIONS (decay), demand persistence before trusting a number.",
+
+  "capital_usd": 100,
+  "refresh_yields_sec": 180,
+  "refresh_spreads_sec": 45,
+
+  "yields": {
+    "source": "https://yields.llama.fi/pools",
+    "min_tvl_usd": 3000000,
+    "min_apy": 4,
+    "max_apy_trust": 80,
+    "_max_apy_trust_doc": "APY above this is almost always a mercenary-emissions trap or a depeg/liquidation risk — we still SHOW it but cap its trust score.",
+    "cheap_chains": ["Base", "Arbitrum", "Optimism", "Polygon", "BSC", "Solana", "Hyperliquid L1"],
+    "expensive_chains": ["Ethereum"],
+    "_chain_doc": "For $100, an Ethereum-mainnet deposit can cost $5-20 in gas to enter+exit = a 5-20% haircut before any yield. Cheap-chain stablecoin lending is the capital-appropriate base. We DON'T hide Ethereum, we just score it down for this capital tier.",
+    "safe_projects": ["aave-v3", "morpho-blue", "compound-v3", "sky-lending", "fluid-lending", "curve-dex", "aave-v2", "spark"],
+    "_safe_doc": "Battle-tested lending/blue-chip protocols. Single-sided stable lending = no impermanent loss, withdraw anytime. The early-capital base layer.",
+    "weights": {
+      "organic": 0.30,
+      "tvl": 0.20,
+      "safety": 0.20,
+      "chain_fit": 0.15,
+      "prediction": 0.15
+    }
+  },
+
+  "spreads": {
+    "pairs": ["BTC", "ETH", "SOL", "XRP", "DOGE"],
+    "exchanges": ["binance", "kraken", "coinbase"],
+    "taker_fee_bps": { "binance": 10, "kraken": 26, "coinbase": 60 },
+    "_fee_doc": "Public taker fees in basis points (0.10% / 0.26% / 0.60%). Cross-exchange arb must clear BOTH legs' fees. We net them out and only flag net-positive. Most won't clear — that honest result IS the signal.",
+    "withdrawal_haircut_bps": 5,
+    "min_net_spread_bps": 8,
+    "_cross_doc": "Cross-exchange arb realistically needs capital PRE-POSITIONED on both venues (you don't withdraw per-trade — chain confirmation is too slow). We flag the spread but mark it 'requires balances on both venues'. Triangular (single-venue, no transfer) is the realistic retail path.",
+    "triangular": {
+      "venue": "binance",
+      "cycles": [["USDT", "BTC", "ETH"], ["USDT", "BTC", "SOL"], ["USDT", "BTC", "BNB"], ["USDT", "BTC", "XRP"], ["USDT", "ETH", "BNB"]],
+      "_doc": "Single-venue triangular cycles expressed as currency triples. The engine resolves each hop to the real pair + side (buy=pay ask, sell=hit bid) from the live order book and walks the cycle product vs 1.0, both directions, minus 3 taker legs. Real if it clears — but HFT bots arb these in ms, so a clearing one on a slow REST poll is rare and almost always stale. Honest framing: a monitoring/teaching surface, not a money printer."
+    }
+  },
+
+  "persistence": {
+    "_doc": "Forward-is-backward for yield: a number you saw once is noise; a number that held for days is real. The scanner snapshots the top pools each pass; a pool's persistence = how many consecutive snapshots it stayed above its threshold. Trust scales with persistence.",
+    "trust_full_after_snapshots": 12,
+    "snapshot_file": "data/opportunities.jsonl"
+  },
+
+  "honest": "Real DeFi yield exists (stablecoin lending 4-12% organic is genuine), but it is SLOW compounding, not money from thin air. Cross-exchange arb is mostly eaten by fees+transfer latency; triangular arb is owned by sub-ms bots. This engine's real value: surface the few PERSISTENT, capital-appropriate, organic yields so the operator deploys the $100→$500 base safely — and prove (honestly) that the spread 'free money' is usually a mirage. The operator signs every transaction."
+}

@@ -1,0 +1,14 @@
+{
+  "_doc": "Compounding model + Monte-Carlo stress-test parameters for the rags-to-riches path ($100 → milestones). Honest, tunable. Reinvest 100% early; free streams drip; airdrops are the fat-tail; deployed capital compounds at yield. The MC IS the stress test — it shows the DISTRIBUTION, not a fantasy single number.",
+  "start_capital": 100,
+  "horizon_days": 1825,
+  "reinvest_rate": 1.0,
+  "free_daily_low": 0.20,
+  "free_daily_high": 0.60,
+  "yield_apy": 0.20,
+  "yield_min_capital": 500,
+  "airdrop_hit_prob": 0.15,
+  "airdrop_value_haircut": 0.5,
+  "mc_paths": 3000,
+  "milestones": [1000, 10000, 100000, 1000000]
+}

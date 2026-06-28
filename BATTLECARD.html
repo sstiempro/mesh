@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet Compute Monetization — Battlecard</title>
+<style>
+  :root{ --bg:#0a0d14; --card:#0f131c; --line:#222a38; --txt:#e6e9ef; --mut:#9aa3b2; --acc:#3b82f6; --grn:#10b981; --amb:#f59e0b; --red:#ef4444; }
+  *{ box-sizing:border-box; }
+  body{ font:14px/1.6 ui-sans-serif,system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--txt); margin:0; padding:28px; max-width:1000px; }
+  h1{ font-size:22px; font-weight:500; margin:0 0 2px; }
+  .sub{ color:var(--mut); font-size:13px; margin-bottom:22px; }
+  h2{ font-size:16px; font-weight:500; margin:26px 0 10px; color:var(--txt); }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th{ text-align:left; color:var(--mut); font-weight:400; padding:9px 11px; border-bottom:1px solid var(--line); }
+  td{ padding:9px 11px; border-bottom:1px solid #161b28; vertical-align:top; }
+  tr:hover td{ background:#11161f; }
+  .tag{ font-size:11px; padding:2px 8px; border-radius:6px; white-space:nowrap; }
+  .ok{ background:rgba(16,185,129,.15); color:#6ee7b7; } .no{ background:rgba(239,68,68,.15); color:#fca5a5; } .mb{ background:rgba(245,158,11,.15); color:#fcd34d; }
+  .rec{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .c{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .c.go{ border-color:var(--acc); }
+  .c .k{ font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--mut); }
+  .c .t{ font-weight:500; margin:5px 0 6px; } .c p{ margin:0; color:var(--mut); font-size:13px; }
+  .note{ color:var(--mut); font-size:12px; }
+</style>
+
+<h1>Fleet compute monetization — battlecard</h1>
+<div class="sub">Operator in Bali · free electricity · 2× Mac (M1 8 GB + laptop) + 2× Linux VPS (Contabo, OVH). VPS prohibit PoW mining; allow staking / nodes / useful-compute. Generated 2026-06-25.</div>
+
+<h2>Comparison matrix</h2>
+<table>
+  <thead><tr><th>Path</th><th>$/day · free power</th><th>Capital</th><th>VPS-legal?</th><th>Distributed→1 payout</th><th>Payout</th></tr></thead>
+  <tbody>
+    <tr><td><b>MoneroOcean (XMR)</b></td><td>~$0.10–0.15 / Mac</td><td>$0</td><td><span class="tag no">PoW banned</span></td><td>yes — pool</td><td>XMR · high</td></tr>
+    <tr><td>NiceHash (→ BTC)</td><td>~$0.08–0.12 / Mac</td><td>$0</td><td><span class="tag no">PoW banned</span></td><td>yes — pool</td><td>BTC · high</td></tr>
+    <tr><td>supportXMR / P2Pool</td><td>~same</td><td>$0</td><td><span class="tag no">PoW banned</span></td><td>yes — pool</td><td>XMR · high</td></tr>
+    <tr><td><b>Gridcoin / BOINC</b></td><td>~$0.05–0.20 / machine</td><td>$0</td><td><span class="tag ok">allowed</span></td><td>yes — one account</td><td>GRC · low</td></tr>
+    <tr><td>Storj</td><td>~$0.15–0.30 (if disk)</td><td>$0, needs disk</td><td><span class="tag ok">allowed</span></td><td>no</td><td>STORJ · med</td></tr>
+    <tr><td>Firo / PIVX masternode</td><td>~19–20% APY on collateral</td><td>~$1k+</td><td><span class="tag ok">allowed</span></td><td>no</td><td>coin · med</td></tr>
+    <tr><td>Flux node</td><td>FLUX rewards</td><td>FLUX collateral</td><td><span class="tag ok">allowed</span></td><td>no</td><td>FLUX · med</td></tr>
+    <tr><td>Akash provider</td><td>~$0 (CPU; demand is GPU)</td><td>AKT + k8s</td><td><span class="tag ok">allowed</span></td><td>no</td><td>AKT · med</td></tr>
+    <tr><td>io.net / Render / Vast / Salad</td><td>~$0 (no rentable GPU)</td><td>—</td><td><span class="tag mb">varies</span></td><td>no</td><td>varies</td></tr>
+    <tr><td>Honeygain / Grass / Nodepay</td><td>~$0.10/Mac; VPS banned</td><td>$0</td><td><span class="tag no">VPS banned</span></td><td>no</td><td>tokens · low</td></tr>
+    <tr><td>Bitaxe (BTC ASIC)</td><td>~$0.02–0.05 + lottery</td><td>$105 hw</td><td>n/a (own hw)</td><td>no</td><td>BTC · high</td></tr>
+  </tbody>
+</table>
+
+<h2>Ranked recommendation — run what, where</h2>
+<div class="rec">
+  <div class="c go"><div class="k">Run on the Macs</div><div class="t">MoneroOcean (XMR)</div><p>Already running on the M1 (1,492 H/s). Add Thomas's laptop. ~$0.25/day combined. PoW banned on VPS.</p></div>
+  <div class="c go"><div class="k">Run on the VPS</div><div class="t">Gridcoin / BOINC</div><p>The only legitimate VPS earner — useful scientific compute, not mining. Throttle to ~50% CPU. Runs on all 4 machines → one GRC account.</p></div>
+  <div class="c"><div class="k">Capital play</div><div class="t">Firo / PIVX masternode</div><p>Block rewards without hashing, ToS-clean, ~19–20% APY. Needs ~$1k collateral locked.</p></div>
+  <div class="c"><div class="k">Hardware</div><div class="t">Bitaxe</div><p>$105, 1.2 TH/s, ~18 W — the real Bitcoin jackpot ticket. Independent of the fleet.</p></div>
+  <div class="c"><div class="k">Skip</div><div class="t">GPU rental + bandwidth</div><p>Salad/io.net/Vast are GPU-only (you have none). Honeygain/Grass are VPS-banned + pennies.</p></div>
+</div>
+
+<h2>Honest bottom line</h2>
+<p class="note">~$0.40–0.70/day (~$12–21/month) across everything at free power. The win is the <b>system</b> — every machine earning legitimately under one dashboard — not the dollar figure. For real money, the levers are (a) more/bigger machines, (b) collateral into a masternode, or (c) just buying the asset.</p>
