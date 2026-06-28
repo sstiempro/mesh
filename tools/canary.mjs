@@ -39,7 +39,7 @@ console.log(trips.length ? '⚠️  TRIPPED:\n' + trips.map(t => '   - ' + t).jo
 console.log('');
 if (builder) console.log(`loop:     ${builder.monitors_active} monitors · ${builder.built_by_loop} built by loop · ${builder.ideas_generated} ideas · ${builder.ticks_run} ticks · last tick ${ageMin ?? '?'}min ago`);
 if (monitors) console.log(`monitors: ${monitors.live}/${monitors.count} live · ${monitors.alerting} firing`);
-if (exec) console.log(`actions:  ${exec.routed || 0} routed/tick · ${exec.deliver?.sent || 0}/${exec.deliver?.count || 0} delivered${exec.deliver?.destinations ? '' : ' (deliver armed — set config/delivery.local.json)'} · ${exec.pending_count || 0} cards awaiting your click`);
+if (exec) console.log(`actions:  ${exec.routed || 0} routed/tick · ${exec.deliver?.published || 0} published to /api/feed${exec.deliver?.webhooks_sent ? ` · ${exec.deliver.webhooks_sent} webhook push` : ' (pro webhook off)'} · ${exec.pending_count || 0} cards awaiting your click`);
 const spentSpecs = ledger.filter(e => e.action === 'spec-built').length;
 console.log(`specs:    ${pendingSpecs.length} pending · ${spentSpecs} already built\n`);
 console.log(`🎯 NEXT TO KNOCK DOWN (highest-scored pending specs):`);

@@ -50,7 +50,7 @@ async function knockDown() {
   const summary = { ts: new Date().toISOString(), action: 'tick', new_ideas: ideas.length,
     knocked: knock?.built || (knock?.failed ? `FAILED:${knock.failed}` : 'none'),
     monitors_live: feed.live, monitors_total: feed.count, alerting: feed.alerting,
-    actions_routed: plan?.routed ?? 0, auto_executed: plan?.auto?.executed ?? 0, delivered: plan?.deliver?.sent ?? 0, approve_queued: plan?.approve?.added ?? 0, confluence: plan?.confluence ?? 0 };
+    actions_routed: plan?.routed ?? 0, auto_executed: plan?.auto?.executed ?? 0, published: plan?.deliver?.published ?? 0, webhooks_sent: plan?.deliver?.webhooks_sent ?? 0, approve_queued: plan?.approve?.added ?? 0, confluence: plan?.confluence ?? 0 };
   await appendFile(LEDGER, JSON.stringify(summary) + '\n');
-  console.log(`tick ✓  +${ideas.length} ideas · knocked: ${summary.knocked} · monitors ${feed.live}/${feed.count} · actions ${summary.actions_routed} (auto ${summary.auto_executed}, deliver ${summary.delivered}, approve+${summary.approve_queued}, conf ${summary.confluence})`);
+  console.log(`tick ✓  +${ideas.length} ideas · knocked: ${summary.knocked} · monitors ${feed.live}/${feed.count} · actions ${summary.actions_routed} (auto ${summary.auto_executed}, published ${summary.published}, webhook ${summary.webhooks_sent}, approve+${summary.approve_queued}, conf ${summary.confluence})`);
 })();

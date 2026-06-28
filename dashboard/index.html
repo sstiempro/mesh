@@ -891,7 +891,7 @@ async function loadExecution(){
       <div class="text-[11px] text-slate-500">${d.routed||0} routed/tick</div></div>
     <div class="grid grid-cols-3 gap-2 my-2 text-center">
       <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2"><div class="text-base font-bold text-sky-400">${a.executed||0}</div><div class="text-[9px] text-slate-500">AUTO executed<br><span class="text-slate-600">signal-tape</span></div></div>
-      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2"><div class="text-base font-bold text-violet-400">${dv.sent||0}/${dv.count||0}</div><div class="text-[9px] text-slate-500">DELIVERED<br><span class="text-slate-600">${dv.destinations?dv.destinations+' webhooks':'arm: delivery.local.json'}</span></div></div>
+      <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2"><div class="text-base font-bold text-violet-400">${dv.published||0}</div><div class="text-[9px] text-slate-500">PUBLISHED<br><a href="/api/feed" target="_blank" class="text-violet-400/70 hover:text-violet-300">/api/feed ↗</a>${dv.webhooks_sent?' · '+dv.webhooks_sent+' push':''}</div></div>
       <div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2"><div class="text-base font-bold text-amber-400">${d.pending_count||0}</div><div class="text-[9px] text-slate-500">YOUR CARDS<br><span class="text-slate-600">click to resolve</span></div></div></div>
     <div class="text-[10px] uppercase tracking-wider text-amber-400 mb-1">action cards — you sign money moves</div>
     ${cards||'<div class="text-[11px] text-slate-600">no pending actions</div>'}

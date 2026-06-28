@@ -10,7 +10,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isPro, gate, tierInfo, proArtifact } from './premium.mjs';
 import { runAll as runMonitors, loadRegistry as loadMonitorRegistry } from './monitors.mjs';
-import { executionView, resolveAction } from './execution.mjs';
+import { executionView, resolveAction, publicFeed, signalTapeView } from './execution.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LAB = path.resolve(__dirname, '..');
@@ -1089,6 +1089,8 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/builder') return J(200, await builder());
     if(u.pathname==='/api/execution') return J(200, await executionView());
     if(u.pathname==='/api/action' && req.method==='POST'){ const {sig,status}=JSON.parse((await readBody(req))||'{}'); return J(200, await resolveAction(sig,status)); }
+    if(u.pathname==='/api/signal-tape') return J(200, await signalTapeView());
+    if(u.pathname==='/api/feed'){ if(u.searchParams.get('format')==='rss'){ const xml=await publicFeed('rss'); res.writeHead(200,{'content-type':'application/rss+xml; charset=utf-8'}); res.end(xml); return; } return J(200, await publicFeed('json')); }
     if(u.pathname==='/api/check') return J(200, await checkAddress(u.searchParams.get('address')));
     if(u.pathname==='/api/bounties') return J(200, await (async()=>{
       let t={targets:[]}, f={findings:[]};

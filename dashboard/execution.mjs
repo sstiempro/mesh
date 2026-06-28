@@ -16,7 +16,8 @@ const TAPE = path.join(LAB, 'data', 'signal-tape.jsonl');
 const QUEUE = path.join(LAB, 'data', 'action-queue.jsonl');
 const FEEDOUT = path.join(LAB, 'data', 'actions-feed.json');
 const PLAN = path.join(LAB, 'data', 'execution-plan.json');
-const DELIVERY = path.join(LAB, 'config', 'delivery.local.json'); // gitignored; operator fills once
+const PUBLICFEED = path.join(LAB, 'data', 'public-feed.json'); // the always-on free-tier product (served at /api/feed)
+const DELIVERY = path.join(LAB, 'config', 'delivery.local.json'); // gitignored; operator fills once for pro realtime push
 
 const jsonl = (f) => existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean) : [];
 
@@ -69,15 +70,25 @@ function confluence(actions) {
 }
 
 async function deliver(actions) {
+  // FREE-TIER delivery is ALWAYS-ON: publish to the public feed (rolling window), served live at /api/feed.
+  // This is the open-core free product — any consumer can poll it. No config needed; it just flows.
+  let prev = []; try { prev = JSON.parse(readFileSync(PUBLICFEED, 'utf8')).alerts || []; } catch {}
+  const stamped = actions.map(a => ({ ts: new Date().toISOString(), type: a.type, asset: a.asset, msg: a.msg, priority: a.priority || 'normal', monetize: a.monetize }));
+  const rolled = [...stamped, ...prev].slice(0, 200);
+  await writeFile(PUBLICFEED, JSON.stringify({ updated: new Date().toISOString(), count: rolled.length, alerts: rolled }, null, 2));
+  const out = { published: actions.length, channels: ['public-feed'], feed: '/api/feed', webhooks_sent: 0, results: [] };
+  // PRO realtime: ADDITIONAL push to operator-wired webhooks, if configured
   let dest = null; try { dest = JSON.parse(await readFile(DELIVERY, 'utf8')); } catch {}
   const webhooks = dest?.webhooks || [];
-  const out = { armed: actions.length, sent: 0, destinations: webhooks.length, results: [] };
-  if (!webhooks.length) { out.note = 'armed — add a webhook URL to config/delivery.local.json (gitignored) to push these'; return out; }
-  const payload = { source: 'mesh-monitors', ts: new Date().toISOString(), alerts: actions.map(a => ({ type: a.type, asset: a.asset, msg: a.msg, priority: a.priority || 'normal' })) };
-  for (const url of webhooks) {
-    try { const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(8000) }); out.sent += r.ok ? 1 : 0; out.results.push({ url: url.slice(0, 28) + '…', ok: r.ok }); }
-    catch (e) { out.results.push({ url: url.slice(0, 28) + '…', ok: false, err: String(e).slice(0, 40) }); }
-  }
+  out.destinations = webhooks.length;
+  if (webhooks.length) {
+    const payload = { source: 'mesh-monitors', ts: new Date().toISOString(), alerts: stamped };
+    for (const url of webhooks) {
+      try { const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload), signal: AbortSignal.timeout(8000) }); out.webhooks_sent += r.ok ? 1 : 0; out.results.push({ url: url.slice(0, 28) + '…', ok: r.ok }); }
+      catch (e) { out.results.push({ url: url.slice(0, 28) + '…', ok: false, err: String(e).slice(0, 40) }); }
+    }
+    out.channels.push('webhook');
+  } else { out.note = 'free tier flowing to /api/feed · add a webhook to config/delivery.local.json for pro realtime push'; }
   return out;
 }
 
@@ -132,6 +143,34 @@ export async function executionView() {
   for (const e of jsonl(QUEUE)) if (e.sig) bySig.set(e.sig, { ...(bySig.get(e.sig) || {}), ...e });
   const pending = [...bySig.values()].filter(e => e.status === 'pending').slice(-20).reverse();
   return { ...(plan || { note: 'no plan yet — runs each builder tick' }), pending_actions: pending, pending_count: pending.length };
+}
+
+// PUBLIC FEED — the always-on free-tier product. JSON by default, RSS so it's actually subscribable.
+export async function publicFeed(format = 'json') {
+  let f = { updated: null, count: 0, alerts: [] }; try { f = JSON.parse(await readFile(PUBLICFEED, 'utf8')); } catch {}
+  if (format === 'rss') {
+    const items = (f.alerts || []).slice(0, 50).map(a => `    <item><title>${esc(`[${a.type}] ${a.asset || ''} ${a.msg || ''}`)}</title><description>${esc(a.msg || '')}</description><pubDate>${new Date(a.ts).toUTCString()}</pubDate><guid isPermaLink="false">${esc((a.ts || '') + (a.asset || '') + a.type)}</guid></item>`).join('\n');
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>\n    <title>mesh — keyless crypto signal feed</title>\n    <link>https://github.com/sstiempro/mesh</link>\n    <description>Stablecoin depegs, TVL-drain early-warning, funding extremes, yield radar — free tier.</description>\n${items}\n</channel></rss>`;
+  }
+  return { ...f, tiers: { free: 'this feed (delayed/digest)', pro: 'realtime webhook push — config/delivery.local.json' },
+    note: 'Open-core free tier. Live keyless signals published every builder tick.' };
+}
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// SIGNAL TAPE — the AUTO-lane consumer. Reads the tape, digests it into the current market posture so
+// the auto signals actually FEED something readable (the paper-sim handoff + a queryable state).
+export async function signalTapeView() {
+  const tape = jsonl(TAPE).slice(-200);
+  const latest = {};
+  for (const t of tape) { const k = `${t.type}:${t.asset || ''}`; latest[k] = t; }
+  const funding = Object.values(latest).filter(t => t.type === 'paper-signal');
+  const regime = Object.values(latest).filter(t => t.type === 'regime');
+  const gas = Object.values(latest).filter(t => t.type === 'tx-timing');
+  return { tape_size: tape.length, posture: {
+      regime: regime.map(r => r.signal), funding_skews: funding.slice(0, 12).map(f => ({ asset: f.asset, signal: f.signal })),
+      gas: gas.map(g => ({ chain: g.asset, signal: g.signal })) },
+    recent: tape.slice(-15).reverse(),
+    note: 'AUTO-lane signals, digested into current posture. This is the handoff a paper-sim/strategist reads — queryable at /api/signal-tape.' };
 }
 
 // operator resolves a card from the dashboard: mark it done/dismissed (append-only status update)
