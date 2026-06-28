@@ -25,9 +25,12 @@ async function knockDown() {
   // pick the highest-scored queued 'auto' idea not yet active
   const reg = await loadRegistry();
   const active = new Set((reg.monitors || []).map(m => `${m.template}:${JSON.stringify(m.params || {})}`));
-  const built = new Set(readJsonl(LEDGER).filter(e => e.action === 'built').map(e => e.sig));
+  const led = readJsonl(LEDGER);
+  const built = new Set(led.filter(e => e.action === 'built').map(e => e.sig));
+  const failed = {}; for (const e of led.filter(e => e.action === 'build-failed')) failed[e.sig] = (failed[e.sig] || 0) + 1;
   const cand = readJsonl(QUEUE)
-    .filter(o => o.kind === 'auto' && !built.has(o.sig) && !active.has(`${o.template}:${JSON.stringify(o.params || {})}`))
+    // skip already-built, already-active, and ideas that have failed verification >=3x (don't block the slot forever)
+    .filter(o => o.kind === 'auto' && !built.has(o.sig) && (failed[o.sig] || 0) < 3 && !active.has(`${o.template}:${JSON.stringify(o.params || {})}`))
     .sort((a, b) => (b.score || 0) - (a.score || 0))[0];
   if (!cand) return null;
   // VERIFY: run it once before committing it to the fleet

@@ -223,6 +223,7 @@
       <section data-page="build" hidden>
         <div id="builder-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.10] to-sky-500/[.04] p-5 mb-4"></div>
         <div id="execution-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-amber-500/[.08] to-rose-500/[.04] p-5 mb-4"></div>
+        <div id="product-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-violet-500/[.08] to-emerald-500/[.04] p-5 mb-4"></div>
         <div id="monitors-panel" class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 mb-4"></div>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.08] to-violet-500/[.04] p-6">
@@ -898,8 +899,23 @@ async function loadExecution(){
     <div class="text-[10px] text-slate-600 mt-2">auto = run now (no money) · deliver = push to your webhook · cards = real-money/identity, your click. No trade/transfer/claim auto-executes.</div>`;
 }
 async function resolveAct(sig,status){ await fetch('/api/action',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sig,status})}).catch(()=>{}); loadExecution(); }
+async function loadProduct(){
+  const el=document.getElementById('product-panel'); if(!el) return;
+  const [pr,dg]=await Promise.all([fetch('/api/pricing').then(r=>r.json()).catch(()=>null),fetch('/api/digest').then(r=>r.json()).catch(()=>null)]);
+  if(!pr){ el.innerHTML='<div class="text-[11px] text-rose-400">product offline</div>'; return; }
+  const tiers=(pr.tiers||[]).map(t=>`<div class="rounded-xl bg-slate-900/60 border ${t.name==='Pro'?'border-violet-500/40':'border-slate-800'} p-3">
+      <div class="flex items-baseline justify-between"><span class="font-semibold text-slate-200">${t.name}</span><span class="text-sm ${t.name==='Pro'?'text-violet-300':'text-emerald-300'}">${t.price}${t.crypto?' · crypto ok':''}</span></div>
+      <ul class="mt-1.5 space-y-0.5">${t.features.map(f=>`<li class="text-[10px] text-slate-400">• ${f}</li>`).join('')}</ul></div>`).join('');
+  const post=(dg?.thread||[]).map((c,i)=>`<div class="text-[11px] text-slate-300 bg-slate-900/50 border border-slate-800 rounded-lg p-2 mb-1"><span class="text-slate-600">${i+1}/</span> ${c.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>`).join('');
+  el.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-2"><div class="text-sm font-semibold">📤 Product &amp; pricing <span class="text-[10px] text-slate-500 font-normal">— open-core, you are: <b class="${pr.current==='pro'?'text-violet-300':'text-emerald-300'}">${pr.current}</b></span></div>
+      <div class="text-[11px]"><a href="/api/feed" target="_blank" class="text-violet-300">/api/feed</a> · <a href="/api/feed?format=rss" target="_blank" class="text-violet-300">RSS</a> · <a href="/api/digest?format=md" target="_blank" class="text-violet-300">digest.md</a></div></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">${tiers}</div>
+    <div class="text-[10px] text-slate-500 mb-2">💰 ${pr.pay_note||''}</div>
+    <div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1">📣 ready-to-post digest (auto-generated)</div>
+    ${post||'<div class="text-[11px] text-slate-600">warming up…</div>'}`;
+}
 async function loadBuild(){
-  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadExecution(); loadMonitors();
+  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadExecution(); loadProduct(); loadMonitors();
   const d=await fetch('/api/knowledge-capital').then(r=>r.json()).catch(()=>null); if(!d) return;
   KCDATA=d; document.getElementById('kc-count').textContent=d.count;
   document.getElementById('kc-passive').innerHTML='<div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1.5">⚡ passive — set up once, pays weekly</div><div class="flex flex-wrap gap-1.5">'+(d.passive||[]).map(p=>`<a href="${p.url}" target="_blank" class="text-[11px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20" title="${(p.requires||'').replace(/"/g,'&#34;')}">${p.name} <span class="text-emerald-400/70">${p.est_value}</span></a>`).join('')+'</div>';

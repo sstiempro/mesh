@@ -173,6 +173,43 @@ export async function signalTapeView() {
     note: 'AUTO-lane signals, digested into current posture. This is the handoff a paper-sim/strategist reads — queryable at /api/signal-tape.' };
 }
 
+// DIGEST — auto-composes a ready-to-post daily thread from the live feed. The "daily auto-posted thread"
+// product: generated automatically (real numbers, no hype); the operator or a webhook posts it. Writes
+// data/digest-latest.md so it's grab-and-go.
+const DIGEST = path.join(LAB, 'data', 'digest-latest.md');
+export async function digest() {
+  let feed = []; try { feed = JSON.parse(readFileSync(PUBLICFEED, 'utf8')).alerts || []; } catch {}
+  const tape = jsonl(TAPE).slice(-200);
+  const since = Date.now() - 24 * 3600e3;
+  const recent = feed.filter(a => new Date(a.ts).getTime() > since);
+  const by = (t) => recent.filter(a => a.type === t);
+  const regime = [...tape].reverse().find(t => t.type === 'regime')?.signal || null;
+  const exploit = by('exploit-early-warning'), depeg = by('depeg-alert'), yield_ = by('yield-radar'), funding = by('funding-feed');
+  const uniq = (arr, n) => [...new Map(arr.map(a => [a.asset, a])).values()].slice(0, n);
+
+  const lines = [];
+  lines.push(`# 📡 mesh signal digest — ${new Date().toISOString().slice(0, 10)}`);
+  if (regime) lines.push(`\n**Market posture:** ${regime}`);
+  if (exploit.length) { lines.push(`\n## 🚨 TVL-drain early-warning (${exploit.length})`); uniq(exploit, 5).forEach(a => lines.push(`- ${a.msg}`)); }
+  if (depeg.length) { lines.push(`\n## 🩹 Stablecoin depegs (${depeg.length})`); uniq(depeg, 5).forEach(a => lines.push(`- ${a.msg}`)); }
+  if (yield_.length) { lines.push(`\n## 🌾 Top real yields (base, ≤500% sane band)`); uniq(yield_, 5).forEach(a => lines.push(`- ${a.msg}`)); }
+  if (funding.length) { lines.push(`\n## 📉 Funding extremes (crowded positioning)`); uniq(funding, 6).forEach(a => lines.push(`- ${a.msg}`)); }
+  lines.push(`\n_Keyless · free tier. Realtime push + pro signals: github.com/sstiempro/mesh_`);
+  const markdown = lines.join('\n');
+
+  // thread chunks for X/Farcaster (≤270 chars each)
+  const thread = [];
+  let head = `📡 crypto signal digest ${new Date().toISOString().slice(5, 10)}${regime ? ` — ${regime}` : ''}`;
+  thread.push(head);
+  if (exploit.length) thread.push(`🚨 TVL-drain watch:\n` + uniq(exploit, 3).map(a => '• ' + a.msg).join('\n').slice(0, 250));
+  if (yield_.length) thread.push(`🌾 real yields today:\n` + uniq(yield_, 3).map(a => '• ' + a.msg).join('\n').slice(0, 250));
+  if (depeg.length || funding.length) thread.push([...uniq(depeg, 2), ...uniq(funding, 2)].map(a => '• ' + a.msg).join('\n').slice(0, 250));
+
+  try { await writeFile(DIGEST, markdown); } catch {}
+  return { generated: new Date().toISOString(), window: '24h', counts: { exploit: exploit.length, depeg: depeg.length, yields: yield_.length, funding: funding.length }, regime, markdown, thread,
+    note: 'Ready-to-post. Grab data/digest-latest.md or POST the thread chunks. Auto-regenerated each tick.' };
+}
+
 // operator resolves a card from the dashboard: mark it done/dismissed (append-only status update)
 export async function resolveAction(sig, status) {
   if (!sig || !['done', 'dismissed', 'pending'].includes(status)) return { ok: false, error: 'need sig + status(done|dismissed)' };

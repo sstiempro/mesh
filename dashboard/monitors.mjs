@@ -53,13 +53,21 @@ export const TEMPLATES = {
     st[key] = now; // roll baseline
     return { ok: true, level: alerts.length ? 'alert' : 'ok', signal: `${pool.length} protocols watched${base && Object.keys(base).length ? '' : ' (baseline seeded)'}`, alerts, _persist: true };
   },
-  // Funding-rate extremes — Binance perps; |funding| extreme = crowded positioning (mean-revert / harvest)
+  // Funding-rate extremes — perps; |funding| extreme = crowded positioning (mean-revert / harvest).
+  // Hyperliquid PRIMARY (keyless, decentralized, NOT geo-blocked); Binance fapi fallback (403 on some nets).
   'funding-extreme': async (p) => {
-    const j = await gjT('https://fapi.binance.com/fapi/v1/premiumIndex', 9000);
-    if (!Array.isArray(j)) return { ok: false };
-    const thr = p.threshold ?? 0.0008; // 0.08%/8h
-    const rated = j.filter(x => x.symbol.endsWith('USDT')).map(x => ({ symbol: x.symbol.replace('USDT', ''), funding: +x.lastFundingRate }))
-      .filter(x => Number.isFinite(x.funding));
+    const thr = p.threshold ?? 0.0008; // 0.08%/8h-equivalent
+    let rated = null, src = null;
+    try {
+      const r = await fetch('https://api.hyperliquid.xyz/info', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type: 'metaAndAssetCtxs' }), signal: AbortSignal.timeout(9000) });
+      const j = await r.json();
+      if (Array.isArray(j) && j[0]?.universe && Array.isArray(j[1])) {
+        rated = j[0].universe.map((u, i) => ({ symbol: u.name, funding: +j[1][i]?.funding * 8 })); src = 'HL'; // HL funding is hourly → ×8 for 8h-equiv
+      }
+    } catch {}
+    if (!rated) { const b = await gjT('https://fapi.binance.com/fapi/v1/premiumIndex', 9000); if (Array.isArray(b)) { rated = b.filter(x => x.symbol.endsWith('USDT')).map(x => ({ symbol: x.symbol.replace('USDT', ''), funding: +x.lastFundingRate })); src = 'BIN'; } }
+    if (!rated) return { ok: false };
+    rated = rated.filter(x => Number.isFinite(x.funding));
     const alerts = rated.filter(x => Math.abs(x.funding) >= thr)
       .sort((a, b) => Math.abs(b.funding) - Math.abs(a.funding))
       .slice(0, 12).map(x => ({ symbol: x.symbol, funding: +(x.funding * 100).toFixed(4) + '%', side: x.funding > 0 ? 'longs pay (fade longs)' : 'shorts pay (fade shorts)' }));
@@ -70,10 +78,18 @@ export const TEMPLATES = {
     const j = await gjT('https://yields.llama.fi/pools', 12000);
     const data = j?.data; if (!Array.isArray(data)) return { ok: false };
     const minApy = p.minApy ?? 20, minTvl = p.minTvl ?? 1e6, stableOnly = p.stableOnly ?? true;
-    const alerts = data.filter(x => x.apy >= minApy && x.tvlUsd >= minTvl && (!stableOnly || x.stablecoin))
-      .sort((a, b) => b.apy - a.apy).slice(0, 10)
-      .map(x => ({ pool: `${x.project}:${x.symbol}`, apy: +x.apy.toFixed(1) + '%', tvl: Math.round(x.tvlUsd), chain: x.chain }));
-    return { ok: true, level: alerts.length ? 'signal' : 'ok', signal: `${data.length} pools, ${alerts.length} hot`, alerts };
+    const maxApy = p.maxApy ?? 500; // SANITY: APY above this is almost always transient reward-token inflation, not real yield
+    const alerts = data.filter(x => x.apy >= minApy && x.apy <= maxApy && x.tvlUsd >= minTvl && (!stableOnly || x.stablecoin))
+      .map(x => {
+        const base = x.apyBase ?? null, reward = x.apyReward ?? null;
+        const rewardShare = (base != null && reward != null && x.apy > 0) ? +(reward / x.apy).toFixed(2) : null;
+        // risk: real yield (mostly base, no IL) = low; incentive-driven or IL = higher
+        const risk = x.ilRisk === 'yes' ? 'high (IL)' : (rewardShare != null && rewardShare > 0.7) ? 'high (incentive)' : (rewardShare != null && rewardShare > 0.4) ? 'med' : 'low (base yield)';
+        return { pool: `${x.project}:${x.symbol}`, apy: +x.apy.toFixed(1) + '%', base: base != null ? +base.toFixed(1) + '%' : '?', risk, tvl: Math.round(x.tvlUsd), chain: x.chain, _base: base ?? x.apy };
+      })
+      // rank by REAL (base) yield first — surfaces durable yield over incentive mirages
+      .sort((a, b) => (b._base) - (a._base)).slice(0, 10).map(({ _base, ...x }) => x);
+    return { ok: true, level: alerts.length ? 'signal' : 'ok', signal: `${data.length} pools, ${alerts.length} hot (≤${maxApy}% sane band)`, alerts };
   },
   // Gas / congestion watch — high gas = MEV/congestion window (or just "wait to transact")
   'gas-watch': async (p) => {
