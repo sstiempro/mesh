@@ -30,8 +30,13 @@ async function tick(){
   if(!pool){ log('REFUSE: pool not in allowlist', a.pool); await record({mode:'refused',reason:'pool not allowlisted',plan:a}); return; }
   const onBehalf = pol.allowlist?.withdraw_to;
   if(!onBehalf || !ethers.isAddress(onBehalf)){ log('REFUSE: bad withdraw_to'); return; }
-  const amt = Math.min(+a.amount_usdc||0, pol.caps?.max_per_action_usd||0, pol.caps?.max_total_deployed_usd||0);
-  if(amt<=0){ log('REFUSE: amount<=0'); return; }
+  // FIX (audit finding): enforce max_total CUMULATIVELY, not per-action — sum prior executed deploys
+  let deployedSoFar=0;
+  try{ const lines=(await readFile(path.join(LAB,'data','agent-trader.jsonl'),'utf8')).trim().split('\n');
+    for(const ln of lines){ try{ const r=JSON.parse(ln); if(r.mode==='executed') deployedSoFar+=(+r.amount||0); }catch{} } }catch{}
+  const remaining = Math.max(0, (pol.caps?.max_total_deployed_usd||0) - deployedSoFar);
+  const amt = Math.min(+a.amount_usdc||0, pol.caps?.max_per_action_usd||0, remaining);
+  if(amt<=0){ log('REFUSE: amount<=0 (cumulative cap reached: $'+deployedSoFar.toFixed(2)+' deployed)'); await record({mode:'refused',reason:'cumulative-cap',deployed:deployedSoFar}); return; }
   if(!a.gas_ok){ log('REFUSE: native gas reserve too low on', a.chain); await record({mode:'refused',reason:'gas',plan:a}); return; }
 
   // ── EXECUTE (only reaches here when armed + funded + every guard passed) ──

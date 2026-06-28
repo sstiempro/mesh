@@ -1,0 +1,19 @@
+{
+  "_doc": "Bug-hunt findings log. Real audit findings, severity-rated. Our own code first (warm-up + protects the wallet); external in-scope targets next (need the operator's platform account to submit). Honest: most passes find nothing — logged findings are the exceptions.",
+  "findings": [
+    {
+      "id": "F1",
+      "date": "2026-06-28",
+      "target": "OUR agent-trader.mjs (internal audit / warm-up)",
+      "severity": "medium",
+      "class": "accounting / caps",
+      "title": "max_total_deployed_usd not enforced cumulatively",
+      "function": "tick() execute path",
+      "description": "The deploy amount was capped per-action via Math.min(amount, max_per_action, max_total). max_total was therefore applied to EACH action independently, not to the AGGREGATE — repeated executions could each deploy up to max_total, exceeding the intended total.",
+      "impact": "If the bounded-yield module were armed + funded, it could over-deploy beyond the operator's intended total cap (bounded to funded balance). Not live (module shelved/disarmed, $0 capital) — but a real flaw before arming.",
+      "fix": "Sum prior mode:'executed' amounts from data/agent-trader.jsonl = deployedSoFar; cap new amount to remaining = max_total - deployedSoFar; refuse at the cumulative cap.",
+      "status": "FIXED",
+      "bounty": "n/a (our code) — demonstrates the audit capability is real"
+    }
+  ]
+}

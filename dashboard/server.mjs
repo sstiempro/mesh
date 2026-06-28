@@ -7,6 +7,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { exec } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isPro, gate, tierInfo, proArtifact } from './premium.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LAB = path.resolve(__dirname, '..');
@@ -1042,6 +1043,20 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/airdrops') return J(200, await airdropRadar());
     if(u.pathname==='/api/system-plays') return J(200, await systemPlays());
     if(u.pathname==='/api/check') return J(200, await checkAddress(u.searchParams.get('address')));
+    if(u.pathname==='/api/bounties') return J(200, await (async()=>{
+      let t={targets:[]}, f={findings:[]};
+      try{ t=JSON.parse(await readFile(path.join(LAB,'config','bounty-targets.json'),'utf8')); }catch{}
+      try{ f=JSON.parse(await readFile(path.join(LAB,'config','bug-findings.json'),'utf8')); }catch{}
+      const aW={ low:0.4, 'low-med':0.55, med:0.8, high:1 };
+      const ranked=(t.targets||[]).map(x=>({ ...x, access_ok:/public|investigate/.test(x.access||x.status||''), score: Math.round((aW[(x.odds||'').split(' ')[0]]??0.5)*Math.log10(Math.max(100,x.prize_usd))*10) })).sort((a,b)=> (b.access_ok?1:0)-(a.access_ok?1:0) || b.score-a.score);
+      // OPEN-CORE demo: the methodology + targets are FREE (open); the proprietary pro vuln-pattern
+      // ruleset is GATED behind a license + lives in a private gitignored file (not in the public repo).
+      const tier = await tierInfo('bug-hunt', 'Pro: our proprietary vuln-pattern ruleset (beyond the open checklist) + the AI-deep-audit pipeline that ranks exploit likelihood. Open methodology stays free; the finding-edge is licensed.');
+      const proRules = await gate(null, async()=>{ const r=await proArtifact('audit'); return r?{ rules:r.rules?.length||0, families:r.families||[] }:{ rules:0 }; });
+      return { count:ranked.length, targets:ranked, findings:f.findings||[], findings_count:(f.findings||[]).length,
+        ...tier, pro_ruleset: proRules,
+        note:'Bug-bounty operation. Open core = methodology + targets + basic Slither sweep (free). Pro = proprietary ruleset + AI-deep-audit (licensed). The agent audits; the operator holds the platform account + submits. F1 was in OUR OWN code — capability is real.', honest:t.honest };
+    })());
     if(u.pathname==='/api/agent-arm') return J(200, await setArm(u.searchParams.get('on')==='1'));
     if(u.pathname==='/api/playbook') return J(200, await playbook());
     if(u.pathname==='/api/playbook-status'){

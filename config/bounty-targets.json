@@ -1,0 +1,28 @@
+{
+  "_doc": "Bug-bounty hunting operation — live targets + access reality. Researched June 2026. Honest: most attempts pay $0, contest code is usually gated behind a platform account (operator's), and crowded contests (high submission counts) = duplicate risk. Ranked by ACCESSIBILITY (public code we can actually audit) × prize × odds (newer/smaller = better odds, less audited). The agent does the audit work (read code, hunt vuln classes, write PoC + report); the operator holds the platform account + submits.",
+  "targets": [
+    { "id":"0xmarkets","name":"0xMarkets","platform":"HackenProof","type":"contest","prize_usd":30000,"lang":"Solidity",
+      "ends":"2026-07-08","access":"gated (HackenProof account)","crowd":"426 submissions — duplicate risk high","odds":"low (crowded)","status":"needs-account",
+      "url":"https://hackenproof.com/audit-programs/0xmarkets-audit-contest","note":"Fresh code + real payout but very crowded now. Needs operator's HackenProof account to see scope + submit." },
+    { "id":"dart-dualdefense","name":"DART SC DualDefense","platform":"HackenProof","type":"contest","prize_usd":3000,"lang":"Solidity",
+      "ends":"2026-06-30","access":"gated","crowd":"unknown","odds":"med (small prize=less crowd)","status":"needs-account",
+      "url":"https://hackenproof.com/audit-programs","note":"Small prize → fewer hunters → better odds, but ends in ~2 days. Tight." },
+    { "id":"circuit","name":"Circuit","platform":"Cantina","type":"bounty","prize_usd":20000,"lang":"Solidity",
+      "ends":null,"access":"check public scope","crowd":"ongoing","odds":"med","status":"investigate",
+      "url":"https://cantina.xyz/","note":"Ongoing bounty — deployed/verified contracts may be publicly auditable without an account." },
+    { "id":"lendvest","name":"Lendvest","platform":"HackenProof","type":"bounty","prize_usd":30000,"lang":"Solidity",
+      "ends":null,"access":"check public","crowd":"ongoing","odds":"med","status":"investigate",
+      "url":"https://hackenproof.com/","note":"Lending protocol — lending = rich vuln surface (oracle, liquidation, interest math)." },
+    { "id":"citrea","name":"Citrea Protocol","platform":"HackenProof","type":"bounty","prize_usd":250000,"lang":"Solidity/Rust",
+      "ends":null,"access":"public repo likely","crowd":"ongoing","odds":"low (big, audited)","status":"investigate",
+      "url":"https://hackenproof.com/","note":"Bitcoin L2, big bounty. Public repo likely but large + heavily reviewed = low odds, high payout." },
+    { "id":"near-intents","name":"NEAR Intents: Bridges","platform":"HackenProof","type":"bounty","prize_usd":300000,"lang":"Rust/Solidity",
+      "ends":null,"access":"public repo","crowd":"ongoing","odds":"low-med","status":"investigate",
+      "url":"https://hackenproof.com/","note":"Bridges = highest-value bug class (cross-chain). Public NEAR repos. Hard but huge." },
+    { "id":"uniswap","name":"Uniswap","platform":"Cantina/Immunefi","type":"bounty","prize_usd":15500000,"lang":"Solidity",
+      "ends":null,"access":"fully public","crowd":"audited to death","odds":"~0 (but huge)","status":"reference",
+      "url":"https://cantina.xyz/","note":"Public code, $15.5M, but reviewed by thousands. Audit it to LEARN, not to expect a payout." }
+  ],
+  "method_note": "Audit methodology lives in docs/BUG-HUNT-METHODOLOGY.md — the systematic vuln-class checklist the agent runs against any in-scope contract. Findings log: data/bug-findings.jsonl.",
+  "honest": "Realistic plan: (1) operator creates a HackenProof + Cantina account (free) so we can access gated contest scopes + submit. (2) We focus on NEWER/SMALLER, less-crowded targets + ongoing bounties with PUBLIC deployed code (better odds than 426-submission contests). (3) The agent audits real code systematically; expect many passes with nothing before a finding — that's the job. (4) Lending + bridge protocols have the richest bug surface."
+}
