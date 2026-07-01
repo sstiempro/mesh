@@ -92,8 +92,9 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Grant drafts · auto-written, ready to submit</div><div id="intel-grants" class="space-y-1.5"></div></div>
           <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Durable yields · proven by our history (not mirages)</div><div id="intel-durable" class="space-y-1.5"></div></div>
+          <div class="rounded-2xl border border-violet-500/25 bg-violet-500/[.04] p-5 lg:col-span-2"><div class="flex items-center justify-between mb-3"><div class="text-[11px] uppercase tracking-wider text-violet-300 font-semibold">Monitor-forge · autonomous capability engine (LLM writes + ships its own monitors)</div><span id="intel-forge-count" class="text-[11px] text-slate-500"></span></div><div id="intel-forge" class="space-y-1.5"></div></div>
         </div>
-        <div class="text-[11px] text-slate-600 mt-4">Regime + confluence + signals + grant-drafts + durability all fuse the same keyless monitor mesh, refreshed every 5-min cron tick.</div>
+        <div class="text-[11px] text-slate-600 mt-4">Regime + confluence + signals + grant-drafts + durability + forge all fuse the same keyless monitor mesh, refreshed every 5-min cron tick.</div>
       </section>
 
       <section data-page="money" hidden>
@@ -439,7 +440,7 @@ const titles={command:'Command',intel:'Intelligence',money:'Money & Tasks',overv
 function route(p){ PAGE=p; document.querySelectorAll('[data-page]').forEach(s=>s.hidden=s.dataset.page!==p); document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('on',n.dataset.nav===p)); document.getElementById('ptitle').textContent=titles[p]; if(p==='command') loadCommand(); if(p==='intel') loadIntel(); if(p==='money') loadMoney(); if(p==='overview') drawChart(); if(p==='fleet'&&LASTO) drawTopology(LASTO); if(p==='wallet') loadPayments(); if(p==='income') loadIncome(); if(p==='vitals') loadVitals(); if(p==='farm') loadFarm(); if(p==='edges') loadEdges(); if(p==='airdrops') loadAirdrops(); if(p==='yield') loadYield(); if(p==='pulse') loadPulse(); if(p==='build') loadBuild(); if(p==='plan') loadPlan(); if(p==='ledger') loadLedger(); }
 async function loadIntel(){
   const $=id=>document.getElementById(id); const gj=u=>fetch(u).then(r=>r.json()).catch(()=>null);
-  const [reg,ex,mon,gf,pe]=await Promise.all([gj('/api/regime'),gj('/api/execution'),gj('/api/monitors'),gj('/api/grantfit'),gj('/api/persistence')]);
+  const [reg,ex,mon,gf,pe,fg]=await Promise.all([gj('/api/regime'),gj('/api/execution'),gj('/api/monitors'),gj('/api/grantfit'),gj('/api/persistence'),gj('/api/forge')]);
   if(reg && $('intel-regime')){ const col=reg.state==='risk-on'?'text-emerald-400':reg.state==='risk-off'?'text-rose-400':'text-slate-300'; const c=reg.components||{};
     $('intel-regime').innerHTML=`<div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-1">Macro regime · fused live</div>
       <div class="flex items-end gap-3"><div class="text-3xl font-semibold ${col}">${(reg.state||'—').toUpperCase()}</div><div class="text-sm text-slate-400 mb-1">conf ${reg.confidence??'—'}</div></div>
@@ -452,6 +453,12 @@ async function loadIntel(){
     $('intel-signals').innerHTML=ms.length?ms.map(m=>`<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3"><div class="text-[12px] font-semibold text-slate-200 mb-1">${m.label||m.template}</div><div class="text-[11px] text-slate-500 mb-1.5">${(m.signal||'').slice(0,58)}</div>`+(m.alerts||[]).slice(0,2).map(a=>`<div class="text-[11px] text-slate-400 truncate">• ${String(a.msg||a.market||a.q||a.narrative||a.coin||a.symbol||a.token||a.stable||a.topic||a.title||JSON.stringify(a)).slice(0,52)}</div>`).join('')+`</div>`).join(''):'<span class="text-slate-500 text-sm">no active signals this tick</span>'; }
   if($('intel-grants')){ const drafts=(gf&&gf.drafts)||[]; $('intel-grants').innerHTML=drafts.length?drafts.map(d=>`<div class="flex items-center justify-between text-sm py-1 border-b border-slate-800/40"><span class="text-slate-300">${d.name} <span class="text-[10px] text-slate-500">fit ${d.fit}</span></span>${d.url?`<a href="${d.url}" target="_blank" class="text-[11px] text-sky-400 hover:underline">apply →</a>`:''}</div>`).join(''):'<span class="text-slate-500 text-sm">POST /api/grantfit/run to draft</span>'; }
   if(pe && $('intel-durable')){ const ds=(pe.durable||[]).slice(0,8); $('intel-durable').innerHTML=ds.length?ds.map(p=>`<div class="flex items-center justify-between text-sm py-1 border-b border-slate-800/40"><span class="text-slate-300">${p.project}:${p.symbol}</span><span class="text-[11px]"><span class="text-emerald-300">${p.apy}%</span> <span class="text-slate-500">held ${p.snaps_held}/${p.of}</span></span></div>`).join(''):'<span class="text-slate-500 text-sm">—</span>'; }
+  if(fg && $('intel-forge')){
+    if($('intel-forge-count')) $('intel-forge-count').textContent=(fg.shipped_count??0)+' shipped';
+    const last=fg.skipped?`next attempt in ${Math.max(0,12-(fg.age_h||0)).toFixed(1)}h (checked ${(fg.age_h||0).toFixed(1)}h ago)`:fg.outcome?`last attempt: ${fg.outcome}${fg.category?' — '+fg.category:''}`:'no forge run yet';
+    const rows=(fg.shipped||[]).slice(0,6).map(m=>`<div class="flex items-center justify-between text-sm py-1 border-b border-slate-800/40"><span class="text-slate-300">${m.label||m.id}</span><span class="text-[10px] text-violet-300 font-mono">${m.template}</span></div>`).join('');
+    $('intel-forge').innerHTML=`<div class="text-[11px] text-slate-500 mb-2">${last}</div>`+(rows||'<span class="text-slate-500 text-sm">nothing shipped yet — the LLM hasn\'t found a genuinely new category to write a monitor for</span>');
+  }
 }
 async function loadCommand(){
   const d=await fetch('/api/command').then(r=>r.json()).catch(()=>null); if(!d) return;
@@ -615,8 +622,8 @@ function fmtUp(s){ s=Math.round(s||0); const h=Math.floor(s/3600),m=Math.floor(s
 function openMachine(name){ DRAWER=name; const d=document.getElementById('drawer'); d.classList.remove('hidden'); requestAnimationFrame(()=>document.getElementById('drawerPanel').classList.remove('translate-x-full')); document.getElementById('drawerBody').innerHTML='<div class="text-slate-500 text-sm py-10 text-center">loading '+name+'…</div>'; renderMachine(); }
 function closeDrawer(){ DRAWER=null; document.getElementById('drawerPanel').classList.add('translate-x-full'); setTimeout(()=>document.getElementById('drawer').classList.add('hidden'),300); }
 addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
-async function mctl(name,action){ const m=document.getElementById('mctlmsg'); if(m)m.textContent=action+'…'; try{ const r=await fetch('/api/machine-control?name='+encodeURIComponent(name)+'&action='+action).then(r=>r.json()); if(m)m.textContent=r.ok?(r.note||action+'d ✓'):(r.error||'failed'); }catch(e){ if(m)m.textContent='failed'; } setTimeout(renderMachine,1200); }
-async function fctl(action){ const m=document.getElementById('fctlmsg'); if(m)m.textContent=action+' all…'; try{ const r=await fetch('/api/fleet-control?action='+action).then(r=>r.json()); toast('Fleet '+action+' — '+r.ok+'/'+r.total+' machines','ok'); if(m)m.textContent=r.ok+'/'+r.total+' done'; }catch(e){ toast('fleet '+action+' failed','err'); } setTimeout(()=>{loadOverview();refresh();},1500); }
+async function mctl(name,action){ const m=document.getElementById('mctlmsg'); if(m)m.textContent=action+'…'; try{ const r=await fetch('/api/machine-control?name='+encodeURIComponent(name)+'&action='+action,{method:'POST'}).then(r=>r.json()); if(m)m.textContent=r.ok?(r.note||action+'d ✓'):(r.error||'failed'); }catch(e){ if(m)m.textContent='failed'; } setTimeout(renderMachine,1200); }
+async function fctl(action){ const m=document.getElementById('fctlmsg'); if(m)m.textContent=action+' all…'; try{ const r=await fetch('/api/fleet-control?action='+action,{method:'POST'}).then(r=>r.json()); toast('Fleet '+action+' — '+r.ok+'/'+r.total+' machines','ok'); if(m)m.textContent=r.ok+'/'+r.total+' done'; }catch(e){ toast('fleet '+action+' failed','err'); } setTimeout(()=>{loadOverview();refresh();},1500); }
 async function openCoin(coin){ DRAWER='coin:'+coin; document.getElementById('drawer').classList.remove('hidden'); requestAnimationFrame(()=>document.getElementById('drawerPanel').classList.remove('translate-x-full')); const o=LASTO||await fetch('/api/overview').then(r=>r.json()).catch(()=>null); const b=document.getElementById('drawerBody'); if(!o){b.innerHTML='<div class="text-red-400">failed</div>';return;} const t=o.totals||{}, ms=(o.machines||[]).filter(m=>m.coin===coin);
   const head=`<div class="flex items-start justify-between mb-5"><div><div class="text-xl font-bold tracking-tight flex items-center gap-2"><span class="w-7 h-7 rounded-lg grid place-items-center text-white text-xs font-bold" style="background:${coinCol(coin)}">${coin[0]}</span>${coin}</div><div class="text-xs text-slate-500 mt-1">${coin==='XMR'?'Monero · RandomX':'Gridcoin · BOINC useful-work'}</div></div><button onclick="closeDrawer()" class="text-slate-500 hover:text-white text-xl px-1">✕</button></div>`;
   const tile=(k,v,s)=>`<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3"><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-lg font-semibold mt-0.5 font-mono">${v}</div><div class="text-[11px] text-slate-600">${s||''}</div></div>`;
@@ -929,7 +936,7 @@ async function loadPlan(){
 async function planSet(id){
   let cur='todo'; PLANDATA.phases.forEach(ph=>ph.steps.forEach(s=>{ if(s.id===id) cur=s.status; }));
   const nx=PLAN_NEXT[cur]||'doing';
-  await fetch('/api/playbook-status?id='+id+'&status='+nx).catch(()=>{});
+  await fetch('/api/playbook-status?id='+id+'&status='+nx,{method:'POST'}).catch(()=>{});
   loadPlan();
 }
 let KCDATA=null, KCFILTER='all';
@@ -1108,7 +1115,7 @@ async function loadBuild(){
 }
 function kcFilter(f){ KCFILTER=f; loadBuild(); }
 const KC_NEXT={open:'queued',queued:'in-progress','in-progress':'submitted',submitted:'earning',earning:'open'};
-async function kcSet(id){ const cur=(KCDATA.targets.find(t=>t.id===id)||{}).status||'open'; const nx=KC_NEXT[cur]||'queued'; await fetch('/api/knowledge-status?id='+id+'&status='+nx).catch(()=>{}); const t=KCDATA.targets.find(x=>x.id===id); if(t)t.status=nx; renderKcCards(); }
+async function kcSet(id){ const cur=(KCDATA.targets.find(t=>t.id===id)||{}).status||'open'; const nx=KC_NEXT[cur]||'queued'; await fetch('/api/knowledge-status?id='+id+'&status='+nx,{method:'POST'}).catch(()=>{}); const t=KCDATA.targets.find(x=>x.id===id); if(t)t.status=nx; renderKcCards(); }
 function renderKcCards(){
   if(!KCDATA) return;
   const stc={open:'bg-slate-700/40 text-slate-400',queued:'bg-amber-500/15 text-amber-300','in-progress':'bg-cyan-500/15 text-cyan-300',submitted:'bg-violet-500/15 text-violet-300',earning:'bg-emerald-500/15 text-emerald-300'};
@@ -1227,11 +1234,11 @@ async function loadFarm(){
   }
 }
 function farmFilter(c){ FARMFILTER=c; loadFarm(); }
-async function farmSet(id,status){ await fetch('/api/farm-status?id='+encodeURIComponent(id)+'&status='+status).catch(()=>{}); if(typeof toast==='function') toast(id+' → '+status,'ok'); setTimeout(loadFarm,300); }
+async function farmSet(id,status){ await fetch('/api/farm-status?id='+encodeURIComponent(id)+'&status='+status,{method:'POST'}).catch(()=>{}); if(typeof toast==='function') toast(id+' → '+status,'ok'); setTimeout(loadFarm,300); }
 async function tune(btn,preset){
   const name=btn.closest('[data-node]')?.dataset.node; if(!name) return;
   const strip=btn.parentElement; const old=btn.textContent; strip.querySelectorAll('.tunebtn').forEach(b=>b.disabled=true); btn.textContent='…';
-  const r=await fetch('/api/node-tune?name='+encodeURIComponent(name)+'&preset='+preset).then(r=>r.json()).catch(()=>({error:'request failed'}));
+  const r=await fetch('/api/node-tune?name='+encodeURIComponent(name)+'&preset='+preset,{method:'POST'}).then(r=>r.json()).catch(()=>({error:'request failed'}));
   if(typeof toast==='function') toast(r.error?(name+' tune failed: '+r.error.slice(0,40)):(name+' → '+preset+(r.threads?(' ('+r.threads+' thr '+r.mode+')'):'')), r.error?'err':'ok');
   btn.textContent=old; setTimeout(loadVitals,1600);
 }
@@ -1261,7 +1268,7 @@ async function loadVitals(){
 async function govToggle(){
   const g=await fetch('/api/governor').then(r=>r.json()).catch(()=>({}));
   const action=g.enabled?'off':'on';
-  await fetch('/api/governor-toggle?action='+action).catch(()=>{});
+  await fetch('/api/governor-toggle?action='+action,{method:'POST'}).catch(()=>{});
   if(typeof toast==='function') toast('Auto-protect turned '+action.toUpperCase(),'ok');
   setTimeout(loadVitals,800);
 }

@@ -70,6 +70,15 @@ ${ledger && !ledger.empty ? `Cumulative mined: $${(ledger.cumulative||0).toFixed
 }
 
 const INTERVAL = +(process.env.REPORT_INTERVAL_SEC || 86400);
-async function loop(){ for(;;){ try{ await generate(); }catch(e){ log('error', String(e)); } await new Promise(r=>setTimeout(r, INTERVAL*1000)); } }
+async function loop(){
+  // KeepAlive restarts used to call generate() immediately on every process start regardless of how
+  // recently the last real report ran — the confirmed cause of an observed same-day duplicate (and,
+  // via the same reset pushing the next cycle a fresh full INTERVAL out, an occasional skipped day).
+  // Anchor off the last real write instead: only generate now if actually overdue.
+  let last = 0; try { last = JSON.parse(await readFile(path.join(LAB,'reports','latest.json'),'utf8')).generated || 0; } catch {}
+  const due = last + INTERVAL*1000 - Date.now();
+  if (due > 0) { log(`resuming — next report due in ${Math.round(due/1000)}s`); await new Promise(r=>setTimeout(r, due)); }
+  for(;;){ try{ await generate(); }catch(e){ log('error', String(e)); } await new Promise(r=>setTimeout(r, INTERVAL*1000)); }
+}
 if (process.argv.includes('--once')) { generate().then(()=>process.exit(0)); }
 else { log(`[report-generator] starting · every ${INTERVAL}s → reports/`); loop(); }

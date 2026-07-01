@@ -24,6 +24,28 @@ const PACKETS = path.join(LAB, 'data', 'work-packets');
 const jsonl = (f) => existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean) : [];
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
 
+// autoResolve — idea-gen.mjs cross-products a fixed 6-twist grid against every system-play/edge
+// forever, so the SAME twist-shape recurs on every new topic. Two of those twists always need
+// ~/Developer/omnione (a separate repo this lab must never touch — CLAUDE.md hard rail) and three
+// more are already generically satisfied by capability this repo already ships (the deliver lane +
+// /api/feed + premium.mjs pro-webhook gate; server.mjs's public read endpoints; digest()'s thread
+// chunks) — so drafting a fresh markdown packet for each new topic of these 5 shapes was pure churn
+// nobody would ever action. Resolve them at classification time instead of staging a dead packet.
+// Only 'confluence' (+ anything unrecognized) is left to draft for real — proven genuinely novel
+// per-topic work this session (airdrop-eligibility-confluence, system:sp31).
+function autoResolve(idea) {
+  const t = idea.toLowerCase();
+  if (t.includes('backtest') || t.includes('candle history') || t.includes('paper-sim') || t.includes('entry gate'))
+    return { action: 'spec-blocked', note: 'requires ~/Developer/omnione (simulation-engine / paper-sim) — a separate repo this lab must never touch (CLAUDE.md hard rail). Not buildable here.' };
+  if (t.includes('webhook feed') || t.includes('paid webhook'))
+    return { action: 'spec-built', note: 'fulfilled: every monitor already flows through execution.mjs\'s deliver lane → free /api/feed digest + pro realtime webhook gate (config/delivery.local.json, premium.mjs) — generic, not per-topic.' };
+  if (t.includes('api endpoint') || t.includes('read-only api'))
+    return { action: 'spec-built', note: 'fulfilled: /api/monitors + /api/feed already expose every monitor\'s output as a public read-only, localhost-rate-limited GET — generic, not per-topic.' };
+  if (t.includes('thread') || t.includes('auto-posted') || t.includes('audience'))
+    return { action: 'spec-built', note: 'fulfilled: execution.mjs\'s digest() already auto-composes daily ≤270-char thread chunks from the whole live feed every tick (data/digest-latest.md) — generic, not per-topic.' };
+  return null; // confluence + unrecognized twists: genuinely may need real per-topic work — draft a packet
+}
+
 // twist keyword → concrete runbook. Each returns { needs, goal, steps[], files[], who }.
 function planFor(idea) {
   const t = idea.toLowerCase();
@@ -91,10 +113,29 @@ export async function drainSpecs({ n = 3, scoreFloor = 0 } = {}) {
   const q = jsonl(QUEUE);
   const led = jsonl(LEDGER);
   const drafted = new Set(led.filter(e => e.action === 'spec-drafted').map(e => e.sig));
-  const specs = q.filter(o => o.kind === 'spec' && o.sig && !drafted.has(o.sig));
-  const undrafted = specs.filter(o => (o.score || 0) >= scoreFloor).sort((a, b) => (b.score || 0) - (a.score || 0));
+  const resolved = new Set(led.filter(e => e.action === 'spec-built' || e.action === 'spec-blocked').map(e => e.sig));
+  // unresolved = every spec not yet built/blocked, REGARDLESS of drafted status — a spec drafted into
+  // a packet before this function knew how to auto-resolve it is still a dead packet sitting in
+  // "pending" today, so the resolve pass below has to sweep already-drafted history too, not just
+  // specs that haven't been touched yet.
+  const unresolved = q.filter(o => o.kind === 'spec' && o.sig && !resolved.has(o.sig));
+
+  // Auto-resolve every already-blocked/already-covered idea in the backlog, not just this tick's
+  // batch — this is cheap (string match + ledger append, no packet file) and is what actually keeps
+  // the backlog from silently re-accumulating dead specs forever as idea-gen.mjs mints new ones.
+  const stillPending = [];
+  let autoResolved = 0;
+  for (const item of unresolved) {
+    const res = autoResolve(item.idea || '');
+    if (res) {
+      await appendFile(LEDGER, JSON.stringify({ ts: new Date().toISOString(), action: res.action, sig: item.sig, idea: item.idea, from: item.from, note: res.note, by: 'work-cruncher-autoresolve' }) + '\n');
+      autoResolved++;
+    } else if (!drafted.has(item.sig)) stillPending.push(item); // not auto-resolvable AND not yet drafted → real candidate
+  }
+
+  const undrafted = stillPending.filter(o => (o.score || 0) >= scoreFloor).sort((a, b) => (b.score || 0) - (a.score || 0));
   const batch = undrafted.slice(0, n);
-  if (!batch.length) return { drained: 0, remaining: specs.length, packets: [] };
+  if (!batch.length) return { drained: 0, auto_resolved: autoResolved, remaining: stillPending.length, packets: [] };
   if (!existsSync(PACKETS)) await mkdir(PACKETS, { recursive: true });
   const packets = [];
   for (const item of batch) {
@@ -104,7 +145,7 @@ export async function drainSpecs({ n = 3, scoreFloor = 0 } = {}) {
     await appendFile(LEDGER, JSON.stringify({ ts: new Date().toISOString(), action: 'spec-drafted', sig: item.sig, idea: item.idea, needs: plan.needs, who: plan.who, packet: path.relative(LAB, file) }) + '\n');
     packets.push({ sig: item.sig, idea: item.idea, needs: plan.needs, packet: path.relative(LAB, file) });
   }
-  return { drained: packets.length, remaining: specs.length - packets.length, packets };
+  return { drained: packets.length, auto_resolved: autoResolved, remaining: stillPending.length - packets.length, packets };
 }
 
 // rotateJsonl — bound an append-only file to the last keepRows lines; overflow moves to <file>.archive.jsonl.
@@ -124,13 +165,18 @@ export async function rotateJsonl(file, keepRows = 5000) {
 export function workPacketSummary() {
   const led = jsonl(LEDGER);
   const drafted = led.filter(e => e.action === 'spec-drafted');
+  const built = led.filter(e => e.action === 'spec-built' && e.by === 'work-cruncher-autoresolve');
+  const blocked = led.filter(e => e.action === 'spec-blocked');
   const q = jsonl(QUEUE);
   const draftedSigs = new Set(drafted.map(e => e.sig));
+  const resolvedSigs = new Set([...built, ...blocked].map(e => e.sig));
   const specsTotal = new Set(q.filter(o => o.kind === 'spec' && o.sig).map(o => o.sig)).size;
   const byNeed = {};
   for (const d of drafted) byNeed[d.needs || 'unknown'] = (byNeed[d.needs || 'unknown'] || 0) + 1;
-  return { specs_total: specsTotal, drafted: draftedSigs.size, remaining: Math.max(0, specsTotal - draftedSigs.size), by_need: byNeed,
-    recent: drafted.slice(-8).reverse().map(d => ({ idea: d.idea, needs: d.needs, who: d.who, packet: d.packet, ts: d.ts })) };
+  return { specs_total: specsTotal, drafted: draftedSigs.size, auto_built: built.length, auto_blocked: blocked.length,
+    remaining: Math.max(0, specsTotal - draftedSigs.size - resolvedSigs.size), by_need: byNeed,
+    recent: drafted.slice(-8).reverse().map(d => ({ idea: d.idea, needs: d.needs, who: d.who, packet: d.packet, ts: d.ts })),
+    note: 'Two of idea-gen.mjs\'s 6 fixed twists always require ~/Developer/omnione (out of scope here, auto-blocked); three more are already generically fulfilled by this repo\'s deliver/API/digest capability (auto-built, no per-topic packet needed) — only confluence + unrecognized twists still draft a real work packet.' };
 }
 
 // standalone: `node dashboard/work-cruncher.mjs` drains a batch now.

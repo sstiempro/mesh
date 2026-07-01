@@ -12,7 +12,7 @@ import { Keypair } from '@solana/web3.js';
 import { HDKey } from '@scure/bip32';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { ripemd160 } from '@noble/hashes/legacy.js';
-import { bech32 } from '@scure/base';
+import { bech32, base58check } from '@scure/base';
 import { ed25519 } from '@noble/curves/ed25519.js';
 import { blake2b } from '@noble/hashes/blake2.js';
 import { sha3_256 } from '@noble/hashes/sha3.js';
@@ -66,17 +66,19 @@ const nearSeedKey = derivePath("m/44'/397'/0'/0'/0'", seed.toString('hex')).key;
 const nearPub = ed25519.getPublicKey(nearSeedKey);
 const near = bytesToHex(nearPub);
 
-// NOT derived here (out of THIS task's scope — Sui/Aptos/Near only — but honest status on the
-// other two names from the original follow-up note, so the note isn't silently wrong):
-//   - TON: v3/v4 wallet address = hash of a BOC-serialized state-init cell (custom TVM cell
-//     hashing, not a plain digest over pubkey bytes) — needs @ton/ton or @ton/crypto, not
-//     installed. Genuinely not derivable with what's in package.json today.
-//   - Tron: address = base58check(0x41 || keccak256(secp256k1 uncompressed pubkey)[-20:]) —
-//     reuses the SAME secp256k1 key as EVM (m/44'/195'/0'/0/0) and `ethers` already exposes
-//     keccak256 + SigningKey, so this one IS derivable with installed libs. Left undone only
-//     because it wasn't in scope for this pass (needs base58check, which nothing here imports
-//     yet — @scure/base has base58 but not the check-variant helper wired up) — flagging as a
-//     real, cheap follow-up rather than a blocked one.
+// Tron (m/44'/195'/0'/0/0 — SLIP-44 195, own secp256k1 derivation, NOT the same key as EVM's
+// m/44'/60'/... path). Tron's address is base58check(0x41 || last-20-bytes(keccak256(pubkey))) —
+// exactly the EVM address-derivation rule with a 0x41 prefix byte, so `ethers` deriving a wallet
+// at Tron's own path already computes the right 20 bytes; base58check (verified below against
+// the well-known Tron burn address T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb for 0x41+zeros) does the rest.
+const tronWallet = ethers.HDNodeWallet.fromPhrase(mnemonic, undefined, "m/44'/195'/0'/0/0");
+const tronBytes = new Uint8Array(21); tronBytes[0] = 0x41;
+tronBytes.set(Buffer.from(tronWallet.address.slice(2), 'hex'), 1);
+const tron = base58check(sha256).encode(tronBytes);
+
+// NOT derived here — TON: v3/v4 wallet address = hash of a BOC-serialized state-init cell (custom
+// TVM cell hashing, not a plain digest over pubkey bytes) — needs @ton/ton or @ton/crypto, not
+// installed. Genuinely not derivable with what's in package.json today.
 
 const meta = JSON.parse(await readFile(pubFile,'utf8'));
 meta.address = evm;                                        // primary (EVM) for back-compat
@@ -88,8 +90,9 @@ meta.addresses = {
   sui:     { address: sui,     covers: 'Sui + all Sui coin objects/tokens', path: "m/44'/784'/0'/0'/0'" },
   aptos:   { address: aptos,   covers: 'Aptos + all Aptos coin/fungible-asset types', path: "m/44'/637'/0'/0'/0'" },
   near:    { address: near,    covers: 'Near (implicit account) + all NEP-141 tokens', path: "m/44'/397'/0'/0'/0'" },
+  tron:    { address: tron,    covers: 'Tron + all TRC-20 tokens', path: "m/44'/195'/0'/0/0" },
 };
-meta.ecosystems_note = 'One seed → one address per ECOSYSTEM, each holding many tokens. TON/Tron still derivable from the same seed (real follow-up: TON needs @ton/crypto for cell-hash addressing, not installed; Tron reuses the EVM secp256k1 key + needs base58check, cheap follow-up). EVM≠Solana≠BTC≠Cosmos≠Sui≠Aptos≠Near — they cannot receive each other.';
+meta.ecosystems_note = 'One seed → one address per ECOSYSTEM, each holding many tokens. TON is the one remaining gap (needs @ton/crypto for cell-hash addressing, not installed). EVM≠Solana≠BTC≠Cosmos≠Sui≠Aptos≠Near≠Tron — they cannot receive each other.';
 await writeFile(pubFile, JSON.stringify(meta,null,2));
 
 console.log('✓ derived multi-chain addresses from your one seed (public only; keys never printed):');
@@ -100,5 +103,6 @@ console.log('  Cosmos  ', cosmos);
 console.log('  Sui     ', sui);
 console.log('  Aptos   ', aptos);
 console.log('  Near    ', near);
-console.log('  ↳ all recoverable from your mnemonic in Phantom/Keplr/hardware (Sui/Aptos/Near need a wallet');
-console.log('    that supports those SLIP-44 paths — e.g. Sui/Aptos CLI wallets, Near CLI). One backup = all.');
+console.log('  Tron    ', tron);
+console.log('  ↳ all recoverable from your mnemonic in Phantom/Keplr/hardware (Sui/Aptos/Near/Tron need a wallet');
+console.log('    that supports those SLIP-44 paths — e.g. Sui/Aptos CLI wallets, Near CLI, TronLink). One backup = all.');

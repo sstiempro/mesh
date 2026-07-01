@@ -28,7 +28,9 @@ if (builder?.last_tick?.ts) {
 }
 
 const ledger = jsonl('data/build-ledger.jsonl');
-const doneSig = new Set(ledger.filter(e => e.action === 'spec-built').map(e => e.sig));
+// spec-built = fulfilled (real capability covers it); spec-blocked = permanently out of scope here
+// (needs ~/Developer/omnione — a hard rail). Both are RESOLVED; neither belongs in "pending" anymore.
+const doneSig = new Set(ledger.filter(e => e.action === 'spec-built' || e.action === 'spec-blocked').map(e => e.sig));
 const queue = jsonl('data/build-queue.jsonl');
 const pendingSpecs = queue.filter(o => o.kind === 'spec' && !doneSig.has(o.sig)).sort((a, b) => (b.score || 0) - (a.score || 0));
 const monitors = await get('/api/monitors');
@@ -47,7 +49,8 @@ if (creds) console.log(`vault:    ${creds.count} saved keys wired (secrets exter
 const hunt = (() => { try { return JSON.parse(readFileSync(path.join(LAB, 'data', 'audit-watch.json'), 'utf8')); } catch { return null; } })();
 if (hunt) { const hAge = Math.round((Date.now() - new Date(hunt.ts).getTime()) / 60000); console.log(`hunt:     ${hunt.watched} repos watched · ${hunt.audited} audited · ${hunt.total_high} high leads · ${hunt.new_high_cards} new cards · ${hAge}min ago ← audit-watch (bug-bounty loop)`); }
 const spentSpecs = ledger.filter(e => e.action === 'spec-built').length;
-console.log(`specs:    ${pendingSpecs.length} pending · ${spentSpecs} already built\n`);
+const blockedSpecs = ledger.filter(e => e.action === 'spec-blocked').length;
+console.log(`specs:    ${pendingSpecs.length} pending · ${spentSpecs} already built · ${blockedSpecs} blocked (needs omnione — out of scope)\n`);
 console.log(`🎯 NEXT TO KNOCK DOWN (highest-scored pending specs):`);
 if (pendingSpecs.length) pendingSpecs.slice(0, 6).forEach((s, i) => console.log(`   ${i + 1}. [${s.score}] ${s.idea}   ⟵ ${s.from}`));
 else console.log('   queue thin — add a NEW monitor TEMPLATE to dashboard/monitors.mjs + a param row to tools/idea-gen.mjs (the loop will mass-produce variants).');
@@ -59,5 +62,5 @@ if (cards.length) {
 }
 
 console.log('\n--- machine ---');
-console.log(JSON.stringify({ healthy: !trips.length, trips, ageMin, monitors_active: builder?.monitors_active ?? null, monitors_live: monitors?.live ?? null, pending_specs: pendingSpecs.length, next: pendingSpecs[0] || null, action_cards: cards.length }));
+console.log(JSON.stringify({ healthy: !trips.length, trips, ageMin, monitors_active: builder?.monitors_active ?? null, monitors_live: monitors?.live ?? null, pending_specs: pendingSpecs.length, spec_blocked: blockedSpecs, next: pendingSpecs[0] || null, action_cards: cards.length }));
 process.exit(trips.length ? 1 : 0);
