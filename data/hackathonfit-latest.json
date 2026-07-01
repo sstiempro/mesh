@@ -1,0 +1,96 @@
+{
+  "ts": 1782907590091,
+  "hackathons_scanned": 10,
+  "scored": 10,
+  "llm": "sstiem-big-free",
+  "drafted": 4,
+  "queued": 3,
+  "top": [
+    {
+      "name": "Build with Gemini XPRIZE",
+      "fit": 80,
+      "reason": "Machine Learning/AI theme fits with autonomous LLM-written monitors",
+      "url": "https://xprize.devpost.com/"
+    },
+    {
+      "name": "Kaya AI IIT India Hackathon 2026",
+      "fit": "Machine Learning/AI and Enterprise themes partially fit with crypto-intelligence engine",
+      "reason": "",
+      "url": "https://kaya-ai-iit-hackathon-2026.devpost.com/"
+    },
+    {
+      "name": "Moonshot Hackathon",
+      "fit": 95,
+      "reason": "Machine Learning/AI and Open Ended themes strongly fit with autonomous crypto-intelligence engine",
+      "url": "https://moonshot-aethra.devpost.com/"
+    },
+    {
+      "name": "Global AI Hackathon Series with Qwen Cloud ",
+      "fit": 90,
+      "reason": "Machine Learning/AI and Productivity themes fit with autonomous monitor generation",
+      "url": "https://qwencloud-hackathon.devpost.com/"
+    },
+    {
+      "name": "Africa Deep Tech Challenge 2026",
+      "fit": 80,
+      "reason": "Machine Learning/AI and Productivity themes fit with autonomous crypto-intelligence engine",
+      "url": "https://adtc-2026.devpost.com/"
+    },
+    {
+      "name": "Open Atlas - AI for Social Good Hackathon 2026",
+      "fit": 30,
+      "reason": "Education and Fintech themes partially fit, but not strongly with crypto-security engine",
+      "url": "https://oa-ai-for-social-good.devpost.com/"
+    },
+    {
+      "name": "India High School Exoplanet Data Challenge",
+      "fit": 20,
+      "reason": "Beginner Friendly and Low/No Code themes do not fit with complex crypto-security engine",
+      "url": "https://celesta-exoplanet-challenge.devpost.com/"
+    },
+    {
+      "name": "IGAD Hackathon 2026: Smarter Early Warning, Stronger Communities",
+      "fit": 20,
+      "reason": "Databases, DevOps, and Mobile themes do not strongly fit with crypto-security engine",
+      "url": "https://igad-husika-hackathon.devpost.com/"
+    },
+    {
+      "name": "The Rice University Urban Sustainability Hackathon",
+      "fit": 10,
+      "reason": "Design, Social Good, and Databases themes do not strongly fit with crypto-security engine",
+      "url": "https://rice-urban-sustainability.devpost.com/"
+    },
+    {
+      "name": "Backblaze Generative Media Hackathon: Build with Genblaze on B2",
+      "fit": 10,
+      "reason": "Music/Art and Voice skills themes do not fit with crypto-security engine",
+      "url": "https://backblaze-generative-media.devpost.com/"
+    }
+  ],
+  "drafts": [
+    {
+      "name": "Build with Gemini XPRIZE",
+      "fit": 80,
+      "url": "https://xprize.devpost.com/",
+      "draft": "data/hackathon-entries/build-with-gemini-xprize.md"
+    },
+    {
+      "name": "Moonshot Hackathon",
+      "fit": 95,
+      "draft": null,
+      "note": "LLM draft unavailable"
+    },
+    {
+      "name": "Global AI Hackathon Series with Qwen Cloud ",
+      "fit": 90,
+      "url": "https://qwencloud-hackathon.devpost.com/",
+      "draft": "data/hackathon-entries/global-ai-hackathon-series-with-qwen-cloud.md"
+    },
+    {
+      "name": "Africa Deep Tech Challenge 2026",
+      "fit": 80,
+      "url": "https://adtc-2026.devpost.com/",
+      "draft": "data/hackathon-entries/africa-deep-tech-challenge-2026.md"
+    }
+  ]
+}

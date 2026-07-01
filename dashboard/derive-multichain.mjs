@@ -13,6 +13,10 @@ import { HDKey } from '@scure/bip32';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { ripemd160 } from '@noble/hashes/legacy.js';
 import { bech32 } from '@scure/base';
+import { ed25519 } from '@noble/curves/ed25519.js';
+import { blake2b } from '@noble/hashes/blake2.js';
+import { sha3_256 } from '@noble/hashes/sha3.js';
+import { bytesToHex } from '@noble/hashes/utils.js';
 
 const LAB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pubFile = path.join(LAB,'config','agent-wallet.json');
@@ -39,6 +43,41 @@ const cosmosNode = HDKey.fromMasterSeed(seed).derive("m/44'/118'/0'/0/0");
 const cosmosH160 = ripemd160(sha256(cosmosNode.publicKey));
 const cosmos = bech32.encode('cosmos', bech32.toWords(cosmosH160));
 
+// --- ed25519 chains that ed25519-hd-key/@solana/web3.js don't already cover ---
+// All three below are raw SLIP-0010 ed25519 derivation (same scheme Solana uses), just a
+// different coin-type path + a chain-specific address encoding over the raw pubkey.
+
+// Sui (m/44'/784'/0'/0'/0' — SLIP-44 784). Address = blake2b-256(flag(0x00=ed25519) || pubkey), hex w/ 0x.
+const suiSeedKey = derivePath("m/44'/784'/0'/0'/0'", seed.toString('hex')).key;
+const suiPub = ed25519.getPublicKey(suiSeedKey);
+const suiHash = blake2b(new Uint8Array([0x00, ...suiPub]), { dkLen: 32 });
+const sui = '0x' + bytesToHex(suiHash);
+
+// Aptos (m/44'/637'/0'/0'/0' — SLIP-44 637). Address = sha3-256(pubkey || scheme(0x00=ed25519)), hex w/ 0x.
+const aptosSeedKey = derivePath("m/44'/637'/0'/0'/0'", seed.toString('hex')).key;
+const aptosPub = ed25519.getPublicKey(aptosSeedKey);
+const aptosHash = sha3_256(new Uint8Array([...aptosPub, 0x00]));
+const aptos = '0x' + bytesToHex(aptosHash);
+
+// Near "implicit account" (m/44'/397'/0'/0'/0' — SLIP-44 397, NEAR's own HD standard, not the
+// Solana path — verified against near-api-js/near-hd-key convention). Address = raw ed25519
+// pubkey as lowercase hex, NO prefix — the account IS the key, funded on first receive.
+const nearSeedKey = derivePath("m/44'/397'/0'/0'/0'", seed.toString('hex')).key;
+const nearPub = ed25519.getPublicKey(nearSeedKey);
+const near = bytesToHex(nearPub);
+
+// NOT derived here (out of THIS task's scope — Sui/Aptos/Near only — but honest status on the
+// other two names from the original follow-up note, so the note isn't silently wrong):
+//   - TON: v3/v4 wallet address = hash of a BOC-serialized state-init cell (custom TVM cell
+//     hashing, not a plain digest over pubkey bytes) — needs @ton/ton or @ton/crypto, not
+//     installed. Genuinely not derivable with what's in package.json today.
+//   - Tron: address = base58check(0x41 || keccak256(secp256k1 uncompressed pubkey)[-20:]) —
+//     reuses the SAME secp256k1 key as EVM (m/44'/195'/0'/0/0) and `ethers` already exposes
+//     keccak256 + SigningKey, so this one IS derivable with installed libs. Left undone only
+//     because it wasn't in scope for this pass (needs base58check, which nothing here imports
+//     yet — @scure/base has base58 but not the check-variant helper wired up) — flagging as a
+//     real, cheap follow-up rather than a blocked one.
+
 const meta = JSON.parse(await readFile(pubFile,'utf8'));
 meta.address = evm;                                        // primary (EVM) for back-compat
 meta.addresses = {
@@ -46,8 +85,11 @@ meta.addresses = {
   solana:  { address: solana,  covers: 'Solana + all SPL tokens (huge for DePIN + airdrops)', path: "m/44'/501'/0'/0'" },
   bitcoin: { address: bitcoin, covers: 'Bitcoin (native segwit)', path: "m/84'/0'/0'/0/0" },
   cosmos:  { address: cosmos,  covers: 'Cosmos Hub + IBC chains (re-prefix the same key for Osmosis/Celestia/…)', path: "m/44'/118'/0'/0/0" },
+  sui:     { address: sui,     covers: 'Sui + all Sui coin objects/tokens', path: "m/44'/784'/0'/0'/0'" },
+  aptos:   { address: aptos,   covers: 'Aptos + all Aptos coin/fungible-asset types', path: "m/44'/637'/0'/0'/0'" },
+  near:    { address: near,    covers: 'Near (implicit account) + all NEP-141 tokens', path: "m/44'/397'/0'/0'/0'" },
 };
-meta.ecosystems_note = 'One seed → one address per ECOSYSTEM, each holding many tokens. TON/Sui/Aptos/Tron/Near derivable from the same seed (follow-up). EVM≠Solana≠BTC≠Cosmos — they cannot receive each other.';
+meta.ecosystems_note = 'One seed → one address per ECOSYSTEM, each holding many tokens. TON/Tron still derivable from the same seed (real follow-up: TON needs @ton/crypto for cell-hash addressing, not installed; Tron reuses the EVM secp256k1 key + needs base58check, cheap follow-up). EVM≠Solana≠BTC≠Cosmos≠Sui≠Aptos≠Near — they cannot receive each other.';
 await writeFile(pubFile, JSON.stringify(meta,null,2));
 
 console.log('✓ derived multi-chain addresses from your one seed (public only; keys never printed):');
@@ -55,4 +97,8 @@ console.log('  EVM     ', evm);
 console.log('  Solana  ', solana);
 console.log('  Bitcoin ', bitcoin);
 console.log('  Cosmos  ', cosmos);
-console.log('  ↳ all recoverable from your mnemonic in Phantom/Keplr/hardware. One backup = all of them.');
+console.log('  Sui     ', sui);
+console.log('  Aptos   ', aptos);
+console.log('  Near    ', near);
+console.log('  ↳ all recoverable from your mnemonic in Phantom/Keplr/hardware (Sui/Aptos/Near need a wallet');
+console.log('    that supports those SLIP-44 paths — e.g. Sui/Aptos CLI wallets, Near CLI). One backup = all.');

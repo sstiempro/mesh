@@ -20,6 +20,9 @@
       <span class="font-semibold tracking-tight">xyzmining</span>
     </div>
     <nav class="p-3 flex-1 space-y-1" id="nav">
+      <button data-nav="command" onclick="route('command')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 3H4a1 1 0 00-1 1v5a1 1 0 001 1h5a1 1 0 001-1V4a1 1 0 00-1-1z"/><path d="M20 3h-5a1 1 0 00-1 1v5a1 1 0 001 1h5a1 1 0 001-1V4a1 1 0 00-1-1z"/><path d="M9 14H4a1 1 0 00-1 1v5a1 1 0 001 1h5a1 1 0 001-1v-5a1 1 0 00-1-1z"/><circle cx="17.5" cy="17.5" r="3.5"/></svg>Command</button>
+      <button data-nav="intel" onclick="route('intel')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Intelligence</button>
+      <button data-nav="money" onclick="route('money')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5a2.5 2 0 00-2.5-1.5c-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.9 2.5 2-1 2-2.5 2a2.5 2 0 01-2.5-1.5M12 6v1.5M12 16.5V18"/></svg>Money</button>
       <button data-nav="overview" onclick="route('overview')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Overview</button>
       <button data-nav="plan" onclick="route('plan')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Plan</button>
       <button data-nav="income" onclick="route('income')" class="nav w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 transition"><svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 3 5-5"/></svg>Income</button>
@@ -54,7 +57,56 @@
     </header>
 
     <div class="p-7 max-w-6xl">
-      <section data-page="overview">
+      <section data-page="command" hidden>
+        <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-indigo-500/[.07] to-emerald-500/[.04] p-5 mb-4">
+          <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-1">The engine · right now</div>
+          <div class="text-sm text-slate-300 leading-relaxed" id="cmd-summary">loading…</div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5" id="cmd-money"></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-2.5">Work the engine is producing · staged → crunched → shipped</div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Staged · waiting to crunch</div><div id="cmd-staged"></div></div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Crunched · deliverables on disk</div><div id="cmd-crunched"></div></div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Shipped · income (your click)</div><div id="cmd-shipped"></div></div>
+        </div>
+        <div class="rounded-2xl border border-amber-500/25 bg-amber-500/[.04] p-5 mb-5">
+          <div class="flex items-center justify-between mb-3"><div class="text-[11px] uppercase tracking-wider text-amber-300 font-semibold">Approvals · your click ships it</div><span id="cmd-approve-count" class="text-[11px] text-slate-500"></span></div>
+          <div id="cmd-approvals" class="space-y-1.5"></div>
+          <div class="text-[10px] text-slate-600 mt-2">Everything else runs automatically. Only these outward/money/identity moves wait for you — one click each. No trade/transfer/claim auto-executes.</div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="flex items-center justify-between mb-3"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Cron health · the heartbeat</div><span id="cmd-cron-tally" class="text-[11px] text-slate-500"></span></div><div id="cmd-crons" class="space-y-1.5"></div></div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Flags · showing green but aren't</div><div id="cmd-flags" class="space-y-2"></div></div>
+        </div>
+        <div class="text-[11px] text-slate-600 mt-4" id="cmd-note"></div>
+      </section>
+
+      <section data-page="intel" hidden>
+        <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.08] to-emerald-500/[.04] p-5 mb-4" id="intel-regime">loading regime…</div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+          <div class="rounded-2xl border border-rose-500/25 bg-rose-500/[.04] p-5"><div class="text-[11px] uppercase tracking-wider text-rose-300 font-semibold mb-3">High-conviction confluence · multi-signal on one asset</div><div id="intel-confluence" class="space-y-1.5"></div></div>
+          <div class="rounded-2xl border border-amber-500/25 bg-amber-500/[.04] p-5"><div class="flex items-center justify-between mb-3"><div class="text-[11px] uppercase tracking-wider text-amber-300 font-semibold">Approvals · your click ships it</div><span id="intel-approve-count" class="text-[11px] text-slate-500"></span></div><div id="intel-approvals" class="space-y-1.5"></div></div>
+        </div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-2.5">Live fused signals · keyless monitor mesh</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-5" id="intel-signals"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Grant drafts · auto-written, ready to submit</div><div id="intel-grants" class="space-y-1.5"></div></div>
+          <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-3">Durable yields · proven by our history (not mirages)</div><div id="intel-durable" class="space-y-1.5"></div></div>
+        </div>
+        <div class="text-[11px] text-slate-600 mt-4">Regime + confluence + signals + grant-drafts + durability all fuse the same keyless monitor mesh, refreshed every 5-min cron tick.</div>
+      </section>
+
+      <section data-page="money" hidden>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="money-kpis"></div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 mb-4"><div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-2">By category · projected/mo (EV if executed)</div><div id="money-cats" class="flex flex-wrap gap-2"></div></div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-2.5">Every avenue · ranked by projected EV · what it is · profit path · next step</div>
+        <div class="rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden">
+          <table class="w-full text-sm"><thead><tr class="text-[10px] uppercase tracking-wider text-slate-500"><th class="text-left font-semibold px-3 py-2.5 border-b border-slate-800">Avenue</th><th class="text-left font-semibold px-3 py-2.5 border-b border-slate-800">Cat</th><th class="text-right font-semibold px-3 py-2.5 border-b border-slate-800">Proj/mo</th><th class="text-right font-semibold px-3 py-2.5 border-b border-slate-800">Upside</th><th class="text-left font-semibold px-3 py-2.5 border-b border-slate-800">Next step</th></tr></thead><tbody id="money-rows"></tbody></table>
+        </div>
+        <div class="text-[11px] text-amber-200/80 mt-3 bg-amber-500/[.06] rounded-lg px-3 py-2" id="money-honest"></div>
+      </section>
+
+      <section data-page="overview" hidden>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.07] to-indigo-500/[.04] p-6">
             <div class="flex items-center justify-between">
@@ -68,7 +120,7 @@
           <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 grid grid-cols-2 gap-y-4 gap-x-3 content-start" id="ovstats"></div>
         </div>
         <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4 mt-4 grid grid-cols-2 md:grid-cols-4 gap-4" id="earnstrip"></div>
-        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Path to $100 · scale the fleet to cut the time</div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Mining path to $100 · fleet rate</div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="scaleplan"></div>
         <div class="flex items-center gap-2 mt-3 text-xs"><span class="text-slate-500 shrink-0">Add a Mac node:</span><code class="font-mono bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-300 flex-1 truncate">curl -fsSL http://TAILNET_IP:8799/ausra-install.sh | bash</code><button onclick="copyNode()" class="ctl" style="padding:4px 10px">copy</button></div>
         <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">What the fleet is mining</div>
@@ -93,13 +145,13 @@
       <section data-page="plan" hidden>
         <div class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.08] to-sky-500/[.04] p-6 mb-4">
           <div class="flex items-baseline justify-between flex-wrap gap-2">
-            <div><div class="text-[11px] text-slate-400 uppercase tracking-wider">The playbook — money from thin air, in order</div>
+            <div><div class="text-[11px] text-slate-400 uppercase tracking-wider">Playbook · what to do, in order</div>
               <div class="text-2xl font-bold tracking-tight mt-1">What to do, sequenced by the test</div></div>
             <div class="text-right"><div id="plan-pct" class="text-3xl font-bold text-emerald-400">0%</div><div id="plan-frac" class="text-[11px] text-slate-500">0 / 0 done</div></div>
           </div>
           <div class="pbar mt-3"><div id="plan-bar" style="width:0%;background:linear-gradient(90deg,#34d399,#38bdf8)"></div></div>
           <div id="plan-next" class="text-xs text-slate-400 mt-3"></div>
-          <div class="text-[11px] text-slate-500 mt-2 border-t border-slate-800 pt-2.5">Ordered by the Monte-Carlo stack test: <span class="text-emerald-300">foundations first (they multiply everything)</span> → concentrate the dominant core → passive stack → create + compound. <span class="text-sky-300">AI does the drafting/building/auditing; you hold the keys + sign.</span></div>
+          <div class="text-[11px] text-slate-500 mt-2 border-t border-slate-800 pt-2.5">You hold the keys and sign; the drafting, building and auditing runs automatically.</div>
         </div>
         <div id="plan-phases" class="space-y-4"></div>
       </section>
@@ -115,14 +167,14 @@
           <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 grid grid-cols-2 gap-y-4 gap-x-3 content-start" id="inc-kpi"></div>
         </div>
         <div id="free-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-amber-500/[.07] to-emerald-500/[.03] p-5 mt-6"></div>
-        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">Every stream · the machine</div>
+        <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mt-7 mb-2.5">All income streams</div>
         <div id="inc-streams" class="space-y-5"></div>
       </section>
 
       <section data-page="farm" hidden>
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
           <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-purple-500/[.08] to-emerald-500/[.04] p-6">
-            <div class="text-[11px] text-slate-400 uppercase tracking-wider">Wealth from thin air — potential</div>
+            <div class="text-[11px] text-slate-400 uppercase tracking-wider">Airdrop farming · projected (unrealized)</div>
             <div class="text-3xl font-bold tracking-tight mt-1"><span id="farm-pot">—</span> <span class="text-sm text-slate-500 font-normal">/yr (speculative — many never pay)</span></div>
             <div id="farm-next" class="text-sm text-slate-300 mt-2"></div>
             <div id="farm-strategy" class="text-xs text-slate-500 mt-3 leading-relaxed border-t border-slate-800 pt-3"></div>
@@ -222,6 +274,7 @@
       </section>
       <section data-page="build" hidden>
         <div id="builder-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-emerald-500/[.10] to-sky-500/[.04] p-5 mb-4"></div>
+        <div id="audit-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-red-500/[.08] to-amber-500/[.04] p-5 mb-4"></div>
         <div id="paper-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.10] to-emerald-500/[.04] p-5 mb-4"></div>
         <div id="execution-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-amber-500/[.08] to-rose-500/[.04] p-5 mb-4"></div>
         <div id="product-panel" class="rounded-2xl border border-slate-800 bg-gradient-to-br from-violet-500/[.08] to-emerald-500/[.04] p-5 mb-4"></div>
@@ -230,7 +283,7 @@
           <div class="lg:col-span-2 rounded-2xl border border-slate-800 bg-gradient-to-br from-sky-500/[.08] to-violet-500/[.04] p-6">
             <div class="text-[11px] text-slate-400 uppercase tracking-wider">Knowledge → money · zero starting capital</div>
             <div class="text-2xl font-bold tracking-tight mt-1"><span id="kc-count">—</span> researched targets <span class="text-sm text-slate-500 font-normal">· you build → it pays</span></div>
-            <div class="text-[11px] text-slate-500 mt-2">The truest thin-air money for someone who builds a lot: get paid for work already done (grants), for the GitHub signal you already produce (passive builder-pay), and for skill (audits, hackathons, bounties). <span class="text-sky-300">The AI does the heavy lifting — drafts, audits, solves.</span></div>
+            <div class="text-[11px] text-slate-500 mt-2">Get paid for work you've already done: grants, builder rewards, audits, hackathons, bounties.</div>
             <div id="kc-passive" class="mt-3"></div>
           </div>
           <div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
@@ -262,7 +315,7 @@
             <label class="block text-xs text-slate-500 mt-4 mb-1.5">Binance XMR deposit address</label>
             <input id="to" class="font-mono w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-500 outline-none" placeholder="4...">
             <label class="block text-xs text-slate-500 mt-4 mb-1.5">Amount · <span id="avail">avail 0</span></label>
-            <div class="flex gap-2"><input id="amt" inputmode="decimal" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-500 outline-none" placeholder="0.00"><button onclick="send()" class="px-5 rounded-lg font-semibold text-slate-950 bg-gradient-to-br from-emerald-400 to-emerald-500 hover:opacity-90">Send</button></div>
+            <div class="flex gap-2"><input id="amt" inputmode="decimal" class="flex-1 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 text-sm focus:border-emerald-500 outline-none" placeholder="0.00"><button id="sendbtn" onclick="send()" class="px-5 rounded-lg font-semibold text-slate-950 bg-gradient-to-br from-emerald-400 to-emerald-500 hover:opacity-90">Send</button></div>
             <div class="text-xs mt-2 min-h-[16px] text-slate-400" id="sendmsg"></div>
             <div class="text-[11px] text-slate-500 mt-2">Signed locally on this Mac — keys never leave it.</div>
           </div>
@@ -382,14 +435,107 @@
 let WALLET={}, hist=[], PAGE='overview', LASTO=null;
 const XMR=n=>Number(n||0)/1e12, f6=n=>XMR(n).toFixed(6), nf=n=>Number(n||0).toLocaleString();
 const ago=ts=>ts?Math.max(0,Math.round((Date.now()/1000-ts)/60))+'m ago':'—';
-const titles={overview:'Overview',plan:'Plan',income:'Income',ledger:'Ledger',farm:'Farm',edges:'Edges',airdrops:'Airdrops',yield:'Yield',pulse:'Pulse',build:'Build',wallet:'Wallet',mining:'Mining',fleet:'Fleet',vitals:'Vitals',earn:'Earn',controls:'Controls',settings:'Settings'};
-function route(p){ PAGE=p; document.querySelectorAll('[data-page]').forEach(s=>s.hidden=s.dataset.page!==p); document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('on',n.dataset.nav===p)); document.getElementById('ptitle').textContent=titles[p]; if(p==='overview') drawChart(); if(p==='fleet'&&LASTO) drawTopology(LASTO); if(p==='wallet') loadPayments(); if(p==='income') loadIncome(); if(p==='vitals') loadVitals(); if(p==='farm') loadFarm(); if(p==='edges') loadEdges(); if(p==='airdrops') loadAirdrops(); if(p==='yield') loadYield(); if(p==='pulse') loadPulse(); if(p==='build') loadBuild(); if(p==='plan') loadPlan(); if(p==='ledger') loadLedger(); }
+const titles={command:'Command',intel:'Intelligence',money:'Money & Tasks',overview:'Overview',plan:'Plan',income:'Income',ledger:'Ledger',farm:'Farm',edges:'Edges',airdrops:'Airdrops',yield:'Yield',pulse:'Pulse',build:'Build',wallet:'Wallet',mining:'Mining',fleet:'Fleet',vitals:'Vitals',earn:'Earn',controls:'Controls',settings:'Settings'};
+function route(p){ PAGE=p; document.querySelectorAll('[data-page]').forEach(s=>s.hidden=s.dataset.page!==p); document.querySelectorAll('[data-nav]').forEach(n=>n.classList.toggle('on',n.dataset.nav===p)); document.getElementById('ptitle').textContent=titles[p]; if(p==='command') loadCommand(); if(p==='intel') loadIntel(); if(p==='money') loadMoney(); if(p==='overview') drawChart(); if(p==='fleet'&&LASTO) drawTopology(LASTO); if(p==='wallet') loadPayments(); if(p==='income') loadIncome(); if(p==='vitals') loadVitals(); if(p==='farm') loadFarm(); if(p==='edges') loadEdges(); if(p==='airdrops') loadAirdrops(); if(p==='yield') loadYield(); if(p==='pulse') loadPulse(); if(p==='build') loadBuild(); if(p==='plan') loadPlan(); if(p==='ledger') loadLedger(); }
+async function loadIntel(){
+  const $=id=>document.getElementById(id); const gj=u=>fetch(u).then(r=>r.json()).catch(()=>null);
+  const [reg,ex,mon,gf,pe]=await Promise.all([gj('/api/regime'),gj('/api/execution'),gj('/api/monitors'),gj('/api/grantfit'),gj('/api/persistence')]);
+  if(reg && $('intel-regime')){ const col=reg.state==='risk-on'?'text-emerald-400':reg.state==='risk-off'?'text-rose-400':'text-slate-300'; const c=reg.components||{};
+    $('intel-regime').innerHTML=`<div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-1">Macro regime · fused live</div>
+      <div class="flex items-end gap-3"><div class="text-3xl font-semibold ${col}">${(reg.state||'—').toUpperCase()}</div><div class="text-sm text-slate-400 mb-1">conf ${reg.confidence??'—'}</div></div>
+      ${reg.contrarian?`<div class="text-sm text-amber-300 mt-1">⚡ ${reg.contrarian}</div>`:''}
+      <div class="flex flex-wrap gap-2 mt-3 text-[11px]"><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">stablecoin flow ${c.stablecoin_flow?.net_day_pct??'?'}%</span><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">funding ${c.funding_bias?.longs_pay??0}L/${c.funding_bias?.shorts_pay??0}S</span><span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300">F&amp;G ${c.fear_greed?.value??'?'}</span></div>`; }
+  if(ex && $('intel-confluence')){ const hits=(ex.confluence_hits||[]); $('intel-confluence').innerHTML=hits.length?hits.map(h=>`<div class="text-sm"><span class="font-semibold text-rose-200">${h.asset}</span> <span class="text-slate-500 text-[11px]">${(h.by||[]).join(' + ')}</span></div>`).join(''):'<span class="text-slate-500 text-sm">no multi-signal confluence right now</span>'; }
+  if(ex && $('intel-approvals')){ const cards=(ex.pending_actions||[]); if($('intel-approve-count')) $('intel-approve-count').textContent=(ex.pending_count||cards.length)+' waiting';
+    $('intel-approvals').innerHTML=cards.length?cards.slice(0,8).map(c=>`<div class="flex items-start justify-between gap-2 py-1.5 border-b border-slate-800/40"><div class="min-w-0"><span class="text-[9px] uppercase px-1.5 py-0.5 rounded ${c.priority==='high'?'bg-rose-500/20 text-rose-300':'bg-slate-700 text-slate-300'} mr-1">${c.type}</span><span class="text-[13px] text-slate-200">${(c.action||c.msg||'').replace(/</g,'&lt;').slice(0,88)}</span></div><div class="shrink-0 flex gap-1"><button onclick="resolveAct('${c.sig}','done')" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-200">✓</button><button onclick="resolveAct('${c.sig}','dismissed')" class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400">skip</button></div></div>`).join(''):'<span class="text-slate-500 text-sm">clear ✓</span>'; }
+  if(mon && $('intel-signals')){ const ms=(mon.monitors||mon.fleet||[]).filter(m=>(m.alerts||[]).length).slice(0,12);
+    $('intel-signals').innerHTML=ms.length?ms.map(m=>`<div class="rounded-xl border border-slate-800 bg-slate-900/40 p-3"><div class="text-[12px] font-semibold text-slate-200 mb-1">${m.label||m.template}</div><div class="text-[11px] text-slate-500 mb-1.5">${(m.signal||'').slice(0,58)}</div>`+(m.alerts||[]).slice(0,2).map(a=>`<div class="text-[11px] text-slate-400 truncate">• ${String(a.msg||a.market||a.q||a.narrative||a.coin||a.symbol||a.token||a.stable||a.topic||a.title||JSON.stringify(a)).slice(0,52)}</div>`).join('')+`</div>`).join(''):'<span class="text-slate-500 text-sm">no active signals this tick</span>'; }
+  if($('intel-grants')){ const drafts=(gf&&gf.drafts)||[]; $('intel-grants').innerHTML=drafts.length?drafts.map(d=>`<div class="flex items-center justify-between text-sm py-1 border-b border-slate-800/40"><span class="text-slate-300">${d.name} <span class="text-[10px] text-slate-500">fit ${d.fit}</span></span>${d.url?`<a href="${d.url}" target="_blank" class="text-[11px] text-sky-400 hover:underline">apply →</a>`:''}</div>`).join(''):'<span class="text-slate-500 text-sm">POST /api/grantfit/run to draft</span>'; }
+  if(pe && $('intel-durable')){ const ds=(pe.durable||[]).slice(0,8); $('intel-durable').innerHTML=ds.length?ds.map(p=>`<div class="flex items-center justify-between text-sm py-1 border-b border-slate-800/40"><span class="text-slate-300">${p.project}:${p.symbol}</span><span class="text-[11px]"><span class="text-emerald-300">${p.apy}%</span> <span class="text-slate-500">held ${p.snaps_held}/${p.of}</span></span></div>`).join(''):'<span class="text-slate-500 text-sm">—</span>'; }
+}
+async function loadCommand(){
+  const d=await fetch('/api/command').then(r=>r.json()).catch(()=>null); if(!d) return;
+  const $=id=>document.getElementById(id);
+  if($('cmd-summary')) $('cmd-summary').textContent=d.summary||'';
+  const m=d.money||{};
+  const K=(k,v,s,c)=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"><div class="text-[11px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-2xl font-semibold tracking-tight mt-1 ${c||''}">${v}</div><div class="text-[11px] text-slate-500 mt-0.5">${s}</div></div>`;
+  if($('cmd-money')) $('cmd-money').innerHTML=[
+    K('Banked','$'+(m.banked_usd??0),'actually in a wallet',(m.banked_usd>0?'text-emerald-400':'text-slate-300')),
+    K('Accrued','$'+(m.accrued_usd??0),'mined/credited, unpaid','text-amber-300'),
+    K('Pending cards',d.pending_actions??0,'your click = money moves',(d.pending_actions>0?'text-sky-300':'')),
+    K('Crons alive',(d.crons_alive??0)+'/'+(d.crons_total??0),'the heartbeat',((d.crons_alive===d.crons_total)?'text-emerald-400':'text-amber-300')),
+  ].join('');
+  const w=d.work||{};
+  const route=w.packets_by_route||{};
+  if($('cmd-staged')) $('cmd-staged').innerHTML=`<div class="text-3xl font-semibold tracking-tight">${w.packets_remaining??0}<span class="text-base text-slate-500 font-normal"> to crunch</span></div>`+
+    `<div class="text-xs text-slate-500 mt-1">${w.packets_staged??0} packets staged total</div>`+
+    `<div class="flex flex-wrap gap-1.5 mt-3">`+Object.entries(route).map(([k,v])=>`<span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">${k} · ${v}</span>`).join('')+`</div>`+
+    `<div class="mt-3 space-y-1">`+(w.packets_recent||[]).slice(0,4).map(p=>`<div class="text-[11px] text-slate-400 truncate">→ ${p.idea}</div>`).join('')+`</div>`;
+  if($('cmd-crunched')) $('cmd-crunched').innerHTML=[
+    ['Audit reports',w.audit_reports],['Grant drafts',w.grant_drafts],['Daily briefs',w.daily_briefs],['Monitors live',w.monitors_live],['Audit leads (high)',`${w.audit_leads} (${w.audit_leads_high})`],['Alerts published today',w.alerts_published_today],
+  ].map(([k,v])=>`<div class="flex justify-between py-1 border-b border-slate-800/60 text-sm"><span class="text-slate-400">${k}</span><span class="font-semibold ${(+v>0)?'text-emerald-300':'text-slate-500'}">${v??'—'}</span></div>`).join('');
+  if($('cmd-shipped')) $('cmd-shipped').innerHTML=`<div class="text-3xl font-semibold tracking-tight ${(w.shipped>0)?'text-emerald-400':'text-amber-300'}">${w.shipped??0}<span class="text-base text-slate-500 font-normal"> shipped</span></div>`+
+    `<p class="text-xs text-slate-500 mt-2 leading-relaxed">${w.shipped_note||''}</p>`;
+  if($('cmd-crons')){ $('cmd-crons').innerHTML=(d.crons||[]).map(c=>`<div class="flex items-center gap-2 text-sm"><span class="w-2 h-2 rounded-full shrink-0" style="background:${c.alive?'#34d399':'#ef4444'}"></span><span class="text-slate-300 flex-1">${c.id}</span><span class="text-[11px] ${c.alive?'text-slate-500':'text-red-400'}">${c.last_min==null?'—':c.last_min+'m ago'}</span></div>`).join(''); }
+  if($('cmd-cron-tally')) $('cmd-cron-tally').textContent=(d.crons_alive??0)+'/'+(d.crons_total??0)+' alive';
+  if($('cmd-flags')){ const fl=d.flags||[]; const col={alert:'#ef4444',warn:'#fbbf24',info:'#64748b'}; $('cmd-flags').innerHTML=fl.length?fl.map(f=>`<div class="flex gap-2 text-sm"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full" style="background:${col[f.level]||'#64748b'}"></span><span class="text-slate-300">${f.what}</span></div>`).join(''):'<span class="text-slate-500 text-sm">nothing lying green — all clear ✓</span>'; }
+  if($('cmd-note')) $('cmd-note').textContent=d.note||'';
+  // Approvals — the outward/money/identity cards that wait for one click (everything else auto-runs)
+  const ex=await fetch('/api/execution').then(r=>r.json()).catch(()=>null);
+  if($('cmd-approvals') && ex){
+    const cards=(ex.pending_actions||[]);
+    if($('cmd-approve-count')) $('cmd-approve-count').textContent=(ex.pending_count||cards.length)+' waiting';
+    $('cmd-approvals').innerHTML = cards.length ? cards.map(c=>`<div class="flex items-start justify-between gap-3 py-2 border-b border-slate-800/40">
+        <div class="min-w-0"><span class="text-[9px] uppercase px-1.5 py-0.5 rounded ${c.priority==='high'?'bg-rose-500/20 text-rose-300':'bg-slate-700 text-slate-300'} mr-1.5">${c.type}</span><span class="text-sm text-slate-200">${(c.action||c.msg||'').replace(/</g,'&lt;')}</span><div class="text-[11px] text-slate-500 mt-0.5">${c.why||''}${c.needs?' · needs: '+c.needs:''}</div></div>
+        <div class="shrink-0 flex gap-1.5"><button onclick="resolveAct('${c.sig}','done')" class="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/30 font-semibold">✓ Approve &amp; ship</button><button onclick="resolveAct('${c.sig}','dismissed')" class="text-[11px] px-2 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-slate-200">skip</button></div></div>`).join('')
+      : '<div class="text-sm text-slate-500">nothing waiting — the engine is clear ✓</div>';
+  }
+}
+async function loadMoney(){
+  const d=await fetch('/api/money').then(r=>r.json()).catch(()=>null); if(!d) return;
+  const $=id=>document.getElementById(id);
+  const money=n=>'$'+Math.round(n).toLocaleString();
+  const K=(k,v,s,c)=>`<div class="rounded-2xl border border-slate-800 bg-slate-900/40 p-4"><div class="text-[11px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-2xl font-semibold tracking-tight mt-1 ${c||''}">${v}</div><div class="text-[11px] text-slate-500 mt-0.5">${s}</div></div>`;
+  if($('money-kpis')) $('money-kpis').innerHTML=[
+    K('Realized / mo','$'+(+d.realized_mo||0).toFixed(2),'actually earning now',((+d.realized_mo>0)?'text-emerald-400':'text-amber-300')),
+    K('Projected / mo',money(d.projected_mo||0),'EV if executed · speculative','text-sky-300'),
+    K('Avenues',d.avenues||0,'across all catalogues'),
+    K('Gap to close',money((d.projected_mo||0)-(+d.realized_mo||0)),'projected → realized = the work','text-violet-300'),
+  ].join('');
+  if($('money-cats')){ const cats=d.by_category||{}; $('money-cats').innerHTML=Object.entries(cats).map(([k,v])=>`<span class="text-[11px] px-2 py-1 rounded-lg bg-slate-800 border border-slate-700"><span class="text-slate-200">${k}</span> <span class="text-slate-500">·${v.count}·</span> <span class="text-sky-300">${money(v.projected_mo)}/mo</span></span>`).join(''); }
+  if($('money-rows')){ const rows=(d.all_tasks||d.top_tasks||[]); $('money-rows').innerHTML=rows.map(t=>`<tr class="border-b border-slate-800/40 hover:bg-slate-800/20">
+    <td class="px-3 py-2"><div class="text-slate-100">${(t.name||'').replace(/</g,'&lt;')}</div><div class="text-[10px] text-slate-500">${(t.what||'').replace(/</g,'&lt;')}</div></td>
+    <td class="px-3 py-2 text-[11px] text-slate-400">${t.cat||''}</td>
+    <td class="px-3 py-2 text-right ${(t.projected_mo>0)?'text-sky-300':'text-slate-600'}">${t.projected_mo?money(t.projected_mo):'—'}</td>
+    <td class="px-3 py-2 text-right text-[11px] text-slate-500">${t.upside?money(t.upside):'—'}</td>
+    <td class="px-3 py-2 text-[11px] text-slate-400">${(t.next||'').replace(/</g,'&lt;')}${t.url?` <a href="${t.url}" target="_blank" class="text-sky-400/70">↗</a>`:''}</td></tr>`).join(''); }
+  if($('money-honest')) $('money-honest').textContent=d.honest||'';
+}
 const ccolor=n=>({Monero:'#f60',Bitcoin:'#f7931a',Zephyr:'#7b61ff',Salvium:'#1d9e75',Verus:'#3165d4',Gridcoin:'#10b981',Wownero:'#df4',ArQmA:'#1abc9c',Yada:'#e84',Raptoreum:'#b22',Conceal:'#5b8',Tari:'#a06bf5',DERO:'#0bd','Quantum Resistant Ledger':'#ffb000',Equilibria:'#16a085',Xolentum:'#8e44ad',Talecoin:'#e67e22',Sugarchain:'#ec4899',Yenten:'#2ecc71',CPUchain:'#0ea5e9',Bellscoin:'#eab308',Magi:'#dc2626'}[n]||'#6366f1');
 function copyAddr(){ if(WALLET.address) navigator.clipboard.writeText(WALLET.address); }
-async function ctl(a){ document.getElementById('ctlmsg').textContent='switching…'; await fetch('/api/control?action='+a); setTimeout(refresh,1000); }
-async function miner(a){ const m=document.getElementById('ctlmsg'); m.textContent=a+'…'; await fetch('/api/miner?action='+a); setTimeout(refresh,1300); }
+async function ctl(a){ document.getElementById('ctlmsg').textContent='switching…'; await fetch('/api/control?action='+a,{method:'POST'}); setTimeout(refresh,1000); }
+async function miner(a){ const m=document.getElementById('ctlmsg'); m.textContent=a+'…'; await fetch('/api/miner?action='+a,{method:'POST'}); setTimeout(refresh,1300); }
 async function setcfg(o){ const m=document.getElementById('ctlmsg'); m.className='text-xs text-slate-400'; m.textContent='applying '+JSON.stringify(o)+'…'; try{ await fetch('/api/config',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(o)}); m.textContent='applied '+JSON.stringify(o); }catch(e){ m.textContent=String(e); } setTimeout(refresh,4000); }
-async function send(){ const to=document.getElementById('to').value.trim(),amount=document.getElementById('amt').value.trim(),m=document.getElementById('sendmsg'); m.className='text-xs mt-2 text-slate-400'; m.textContent='sending…'; if(!to||!amount){ m.className='text-xs mt-2 text-red-400'; m.textContent='enter address + amount'; return; } try{ const r=await fetch('/api/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({to,amount})}).then(r=>r.json()); if(r.ok){ m.className='text-xs mt-2 text-emerald-400'; m.textContent='sent · tx '+r.tx_hash.slice(0,18)+'… fee '+r.fee; } else { m.className='text-xs mt-2 text-red-400'; m.textContent=r.error||'failed'; } }catch(e){ m.className='text-xs mt-2 text-red-400'; m.textContent=String(e); } }
+let PENDING_SEND=null;
+async function send(){
+  const to=document.getElementById('to').value.trim(),amount=document.getElementById('amt').value.trim(),m=document.getElementById('sendmsg'),btn=document.getElementById('sendbtn');
+  if(!to||!amount){ m.className='text-xs mt-2 text-red-400'; m.textContent='enter address + amount'; return; }
+  try{
+    if(PENDING_SEND && PENDING_SEND.to===to && PENDING_SEND.amount===amount){
+      m.className='text-xs mt-2 text-slate-400'; m.textContent='sending…';
+      const r=await fetch('/api/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({to,amount,confirm:PENDING_SEND.token})}).then(r=>r.json());
+      PENDING_SEND=null; if(btn) btn.textContent='Send';
+      if(r.ok){ m.className='text-xs mt-2 text-emerald-400'; m.textContent='sent · tx '+r.tx_hash.slice(0,18)+'… fee '+r.fee; }
+      else { m.className='text-xs mt-2 text-red-400'; m.textContent=r.error||'failed'; }
+      return;
+    }
+    m.className='text-xs mt-2 text-slate-400'; m.textContent='checking…';
+    const r=await fetch('/api/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({to,amount})}).then(r=>r.json());
+    if(r.needs_confirm){ PENDING_SEND={to,amount,token:r.confirm_token}; if(btn) btn.textContent='Confirm?'; m.className='text-xs mt-2 text-amber-400'; m.textContent=`click Send again within 2min to confirm ${amount} → ${to.slice(0,10)}…`; }
+    else if(r.ok){ m.className='text-xs mt-2 text-emerald-400'; m.textContent='sent · tx '+r.tx_hash.slice(0,18)+'… fee '+r.fee; }
+    else { m.className='text-xs mt-2 text-red-400'; m.textContent=r.error||'failed'; }
+  }catch(e){ m.className='text-xs mt-2 text-red-400'; m.textContent=String(e); PENDING_SEND=null; if(btn) btn.textContent='Send'; }
+}
 async function loadCoins(){ const d=await fetch('/api/coins').then(r=>r.json()).catch(()=>({coins:[]})); document.getElementById('coins').innerHTML=(d.coins||[]).map(c=>{ const active=d.active===c.id, oneclick=c.engine==='xmrig', needIn=!c.address||!oneclick, eng={xmrig:'1-click',['xmrig-merge']:'merge proxy',['cpuminer-opt']:'cpuminer',verus:'verus miner',node:'own miner',boinc:'BOINC'}[c.engine]||c.engine||''; return `<div class="rounded-2xl border ${active?'border-emerald-500/50 bg-emerald-500/[.06]':'border-slate-800 bg-slate-900/40'} p-4"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-xl grid place-items-center font-bold text-white text-sm" style="background:${ccolor(c.name)}">${c.name[0]}</div><div class="flex-1 min-w-0"><div class="font-semibold truncate">${c.name} <span class="text-slate-500 font-normal text-xs">${c.ticker||''}</span></div><div class="text-xs text-slate-500 truncate">${c.chain}</div></div><span class="text-[11px] px-2 py-1 rounded-md font-semibold ${c.ready?'bg-emerald-500/15 text-emerald-400':'bg-amber-500/15 text-amber-400'}">${c.ready?'ready':'setup'}</span></div><div class="text-xs text-slate-500 my-3 flex flex-wrap items-center gap-1.5"><span>pays ${c.payout}</span><span class="px-1.5 py-0.5 rounded bg-slate-800 text-[10px] ${oneclick?'text-slate-400':'text-amber-400/90'}">${eng}</span>${active?'<span class="text-emerald-400">· mining now</span>':''}</div>${needIn?`<input class="font-mono w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-2 text-xs mb-2.5 focus:border-emerald-500 outline-none" id="ca-${c.id}" placeholder="${c.payout} address" value="${c.address||''}">`:''}<button onclick="switchCoin('${c.id}')" class="w-full text-sm rounded-lg py-2 ${active?'bg-gradient-to-br from-emerald-400 to-emerald-500 text-slate-950 font-semibold':'bg-slate-800 hover:bg-slate-700 border border-slate-700'}">${active?'Mining':'Mine this'}</button></div>`; }).join(''); }
 async function switchCoin(id){ const inp=document.getElementById('ca-'+id), address=inp?inp.value.trim():undefined, m=document.getElementById('ctlmsg'); if(m){m.textContent='switching…';} const r=await fetch('/api/coin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id,address})}).then(r=>r.json()); if(m) m.textContent=r.ok?(r.coin?('now mining '+r.coin):(r.note||'saved')):(r.error||'failed'); setTimeout(()=>{loadCoins();refresh();},3500); }
 async function loadBoinc(){ const b=await fetch('/api/boinc').then(r=>r.json()).catch(()=>({})); const el=document.getElementById('boinc'); if(!el) return; const boxes=b.boxes||[]; const dot=x=>x.project?'#34d399':(x.am?'#fbbf24':'#ef4444'); el.innerHTML=(boxes.length?boxes.map(x=>`<div class="flex items-center gap-2 py-0.5"><span class="w-2 h-2 rounded-full shrink-0" style="background:${dot(x)}"></span><span class="text-slate-100 font-semibold w-16 shrink-0">${x.name}</span><span class="text-slate-400">${x.status}</span>${x.project?`<span class="text-slate-600 truncate">· ${x.project}</span>`:''}</div>`).join(''):'<span class="text-slate-500">—</span>')+`<div class="text-slate-500 text-xs mt-2">${b.summary||''} — scientific compute for Gridcoin (GRC), throttled, ToS-legal.</div>`; }
@@ -432,7 +578,7 @@ async function loadOverview(){
   const E=(k,v,s,c)=>`<div><div class="text-[10px] uppercase tracking-wider text-slate-500">${k}</div><div class="text-2xl font-semibold tracking-tight mt-0.5 ${c||''}">${v}</div><div class="text-[11px] text-slate-600">${s||''}</div></div>`;
   const eta=t.eta_100_days; const etaStr=eta==null?'—':(eta>365?(eta/365).toFixed(1)+' yr':eta+' days');
   const es=document.getElementById('earnstrip'); if(es) es.innerHTML=[
-    E('Est. revenue','$'+(t.fleet_usd_day??t.usd_per_day??0),'per day · XMR+GRC','text-emerald-400'),
+    E('Mining revenue','$'+(t.fleet_usd_day??t.usd_per_day??0),'per day · XMR+GRC','text-emerald-400'),
     E('Pending value','$'+(t.pending_usd||0).toFixed(3),(t.pending_xmr??0)+' XMR','text-amber-300'),
     E('$100 milestone',etaStr,'whole fleet rate'),
     E('Prices','$'+(t.xmr_price||0).toFixed(0)+' / $'+(+(t.grc_price||0)).toFixed(4),'XMR / GRC · live'),
@@ -546,12 +692,12 @@ async function loadFree(){
   const f=await fetch('/api/free-streams').then(r=>r.json()).catch(()=>null); const el=document.getElementById('free-panel'); if(!f||!el) return;
   const grp=(title,arr,color,hint)=>arr&&arr.length?`<div class="mb-3"><div class="text-[10px] uppercase tracking-wider ${color} mb-1.5">${title} <span class="text-slate-600 normal-case tracking-normal">${hint||''}</span></div><div class="flex flex-wrap gap-1.5">${arr.map(s=>`<span class="text-[11px] px-2 py-1 rounded-lg bg-slate-800/70 border border-slate-700 text-slate-300" title="${(s.note||'').replace(/"/g,'&#34;')}">${s.name}${s.est_day_high>0?` <span class='text-slate-500'>$${s.est_day_low}-${s.est_day_high}/d</span>`:''}</span>`).join('')}</div></div>`:'';
   el.innerHTML=`<div class="flex items-baseline justify-between flex-wrap gap-2 mb-3">
-      <div class="text-sm font-semibold">💸 Free / thin-air streams <span class="text-[11px] text-slate-500 font-normal">· zero-capital · idle resources → money + airdrops · ${f.mesh_macs} Mac(s)</span></div>
+      <div class="text-sm font-semibold">💸 Free streams <span class="text-[11px] text-slate-500 font-normal">· zero-capital · idle resources + airdrops · ${f.mesh_macs} Mac(s)</span></div>
       <div class="text-xs text-slate-400">live drip <span class="text-emerald-400 font-mono">$${f.daily_drip_usd.live[0]}-${f.daily_drip_usd.live[1]}/d</span> · full potential <span class="text-slate-300 font-mono">$${f.daily_drip_usd.full_potential[0]}-${f.daily_drip_usd.full_potential[1]}/d</span></div></div>
     ${grp('● running',f.groups.running,'text-emerald-400')}
     ${grp('○ one command',f.groups.one_command,'text-cyan-400','bin/depin-deploy.sh up — your creds, gitignored')}
-    ${grp('◇ airdrop nodes (vet first)',f.groups.airdrop_nodes,'text-fuchsia-400','the real thin-air bet = early-node token')}
-    ${grp('✎ paid for work already DONE',f.groups.paid_for_work,'text-amber-400','PGF grants for the dashboard · bug bounties — I help draft/audit')}
+    ${grp('◇ airdrop nodes (vet first)',f.groups.airdrop_nodes,'text-fuchsia-400','early-node tokens — vet before running')}
+    ${grp('✎ paid for existing work',f.groups.paid_for_work,'text-amber-400','grants + bug bounties — drafts auto-generated, you submit')}
     <div class="text-[11px] text-slate-500 mt-1 border-t border-slate-800 pt-2.5">${f.honest}</div>`;
 }
 async function loadIncome(){
@@ -621,11 +767,11 @@ async function loadRevenue(){
       <div class="bg-slate-950/40 rounded-xl p-3 border border-slate-800">
         <div class="text-[10px] uppercase tracking-wider text-slate-500">ETA at this rate <span class="text-red-400/70">— hash only</span></div>
         <div class="text-lg font-semibold text-slate-300 mt-0.5">$100 in <span class="text-amber-400">${fmtY(er.to_100.years)}</span> · $1k in <span class="text-amber-400">${fmtY(er.to_1000.years)}</span></div>
-        <div class="text-[10px] text-slate-600">mining is the worst transform — this is why</div></div>
+        <div class="text-[10px] text-slate-600">at current mining-only rate</div></div>
       <div class="bg-slate-950/40 rounded-xl p-3 border border-emerald-500/20">
-        <div class="text-[10px] uppercase tracking-wider text-slate-500">ETA if value monetized <span class="text-emerald-400/70">— high-ratio transforms</span></div>
+        <div class="text-[10px] uppercase tracking-wider text-slate-500">ETA with other avenues active <span class="text-emerald-400/70">— projected</span></div>
         <div class="text-lg font-semibold text-slate-300 mt-0.5">$1k in <span class="text-emerald-400">${ep.to_1000?fmtY(ep.to_1000.years):'—'}</span> · $10k in <span class="text-emerald-400">${ep.to_10000?fmtY(ep.to_10000.years):'—'}</span></div>
-        <div class="text-[10px] text-slate-600">${ep.to_1000?ep.to_1000.prob+'% / '+ep.to_10000.prob+'% probability':''} · the 4 foundation clicks unlock this</div></div></div>
+        <div class="text-[10px] text-slate-600">${ep.to_1000?ep.to_1000.prob+'% / '+ep.to_10000.prob+'% probability':''}</div></div></div>
     <div class="text-[11px] text-slate-500 mt-3 border-t border-slate-800 pt-2.5">${r.gap}</div>`;
   loadAutonomous();
 }
@@ -792,11 +938,11 @@ async function loadStrategy(){
   const bar=r=>`<div class="h-1.5 rounded-full bg-slate-800 overflow-hidden"><div class="h-full rounded-full" style="width:${r}%;background:${r>=70?'#34d399':r>=40?'#fbbf24':'#64748b'}"></div></div>`;
   const led=(s.energy_ledger||[]).map(e=>`<div class="py-1"><div class="flex justify-between text-[11px]"><span class="text-slate-300">${e.transform.split('(')[0].trim()}</span><span class="font-mono ${e.ratio>=70?'text-emerald-400':e.ratio>=40?'text-amber-400':'text-slate-500'}">${e.ratio}</span></div>${bar(e.ratio)}<div class="text-[9px] text-slate-600 mt-0.5">${e.autonomy}</div></div>`).join('');
   const wf=(s.optimal_workflow||[]).map(w=>`<div class="flex items-start gap-2 text-[11px] py-0.5"><span class="px-1.5 py-0.5 rounded ${w.autonomous?'bg-emerald-500/15 text-emerald-300':'bg-sky-500/15 text-sky-300'} text-[9px] uppercase tracking-wider shrink-0">${w.autonomous?'machine':'you'}</span><span class="text-slate-400"><b class="text-slate-300">${w.name}</b> — ${w.detail}</span></div>`).join('');
-  el.innerHTML=`<div class="text-[11px] text-amber-300/90 uppercase tracking-wider mb-1">⚡ The strategist — the machine thinking</div>
-    <div class="text-sm text-slate-200 mb-3">${s.law}</div>
+  el.innerHTML=`<div class="text-[11px] text-amber-300/90 uppercase tracking-wider mb-1">Where the money is · what to do next</div>
+    <div class="text-sm text-slate-400 mb-3">Each row is a way to make money, ranked by what it's worth. The next real step for each is on the right.</div>
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div><div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Energy ledger — value per joule·effort</div>${led}</div>
-      <div><div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Optimal workflow (energy → value → money)</div>${wf}</div></div>
+      <div><div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Avenues, ranked by value</div>${led}</div>
+      <div><div class="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Next steps</div>${wf}</div></div>
     <div class="text-[11px] text-amber-200/90 mt-3 bg-amber-500/[.06] rounded-lg px-2 py-1.5">▶ Now: ${s.now}</div>
     <div class="text-[10px] text-slate-600 mt-2">${s.honest}</div>`;
 }
@@ -823,7 +969,7 @@ async function loadReport(){
 function copyReport(btn){ navigator.clipboard.writeText(window.__REPORT_MD||'').then(()=>{ const o=btn.textContent; btn.textContent='✓ Copied'; setTimeout(()=>btn.textContent=o,1500); }); }
 async function loadFringe(){
   const f=await fetch('/api/fringe').then(r=>r.json()).catch(()=>null); const el=document.getElementById('fringe-lab'); if(!f||!el) return;
-  const mc=f.mc; if(!mc){ el.innerHTML=`<div class="text-sm font-semibold">🧪 Fringe lab — ${f.count} zero-capital concepts</div><div class="text-[11px] text-slate-500 mt-1">Run <code class="text-slate-400">node tools/fringe-mc.mjs</code> to populate the stack test.</div>`; return; }
+  const mc=f.mc; if(!mc){ el.innerHTML=`<div class="text-sm font-semibold">🧪 Experimental ideas — ${f.count}</div><div class="text-[11px] text-slate-500 mt-1">Run <code class="text-slate-400">node tools/fringe-mc.mjs</code> to populate.</div>`; return; }
   const B=mc.budgets||[];
   const row=b=>`<div class="bg-slate-950/40 rounded-xl p-3">
     <div class="text-[10px] uppercase tracking-wider text-slate-500">${b.weekly} h/week · ${b.plays} plays</div>
@@ -831,8 +977,8 @@ async function loadFringe(){
     <div class="text-[11px] text-slate-500">p10 $${b.dist.p10} · <span class="text-emerald-400">p90 $${b.dist.p90}</span> · tail $${b.dist.p99}</div></div>`;
   const lift=mc.foundation_lift;
   el.innerHTML=`<div class="flex items-baseline justify-between flex-wrap gap-2 mb-2">
-      <div class="text-sm font-semibold">🧪 Fringe lab — ${f.count} concepts · Monte-Carlo stack test</div>
-      <div class="text-[11px] text-slate-500">${(mc.trials||0).toLocaleString()} trials/portfolio · ${mc.horizon}-mo · tested combinations</div></div>
+      <div class="text-sm font-semibold">🧪 Experimental ideas — ${f.count}</div>
+      <div class="text-[11px] text-slate-500">${mc.horizon}-month estimate · experimental</div></div>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">${B.map(row).join('')}</div>
     <div class="text-[11px] text-slate-400 mb-2"><span class="text-amber-300">What dominates</span> (across winning stacks): ${(mc.dominant||[]).slice(0,8).map(d=>d.name).join(' · ')}</div>
     ${lift?`<div class="text-[11px] text-emerald-300/90 bg-emerald-500/[.06] rounded-lg px-2 py-1.5">⚡ Foundations first (build-in-public · Basename · Farcaster-PoH) lift the stack <b>+${Math.round((lift.with.p50/Math.max(1,lift.without.p50)-1)*100)}% median · +${Math.round((lift.with.p90/Math.max(1,lift.without.p90)-1)*100)}% upside</b> — set them up before anything else.</div>`:''}
@@ -854,6 +1000,24 @@ async function loadSystemPlays(){
     <div class="flex flex-wrap gap-1 mb-3">${chips}</div>${rows}</div>`;
 }
 function spFilter(c){ SPFILTER=c; loadSystemPlays(); }
+let AUDIT_OPEN=null;
+async function auditDrill(id){
+  if(AUDIT_OPEN===id){ AUDIT_OPEN=null; loadAudit(); return; }
+  AUDIT_OPEN=id;
+  const det=document.getElementById('audit-detail-'+id); if(!det){ loadAudit(); return; }
+  det.innerHTML='<div class="text-[11px] text-slate-500 py-2">loading…</div>';
+  const leads=await fetch('/api/audit/leads?target='+encodeURIComponent(id)).then(r=>r.json()).catch(()=>[]);
+  if(!leads.length){ det.innerHTML='<div class="text-[11px] text-slate-500 py-2">no findings on record</div>'; return; }
+  const sev={high:'text-red-400 bg-red-500/15',medium:'text-amber-400 bg-amber-500/15',low:'text-slate-500 bg-slate-700/40'};
+  det.innerHTML=leads.slice(0,25).map(f=>`<div class="flex items-start gap-2 py-1.5 border-b border-slate-800/30 text-[11px]"><span class="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider shrink-0 ${sev[f.severity]||sev.low}">${f.severity}</span><div class="min-w-0"><div class="text-slate-300 truncate">${(f.title||f.check||'').slice(0,100)}</div><div class="text-[10px] text-slate-600">${f.file||''}:${f.line||''} · ${f.source||''} · ${f.check||''}</div></div></div>`).join('')+(leads.length>25?`<div class="text-[10px] text-slate-500 py-1">+${leads.length-25} more — see data/audit-reports/${id}.md</div>`:'');
+}
+async function loadAudit(){
+  const d=await fetch('/api/audit').then(r=>r.json()).catch(()=>null); const el=document.getElementById('audit-panel'); if(!el) return;
+  if(!d||!d.targets||!d.targets.length){ el.innerHTML=`<div class="text-sm font-semibold">🛡️ Bug bounty hunt</div><div class="text-[11px] text-slate-500 mt-1">audit-watch warming up — run <code class="text-slate-400">node tools/audit-watch.mjs</code></div>`; return; }
+  const rows=d.targets.map(t=>{const s=t.skipped?'unchanged':'scanned'; const open=AUDIT_OPEN===t.id; const total=(t.high||0)+(t.med||0)+(t.low||0); return `<div class="cursor-pointer hover:bg-white/[.02] rounded-lg px-1 -mx-1" onclick="auditDrill('${t.id}')"><div class="flex items-center justify-between py-1.5 border-b border-slate-800/40 text-[11px]"><div class="text-slate-300"><span class="text-slate-600 mr-1">${open?'▼':'▸'}</span>${t.name||t.id} <span class="text-[10px] text-slate-600">${t.head?'@'+t.head:''}</span>${total?` <span class="text-[10px] text-slate-500">${total} findings</span>`:''}</div><div class="flex items-center gap-2"><span class="font-mono ${t.high?'text-red-400':'text-slate-500'}">${t.high||0}H</span><span class="font-mono text-amber-400/70">${t.med||0}M</span><span class="font-mono text-slate-600">${t.low||0}L</span><span class="text-[10px] px-1.5 py-0.5 rounded ${t.skipped?'bg-slate-800 text-slate-500':'bg-emerald-500/15 text-emerald-300'}">${s}</span></div></div>${open?`<div id="audit-detail-${t.id}" class="pl-4 pb-2"></div>`:''}</div>`;}).join('');
+  el.innerHTML=`<div class="flex items-center justify-between flex-wrap gap-2 mb-2"><div class="text-sm font-semibold">🛡️ Bug bounty hunt <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 ml-1">cron · hourly</span></div><div class="text-[11px] text-slate-500">${d.watched} repos watched · ${d.audited||0} scanned · ${d.total_high||0} high leads</div></div><div class="grid grid-cols-2 sm:grid-cols-4 gap-2 my-3"><div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-red-400">${d.total_high||0}</div><div class="text-[10px] text-slate-500">high leads</div></div><div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-slate-200">${d.watched||0}</div><div class="text-[10px] text-slate-500">repos watched</div></div><div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-emerald-400">${d.audited||0}</div><div class="text-[10px] text-slate-500">scanned this pass</div></div><div class="rounded-xl bg-slate-900/60 border border-slate-800 p-2.5"><div class="text-xl font-bold text-amber-400">${d.new_high_cards||0}</div><div class="text-[10px] text-slate-500">new cards queued</div></div></div>${rows}<div class="text-[10px] text-slate-500 mt-2">last run: ${(d.ts||'').replace('T',' ').slice(0,16)} · Slither + Aderyn sweep · diff-aware (skips unchanged repos)</div>`;
+  if(AUDIT_OPEN) auditDrill(AUDIT_OPEN);
+}
 async function loadBuilder(){
   const d=await fetch('/api/builder').then(r=>r.json()).catch(()=>null); const el=document.getElementById('builder-panel'); if(!d||!el) return;
   const lt=d.last_tick||{};
@@ -915,7 +1079,7 @@ async function loadExecution(){
     ${cards||'<div class="text-[11px] text-slate-600">no pending actions</div>'}
     <div class="text-[10px] text-slate-600 mt-2">auto = run now (no money) · deliver = push to your webhook · cards = real-money/identity, your click. No trade/transfer/claim auto-executes.</div>`;
 }
-async function resolveAct(sig,status){ await fetch('/api/action',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sig,status})}).catch(()=>{}); loadExecution(); }
+async function resolveAct(sig,status){ await fetch('/api/action',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({sig,status})}).catch(()=>{}); const refreshers={command:loadCommand,intel:loadIntel,plan:loadExecution}; (refreshers[PAGE]||loadExecution)(); }
 async function loadProduct(){
   const el=document.getElementById('product-panel'); if(!el) return;
   const [pr,dg]=await Promise.all([fetch('/api/pricing').then(r=>r.json()).catch(()=>null),fetch('/api/digest').then(r=>r.json()).catch(()=>null)]);
@@ -932,7 +1096,7 @@ async function loadProduct(){
     ${post||'<div class="text-[11px] text-slate-600">warming up…</div>'}`;
 }
 async function loadBuild(){
-  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadPaper(); loadExecution(); loadProduct(); loadMonitors();
+  loadStrategy(); loadAutomation(); loadReport(); loadFringe(); loadSystemPlays(); loadBuilder(); loadAudit(); loadPaper(); loadExecution(); loadProduct(); loadMonitors();
   const d=await fetch('/api/knowledge-capital').then(r=>r.json()).catch(()=>null); if(!d) return;
   KCDATA=d; document.getElementById('kc-count').textContent=d.count;
   document.getElementById('kc-passive').innerHTML='<div class="text-[10px] uppercase tracking-wider text-emerald-400 mb-1.5">⚡ passive — set up once, pays weekly</div><div class="flex flex-wrap gap-1.5">'+(d.passive||[]).map(p=>`<a href="${p.url}" target="_blank" class="text-[11px] px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 hover:bg-emerald-500/20" title="${(p.requires||'').replace(/"/g,'&#34;')}">${p.name} <span class="text-emerald-400/70">${p.est_value}</span></a>`).join('')+'</div>';
@@ -1101,5 +1265,5 @@ async function govToggle(){
   if(typeof toast==='function') toast('Auto-protect turned '+action.toUpperCase(),'ok');
   setTimeout(loadVitals,800);
 }
-loadSettings(); route('overview'); loadOverview(); loadCoins(); loadEarn(); refresh(); applyInterval(); setInterval(loadCoins,20000); setInterval(loadEarn,8000); setInterval(()=>{ if(DRAWER && !DRAWER.startsWith('coin:')) renderMachine(); },4000); setInterval(()=>{ if(PAGE==='wallet') loadPayments(); },30000); setInterval(()=>{ if(PAGE==='income') loadIncome(); },10000); setInterval(()=>{ if(PAGE==='vitals') loadVitals(); },5000); setInterval(()=>{ if(PAGE==='farm') loadFarm(); },15000); setInterval(()=>{ if(PAGE==='ledger') loadLedger(); },30000); addEventListener('resize',drawChart);
+loadSettings(); route('command'); loadOverview(); loadCoins(); loadEarn(); refresh(); applyInterval(); setInterval(()=>{ if(PAGE==='command') loadCommand(); },10000); setInterval(loadCoins,20000); setInterval(loadEarn,8000); setInterval(()=>{ if(DRAWER && !DRAWER.startsWith('coin:')) renderMachine(); },4000); setInterval(()=>{ if(PAGE==='wallet') loadPayments(); },30000); setInterval(()=>{ if(PAGE==='income') loadIncome(); },10000); setInterval(()=>{ if(PAGE==='vitals') loadVitals(); },5000); setInterval(()=>{ if(PAGE==='farm') loadFarm(); },15000); setInterval(()=>{ if(PAGE==='ledger') loadLedger(); },30000); addEventListener('resize',drawChart);
 </script>

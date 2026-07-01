@@ -1,0 +1,21 @@
+{
+  "ts": 1782908497782,
+  "exitCode": 0,
+  "healthy": true,
+  "trips": [],
+  "ageMin": 4,
+  "monitors_active": 102,
+  "monitors_live": 102,
+  "pending_specs": 500,
+  "next": {
+    "kind": "spec",
+    "from": "edge:liquidation-bot",
+    "idea": "Liquidation keeper → backtest the signal against stored candle history for an edge stat",
+    "status": "queued",
+    "sig": "spec:Liquidation keeper → backtest the signal against stored candle history for an edge stat",
+    "id": "idea-mqxq6y9q-cryp",
+    "score": 70,
+    "ts": "2026-06-28T11:48:49.015Z"
+  },
+  "action_cards": 19
+}

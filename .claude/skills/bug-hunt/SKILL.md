@@ -22,7 +22,21 @@ Read `config/bounty-targets.json` → rank by `odds` × `prize_usd` ÷ crowd. Pr
 - Note invariants the protocol *claims* (from docs/NatSpec) — bugs live where code breaks a stated invariant.
 
 ## 3. Tool sweep (seconds — catches the cheap stuff first)
-Run, triage output, discard noise:
+**One command runs the whole sweep + triage:**
+```bash
+node tools/audit.mjs <git-url|local-path> [--commit <hash>] [--sub <subdir>] [--name <id>]
+node tools/audit.mjs --target <bounty-id>   # pulls the repo from config/bounty-targets.json
+node tools/audit.mjs --list                 # in-scope targets, ranked
+```
+It resolves the target (clones if a URL), finds in-scope `.sol` (skips deps/tests/mocks), runs **Slither**
+(impact-filtered to High/Med, noise detectors dropped) **and Aderyn** (Cyfrin's AST analyzer — a complementary
+detector set; in-scope-filtered + info detectors downgraded), runs the **high-signal pattern sweep** (tx.origin
+auth, unprotected `initialize`, raw value-call before state, stale-oracle reads, missing access modifiers on
+fund/admin functions, delegatecall/selfdestruct, ecrecover-replay, weak randomness), triages + dedupes by
+severity, and writes a submission-draft to `data/audit-reports/<name>.{json,md}`. **Findings are LEADS, not
+confirmed bugs** — each needs the manual pass (step 4) + a PoC (step 6) before submission.
+
+The tool wraps these; run any directly to dig deeper. Triage output, discard noise:
 - **Slither** — `slither . --exclude-dependencies` — 90+ detectors, reentrancy/access/uninitialized.
 - **Aderyn** — `aderyn .` — Rust analyzer, complementary detector set.
 - **Semgrep** — `semgrep --config p/smart-contracts` — pattern rules.

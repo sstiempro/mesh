@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.xyzmining.audit</string>
+  <key>ProgramArguments</key><array>
+    <string>/Users/digitaloutbreak/.local/bin/node</string>
+    <string>/Users/digitaloutbreak/Developer/cpu-miner-lab/tools/audit-watch.mjs</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Users/digitaloutbreak/Developer/cpu-miner-lab</string>
+  <key>RunAtLoad</key><false/>
+  <key>StartInterval</key><integer>3600</integer>
+  <key>EnvironmentVariables</key><dict><key>PATH</key><string>/Users/digitaloutbreak/.local/bin:/Users/digitaloutbreak/.foundry/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string><key>HOME</key><string>/Users/digitaloutbreak</string></dict>
+  <key>StandardOutPath</key><string>/Users/digitaloutbreak/Developer/cpu-miner-lab/logs/com.xyzmining.audit.out.log</string>
+  <key>StandardErrorPath</key><string>/Users/digitaloutbreak/Developer/cpu-miner-lab/logs/com.xyzmining.audit.err.log</string>
+</dict></plist>

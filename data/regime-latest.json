@@ -1,0 +1,23 @@
+{
+  "ts": 1782908690109,
+  "state": "risk-off",
+  "confidence": 0.79,
+  "composite": -0.793,
+  "contrarian": "extreme fear → contrarian long bias",
+  "components": {
+    "stablecoin_flow": {
+      "net_day_pct": -13.5,
+      "score": -1
+    },
+    "funding_bias": {
+      "longs_pay": 1,
+      "shorts_pay": 4,
+      "score": -0.6
+    },
+    "fear_greed": {
+      "value": 11,
+      "score": -0.78
+    }
+  },
+  "note": "Risk-on/off regime fused from 3 keyless feeds, lookahead-free. The paper book gates entries on this; contrarian overlay flags extremes. Queryable at /api/regime."
+}

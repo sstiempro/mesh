@@ -5,7 +5,7 @@
 //   kind:'auto'  → a new monitor = template × novel params → the builder INSTANTIATES it (real, runs now)
 //   kind:'spec'  → a buildable avenue crossed into a concrete idea → queued for a build pass
 // Standalone: `node tools/idea-gen.mjs`  ·  or import generate() from the builder tick.
-import { readFile, appendFile } from 'node:fs/promises';
+import { readFile, appendFile, writeFile } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,18 +13,48 @@ import { fileURLToPath } from 'node:url';
 const LAB = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const QUEUE = path.join(LAB, 'data', 'build-queue.jsonl');
 const LEDGER = path.join(LAB, 'data', 'build-ledger.jsonl');
+const CATS_CACHE = path.join(LAB, 'data', 'llama-categories-cache.json');
 const J = (f) => { try { return JSON.parse(readFileSync(path.join(LAB, 'config', f), 'utf8')); } catch { return null; } };
 
 // ── auto-buildable monitor grid: every combo is a REAL distinct monitor ──
-const CATS = ['Bridge', 'Lending', 'Dexes', 'CDP', 'Liquid Staking', 'Yield', 'Derivatives', 'RWA', 'Restaking', 'Liquid Restaking', 'Farm'];
+// Fallback CATS (used only if the live DeFiLlama fetch fails and no disk cache exists) — kept as a
+// floor so idea generation never fully dies on a network blip.
+const CATS_FALLBACK = ['Bridge', 'Lending', 'Dexes', 'CDP', 'Liquid Staking', 'Yield', 'Derivatives', 'RWA', 'Restaking', 'Liquid Restaking', 'Farm'];
 const CHAINS = { base: 'https://mainnet.base.org', arbitrum: 'https://arb1.arbitrum.io/rpc', optimism: 'https://mainnet.optimism.io', polygon: 'https://polygon-rpc.com' };
 const STABLE_SETS = {
   'algo-stables': 'frax,usdd,gho,crvusd,liquity-usd',
   'rwa-stables': 'usual-usd,ondo-us-dollar-yield,mountain-protocol-usdm',
   'majors-tight': 'tether,usd-coin,dai',
 };
-function autoGrid() {
+const CATS_TTL_MS = 6 * 60 * 60 * 1000; // refetch live categories at most every 6h
+
+// Genuinely open-ended: pull the LIVE, currently-active category list straight off DeFiLlama's
+// /protocols endpoint (keyless) instead of a hardcoded array, so the grid grows as the real world
+// does (new categories, new sectors) rather than converging on a fixed enumeration forever.
+// Cached to disk with a TTL (don't hammer the API every 5-min cron tick) and falls back to the
+// on-disk cache, then the hardcoded CATS_FALLBACK, if the live fetch is down — never throws.
+async function liveCategories() {
+  let cached = null;
+  try { cached = JSON.parse(readFileSync(CATS_CACHE, 'utf8')); } catch {}
+  if (cached?.cats?.length && Date.now() - (cached.ts || 0) < CATS_TTL_MS) return cached.cats;
+  try {
+    const r = await fetch('https://api.llama.fi/protocols', { signal: AbortSignal.timeout(12000), headers: { 'user-agent': 'mesh-monitor' } });
+    const j = await r.json();
+    if (Array.isArray(j) && j.length) {
+      const cats = [...new Set(j.map(p => p.category).filter(Boolean))].sort();
+      if (cats.length) {
+        try { await writeFile(CATS_CACHE, JSON.stringify({ ts: Date.now(), cats })); } catch {}
+        return cats;
+      }
+    }
+  } catch {}
+  // live fetch failed (or returned nothing usable) — fall back to a stale disk cache, else the hardcoded floor
+  return cached?.cats?.length ? cached.cats : CATS_FALLBACK;
+}
+
+async function autoGrid() {
   const out = [];
+  const CATS = await liveCategories();
   for (const c of CATS) for (const d of [0.1, 0.15, 0.2, 0.25])
     out.push({ template: 'tvl-drain', params: { category: c, minTvl: 2e7, dropPct: d }, label: `${c} TVL-drain ${Math.round(d * 100)}%`, monetize: 'exploit/exit early-warning feed (security teams)' });
   for (const t of [0.0005, 0.0008, 0.0012, 0.002])
@@ -80,7 +110,7 @@ function score(o) {
 export async function generate({ autoN = 3, specN = 2 } = {}) {
   const seen = seenSet();
   const rng = mulberry32((Date.now() / 1000 | 0) ^ 0x9e3779b9);
-  const grid = autoGrid().sort(() => rng() - 0.5);
+  const grid = (await autoGrid()).sort(() => rng() - 0.5);
   const out = [];
   for (const g of grid) { if (out.filter(x => x.kind === 'auto').length >= autoN) break; const o = { kind: 'auto', ...g }; o.sig = sig(o); if (!seen.has(o.sig)) { out.push(o); seen.add(o.sig); } }
   for (const s of specIdeas(rng, specN * 3)) { if (out.filter(x => x.kind === 'spec').length >= specN) break; s.sig = sig(s); if (!seen.has(s.sig)) { out.push(s); seen.add(s.sig); } }

@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-28T06:23:32.869Z",
+  "updated": "2026-07-01T11:36:24.272Z",
   "count": 200,
   "tiers": {
     "free": "this feed (delayed/digest)",
@@ -7,127 +7,135 @@
   },
   "alerts": [
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "depeg-alert",
+      "asset": "frax",
+      "msg": "frax discount -1.167% (px 0.988329)",
+      "priority": "normal",
+      "monetize": "depeg-alert feed (Telegram/webhook), arb trigger"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "funding-feed",
-      "asset": "S",
-      "msg": "S funding -0.2424% — shorts pay (fade shorts)",
+      "asset": "CELO",
+      "msg": "CELO funding -0.4161% — shorts pay (fade shorts)",
       "priority": "normal",
       "monetize": "crowded-positioning signal → omnione mean-revert / paid feed"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "funding-feed",
-      "asset": "IP",
-      "msg": "IP funding 0.1878% — longs pay (fade longs)",
+      "asset": "TNSR",
+      "msg": "TNSR funding -0.2874% — shorts pay (fade shorts)",
       "priority": "normal",
       "monetize": "crowded-positioning signal → omnione mean-revert / paid feed"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "funding-feed",
-      "asset": "POLYX",
-      "msg": "POLYX funding -0.1757% — shorts pay (fade shorts)",
+      "asset": "ME",
+      "msg": "ME funding -0.1473% — shorts pay (fade shorts)",
       "priority": "normal",
       "monetize": "crowded-positioning signal → omnione mean-revert / paid feed"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "funding-feed",
-      "asset": "ZORA",
-      "msg": "ZORA funding -0.0944% — shorts pay (fade shorts)",
+      "asset": "MANTA",
+      "msg": "MANTA funding -0.1184% — shorts pay (fade shorts)",
       "priority": "normal",
       "monetize": "crowded-positioning signal → omnione mean-revert / paid feed"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "funding-feed",
-      "asset": "LAYER",
-      "msg": "LAYER funding -0.0911% — shorts pay (fade shorts)",
+      "asset": "STABLE",
+      "msg": "STABLE funding -0.0818% — shorts pay (fade shorts)",
       "priority": "normal",
       "monetize": "crowded-positioning signal → omnione mean-revert / paid feed"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "yield-radar",
+      "asset": "growihf:USDC",
+      "msg": "growihf:USDC 127.6% APY · $8,533,188 · Hyperliquid L1",
+      "priority": "normal",
+      "monetize": "yield-radar newsletter / API"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "curve-dex:IDAI-IUSDC-IUSDT",
-      "msg": "curve-dex:IDAI-IUSDC-IUSDT 123.8% APY · $1,758,950 · Ethereum",
+      "msg": "curve-dex:IDAI-IUSDC-IUSDT 122.4% APY · $1,759,087 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar newsletter / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "yearn-finance:USDS",
-      "msg": "yearn-finance:USDS 55.1% APY · $1,388,102 · Ethereum",
+      "asset": "ember-protocol:USDC",
+      "msg": "ember-protocol:USDC 71.9% APY · $1,989,274 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar newsletter / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "gmtrade:USDMXN-USDC",
-      "msg": "gmtrade:USDMXN-USDC 53.9% APY · $1,654,727 · Solana",
+      "msg": "gmtrade:USDMXN-USDC 43.7% APY · $1,711,742 · Solana",
       "priority": "normal",
       "monetize": "yield-radar newsletter / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "yield-radar",
+      "asset": "aerodrome-slipstream:EURC-USDC",
+      "msg": "aerodrome-slipstream:EURC-USDC 45.2% APY · $2,113,657 · Base",
+      "priority": "normal",
+      "monetize": "yield-radar newsletter / API"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "gmtrade:EUR-USDC",
-      "msg": "gmtrade:EUR-USDC 47.7% APY · $1,078,584 · Solana",
+      "msg": "gmtrade:EUR-USDC 32.8% APY · $1,155,675 · Solana",
       "priority": "normal",
       "monetize": "yield-radar newsletter / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "yield-radar",
+      "asset": "thalaswap:USDT-USDC",
+      "msg": "thalaswap:USDT-USDC 25.7% APY · $1,810,500 · Aptos",
+      "priority": "normal",
+      "monetize": "yield-radar newsletter / API"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "saturn:SUSDAT",
-      "msg": "saturn:SUSDAT 38.1% APY · $72,200,546 · Ethereum",
+      "msg": "saturn:SUSDAT 25.5% APY · $87,159,192 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar newsletter / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "unitas:SUSDU",
-      "msg": "unitas:SUSDU 37.2% APY · $7,631,482 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "curve-dex:USDC-SUSDAT",
-      "msg": "curve-dex:USDC-SUSDAT 34.1% APY · $1,415,905 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "gmtrade:USDCHF-USDC",
-      "msg": "gmtrade:USDCHF-USDC 32.1% APY · $2,046,212 · Solana",
+      "msg": "gmtrade:USDCHF-USDC 22.3% APY · $2,137,750 · Solana",
       "priority": "normal",
       "monetize": "yield-radar newsletter / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDCDELTAV2",
-      "msg": "morpho-blue:ALPHAUSDCDELTAV2 25.2% APY · $22,228,703 · Ethereum",
+      "asset": "pendle:SUSDAT",
+      "msg": "pendle:SUSDAT 20.1% APY · $3,290,497 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar newsletter / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDTPRIME",
-      "msg": "morpho-blue:ALPHAUSDTPRIME 43.2% APY · $5,641,265 · Hyperliquid L1",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "regime-feed",
       "asset": "MARKET",
       "msg": "extreme fear → contrarian long bias",
@@ -135,183 +143,39 @@
       "monetize": "contrarian regime trigger → strategist + paid feed"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "uniswap-v3:SUSD-SNX",
-      "msg": "uniswap-v3:SUSD-SNX 245.5% APY · $552,018 · Ethereum",
+      "asset": "uniswap-v4:DAI-SLGNS",
+      "msg": "uniswap-v4:DAI-SLGNS 398% APY · $574,410 · Polygon",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "yield-radar",
+      "asset": "uniswap-v3:WETH-VVV",
+      "msg": "uniswap-v3:WETH-VVV 299.4% APY · $511,741 · Base",
+      "priority": "normal",
+      "monetize": "yield-radar feed / API"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "yield-radar",
+      "asset": "aerodrome-slipstream:USDC-CBBTC",
+      "msg": "aerodrome-slipstream:USDC-CBBTC 281.5% APY · $5,488,029 · Base",
+      "priority": "normal",
+      "monetize": "yield-radar feed / API"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "aerodrome-slipstream:CBETH-CBBTC",
-      "msg": "aerodrome-slipstream:CBETH-CBBTC 231.3% APY · $501,632 · Base",
+      "msg": "aerodrome-slipstream:CBETH-CBBTC 257.2% APY · $507,858 · Base",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v4:DAI-SLGNS",
-      "msg": "uniswap-v4:DAI-SLGNS 209.2% APY · $548,146 · Polygon",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v3:SYRUP-WETH",
-      "msg": "uniswap-v3:SYRUP-WETH 193% APY · $594,976 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:SOL-USDC",
-      "msg": "gmtrade:SOL-USDC 187.8% APY · $2,325,270 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "neverland:VEDUST",
-      "msg": "neverland:VEDUST 170.8% APY · $1,499,054 · Monad",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "raydium-amm:CARDS-USDC",
-      "msg": "raydium-amm:CARDS-USDC 150.5% APY · $3,466,035 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-USDC",
-      "msg": "aerodrome-v1:FBOMB-USDC 146.8% APY · $1,155,246 · Base",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-AERO",
-      "msg": "aerodrome-v1:FBOMB-AERO 136.4% APY · $1,540,467 · Base",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:23:32.869Z",
-      "type": "yield-radar",
-      "asset": "aerodrome-slipstream:WETH-DRV",
-      "msg": "aerodrome-slipstream:WETH-DRV 136.1% APY · $547,203 · Base",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "depeg-alert",
-      "asset": "frax",
-      "msg": "frax discount -0.891% (px 0.991086)",
-      "priority": "normal",
-      "monetize": "depeg-alert feed (Telegram/webhook), arb trigger"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "curve-dex:IDAI-IUSDC-IUSDT",
-      "msg": "curve-dex:IDAI-IUSDC-IUSDT 123.8% APY · $1,758,924 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "yearn-finance:USDS",
-      "msg": "yearn-finance:USDS 55.1% APY · $1,388,102 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:USDMXN-USDC",
-      "msg": "gmtrade:USDMXN-USDC 53.9% APY · $1,654,634 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:EUR-USDC",
-      "msg": "gmtrade:EUR-USDC 47.7% APY · $1,078,523 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "saturn:SUSDAT",
-      "msg": "saturn:SUSDAT 38.1% APY · $72,199,446 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "unitas:SUSDU",
-      "msg": "unitas:SUSDU 37.2% APY · $7,631,482 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "curve-dex:USDC-SUSDAT",
-      "msg": "curve-dex:USDC-SUSDAT 34.1% APY · $1,418,491 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:USDCHF-USDC",
-      "msg": "gmtrade:USDCHF-USDC 32.1% APY · $2,046,096 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDCDELTAV2",
-      "msg": "morpho-blue:ALPHAUSDCDELTAV2 25.2% APY · $22,228,703 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDTPRIME",
-      "msg": "morpho-blue:ALPHAUSDTPRIME 43.2% APY · $5,641,265 · Hyperliquid L1",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "regime-feed",
-      "asset": "MARKET",
-      "msg": "extreme fear → contrarian long bias",
-      "priority": "normal",
-      "monetize": "contrarian regime trigger → strategist + paid feed"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "uniswap-v3:SUSD-SNX",
       "msg": "uniswap-v3:SUSD-SNX 245.5% APY · $552,018 · Ethereum",
@@ -319,79 +183,47 @@
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v4:DAI-SLGNS",
-      "msg": "uniswap-v4:DAI-SLGNS 218.8% APY · $538,138 · Polygon",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "aerodrome-slipstream:WETH-USDC",
-      "msg": "aerodrome-slipstream:WETH-USDC 199.5% APY · $3,254,910 · Base",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v3:SYRUP-WETH",
-      "msg": "uniswap-v3:SYRUP-WETH 194% APY · $597,883 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "gmtrade:SOL-USDC",
-      "msg": "gmtrade:SOL-USDC 187.8% APY · $2,309,447 · Solana",
+      "msg": "gmtrade:SOL-USDC 220.8% APY · $2,272,364 · Solana",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:22:25.435Z",
-      "type": "yield-radar",
-      "asset": "neverland:VEDUST",
-      "msg": "neverland:VEDUST 171.2% APY · $1,496,432 · Monad",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "raydium-amm:CARDS-USDC",
-      "msg": "raydium-amm:CARDS-USDC 154.8% APY · $3,469,599 · Solana",
+      "msg": "raydium-amm:CARDS-USDC 202.2% APY · $3,379,535 · Solana",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-USDC",
-      "msg": "aerodrome-v1:FBOMB-USDC 145.1% APY · $1,164,401 · Base",
+      "asset": "neverland:VEDUST",
+      "msg": "neverland:VEDUST 198.3% APY · $1,300,095 · Monad",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-AERO",
-      "msg": "aerodrome-v1:FBOMB-AERO 135.1% APY · $1,549,940 · Base",
+      "asset": "uniswap-v4:LIT-USDC",
+      "msg": "uniswap-v4:LIT-USDC 188.3% APY · $649,470 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "uniswap-v4:QUQ-USDT",
-      "msg": "uniswap-v4:QUQ-USDT 134.7% APY · $2,368,188 · BSC",
+      "asset": "ekubo:ETH-USDC",
+      "msg": "ekubo:ETH-USDC 307.5% APY · $726,588 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "depeg-alert",
       "asset": "ondo-us-dollar-yield",
       "msg": "ondo-us-dollar-yield premium 14% (px 1.14)",
@@ -399,7 +231,7 @@
       "monetize": "depeg-alert + arb trigger"
     },
     {
-      "ts": "2026-06-28T06:22:25.435Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "depeg-alert",
       "asset": "ondo-us-dollar-yield",
       "msg": "ondo-us-dollar-yield premium 14% (px 1.14)",
@@ -407,404 +239,572 @@
       "monetize": "depeg-alert + arb trigger"
     },
     {
-      "ts": "2026-06-28T06:20:15.649Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "curve-dex:IDAI-IUSDC-IUSDT",
-      "msg": "curve-dex:IDAI-IUSDC-IUSDT 123.8% APY · $1,758,924 · Ethereum",
+      "asset": "growihf:USDC",
+      "msg": "growihf:USDC 127.6% APY · $8,533,188 · Hyperliquid L1",
       "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
+      "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "yearn-finance:USDS",
-      "msg": "yearn-finance:USDS 55.1% APY · $1,388,102 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:USDMXN-USDC",
-      "msg": "gmtrade:USDMXN-USDC 53.9% APY · $1,654,634 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:EUR-USDC",
-      "msg": "gmtrade:EUR-USDC 47.7% APY · $1,078,523 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "saturn:SUSDAT",
-      "msg": "saturn:SUSDAT 38.1% APY · $72,199,446 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "unitas:SUSDU",
-      "msg": "unitas:SUSDU 37.2% APY · $7,631,482 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "curve-dex:USDC-SUSDAT",
-      "msg": "curve-dex:USDC-SUSDAT 34.1% APY · $1,418,491 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:USDCHF-USDC",
-      "msg": "gmtrade:USDCHF-USDC 32.1% APY · $2,046,096 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDCDELTAV2",
-      "msg": "morpho-blue:ALPHAUSDCDELTAV2 25.2% APY · $22,228,703 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDTPRIME",
-      "msg": "morpho-blue:ALPHAUSDTPRIME 43.2% APY · $5,641,265 · Hyperliquid L1",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "regime-feed",
-      "asset": "MARKET",
-      "msg": "extreme fear → contrarian long bias",
-      "priority": "normal",
-      "monetize": "contrarian regime trigger → strategist + paid feed"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v3:SUSD-SNX",
-      "msg": "uniswap-v3:SUSD-SNX 245.5% APY · $552,018 · Ethereum",
+      "msg": "saturn:SUSDAT 25.5% APY · $87,159,192 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v4:DAI-SLGNS",
-      "msg": "uniswap-v4:DAI-SLGNS 218.8% APY · $538,138 · Polygon",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "aerodrome-slipstream:WETH-USDC",
-      "msg": "aerodrome-slipstream:WETH-USDC 199.5% APY · $3,254,910 · Base",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v3:SYRUP-WETH",
-      "msg": "uniswap-v3:SYRUP-WETH 194% APY · $597,883 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:SOL-USDC",
-      "msg": "gmtrade:SOL-USDC 187.8% APY · $2,309,447 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "neverland:VEDUST",
-      "msg": "neverland:VEDUST 171.2% APY · $1,496,432 · Monad",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "raydium-amm:CARDS-USDC",
-      "msg": "raydium-amm:CARDS-USDC 154.8% APY · $3,469,599 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-USDC",
-      "msg": "aerodrome-v1:FBOMB-USDC 145.1% APY · $1,164,401 · Base",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-AERO",
-      "msg": "aerodrome-v1:FBOMB-AERO 135.1% APY · $1,549,940 · Base",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:20:15.649Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v4:QUQ-USDT",
-      "msg": "uniswap-v4:QUQ-USDT 134.7% APY · $2,368,188 · BSC",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "depeg-alert",
-      "asset": "frax",
-      "msg": "frax discount -0.894% (px 0.991061)",
+      "asset": "ondo-us-dollar-yield",
+      "msg": "ondo-us-dollar-yield premium 14% (px 1.14)",
       "priority": "normal",
-      "monetize": "depeg-alert feed (Telegram/webhook), arb trigger"
+      "monetize": "depeg-alert + arb trigger"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "CELO",
+      "msg": "CELO funding -0.413% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "TNSR",
+      "msg": "TNSR funding -0.2847% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "CELO",
+      "msg": "CELO funding -0.413% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "TNSR",
+      "msg": "TNSR funding -0.2847% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "ME",
+      "msg": "ME funding -0.1479% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "MANTA",
+      "msg": "MANTA funding -0.12% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "STABLE",
+      "msg": "STABLE funding -0.0817% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "PYTH",
+      "msg": "PYTH funding -0.0795% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "VINE",
+      "msg": "VINE funding 0.0779% — longs pay (fade longs)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "kNEIRO",
+      "msg": "kNEIRO funding -0.0746% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "AR",
+      "msg": "AR funding 0.0714% — longs pay (fade longs)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "OP",
+      "msg": "OP funding -0.0685% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "IO",
+      "msg": "IO funding -0.0622% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-feed",
+      "asset": "IOTA",
+      "msg": "IOTA funding -0.0559% — shorts pay (fade shorts)",
+      "priority": "normal",
+      "monetize": "crowded-positioning signal → mean-revert"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "curve-dex:IDAI-IUSDC-IUSDT",
-      "msg": "curve-dex:IDAI-IUSDC-IUSDT 123.8% APY · $1,758,924 · Ethereum",
+      "asset": "growihf:USDC",
+      "msg": "growihf:USDC 127.6% APY · $8,533,188 · Hyperliquid L1",
       "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
+      "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "yearn-finance:USDS",
-      "msg": "yearn-finance:USDS 55.1% APY · $1,388,102 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:USDMXN-USDC",
-      "msg": "gmtrade:USDMXN-USDC 53.9% APY · $1,654,634 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:EUR-USDC",
-      "msg": "gmtrade:EUR-USDC 47.7% APY · $1,078,523 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
       "asset": "saturn:SUSDAT",
-      "msg": "saturn:SUSDAT 38.1% APY · $72,199,446 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "unitas:SUSDU",
-      "msg": "unitas:SUSDU 37.2% APY · $7,631,482 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "curve-dex:USDC-SUSDAT",
-      "msg": "curve-dex:USDC-SUSDAT 34.1% APY · $1,418,491 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:USDCHF-USDC",
-      "msg": "gmtrade:USDCHF-USDC 32.1% APY · $2,046,096 · Solana",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDCDELTAV2",
-      "msg": "morpho-blue:ALPHAUSDCDELTAV2 25.2% APY · $22,228,703 · Ethereum",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "morpho-blue:ALPHAUSDTPRIME",
-      "msg": "morpho-blue:ALPHAUSDTPRIME 43.2% APY · $5,641,265 · Hyperliquid L1",
-      "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "regime-feed",
-      "asset": "MARKET",
-      "msg": "extreme fear → contrarian long bias",
-      "priority": "normal",
-      "monetize": "contrarian regime trigger → strategist + paid feed"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v3:SUSD-SNX",
-      "msg": "uniswap-v3:SUSD-SNX 245.5% APY · $552,018 · Ethereum",
+      "msg": "saturn:SUSDAT 25.5% APY · $87,159,192 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "uniswap-v4:DAI-SLGNS",
-      "msg": "uniswap-v4:DAI-SLGNS 218.8% APY · $538,138 · Polygon",
+      "asset": "pendle:APYUSD",
+      "msg": "pendle:APYUSD 17.5% APY · $7,524,469 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "aerodrome-slipstream:WETH-USDC",
-      "msg": "aerodrome-slipstream:WETH-USDC 199.5% APY · $3,254,910 · Base",
+      "asset": "pendle:APYUSD",
+      "msg": "pendle:APYUSD 15.6% APY · $7,524,469 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "uniswap-v3:SYRUP-WETH",
-      "msg": "uniswap-v3:SYRUP-WETH 194% APY · $597,883 · Ethereum",
+      "asset": "hyperion:USDT-USDC",
+      "msg": "hyperion:USDT-USDC 15.1% APY · $6,286,828 · Aptos",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "gmtrade:SOL-USDC",
-      "msg": "gmtrade:SOL-USDC 187.8% APY · $2,309,447 · Solana",
+      "asset": "apyx-protocol:APXUSD",
+      "msg": "apyx-protocol:APXUSD 14.4% APY · $137,998,611 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "neverland:VEDUST",
-      "msg": "neverland:VEDUST 171.2% APY · $1,496,432 · Monad",
+      "asset": "curve-dex:APYUSD-APXUSD",
+      "msg": "curve-dex:APYUSD-APXUSD 14.1% APY · $13,754,043 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "raydium-amm:CARDS-USDC",
-      "msg": "raydium-amm:CARDS-USDC 154.8% APY · $3,469,599 · Solana",
+      "asset": "aerodrome-v1:MSUSD-USDC",
+      "msg": "aerodrome-v1:MSUSD-USDC 14% APY · $8,034,621 · Base",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-USDC",
-      "msg": "aerodrome-v1:FBOMB-USDC 145.1% APY · $1,164,401 · Base",
+      "asset": "3jane-lending:SUSD3",
+      "msg": "3jane-lending:SUSD3 13.4% APY · $7,834,424 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "yield-radar",
-      "asset": "aerodrome-v1:FBOMB-AERO",
-      "msg": "aerodrome-v1:FBOMB-AERO 135.1% APY · $1,549,940 · Base",
+      "asset": "ember-protocol:USDC",
+      "msg": "ember-protocol:USDC 12.9% APY · $10,508,739 · Ethereum",
       "priority": "normal",
       "monetize": "yield-radar feed / API"
     },
     {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "yield-radar",
-      "asset": "uniswap-v4:QUQ-USDT",
-      "msg": "uniswap-v4:QUQ-USDT 134.7% APY · $2,368,188 · BSC",
-      "priority": "normal",
-      "monetize": "yield-radar feed / API"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "depeg-alert",
-      "asset": "ondo-us-dollar-yield",
-      "msg": "ondo-us-dollar-yield premium 14% (px 1.14)",
-      "priority": "normal",
-      "monetize": "depeg-alert + arb trigger"
-    },
-    {
-      "ts": "2026-06-28T06:19:23.959Z",
-      "type": "depeg-alert",
-      "asset": "ondo-us-dollar-yield",
-      "msg": "ondo-us-dollar-yield premium 14% (px 1.14)",
-      "priority": "normal",
-      "monetize": "depeg-alert + arb trigger"
-    },
-    {
-      "ts": "2026-06-28T06:16:14.000Z",
+      "ts": "2026-07-01T11:36:24.272Z",
       "type": "depeg-alert",
       "asset": "frax",
-      "msg": "frax discount -0.882% (px 0.991177)",
+      "msg": "frax discount -1.17% (px 0.988301)",
       "priority": "normal",
-      "monetize": "depeg-alert feed (Telegram/webhook), arb trigger"
+      "monetize": "depeg-alert + arb trigger"
     },
     {
-      "ts": "2026-06-28T06:16:14.000Z",
-      "type": "yield-radar",
-      "asset": "curve-dex:IDAI-IUSDC-IUSDT",
-      "msg": "curve-dex:IDAI-IUSDC-IUSDT 123.8% APY · $1,758,924 · Ethereum",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "capital-flow",
+      "asset": "RLUSD",
+      "msg": "RLUSD supply BURN → outflow / risk-off -9.79%/day (wk -11.65%)",
       "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
+      "monetize": "capital in/outflow signal (risk-on/off)"
     },
     {
-      "ts": "2026-06-28T06:16:14.000Z",
-      "type": "yield-radar",
-      "asset": "yearn-finance:USDS",
-      "msg": "yearn-finance:USDS 55.1% APY · $1,388,102 · Ethereum",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "capital-flow",
+      "asset": "reUSD",
+      "msg": "reUSD supply BURN → outflow / risk-off -3.08%/day (wk -15%)",
       "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
+      "monetize": "capital in/outflow signal (risk-on/off)"
     },
     {
-      "ts": "2026-06-28T06:16:14.000Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:USDMXN-USDC",
-      "msg": "gmtrade:USDMXN-USDC 53.9% APY · $1,654,634 · Solana",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "TNSR",
+      "msg": "TNSR cross-venue funding 0.5142%/8h (563.1% annl) — long BybitPerp / short HlPerp",
       "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
+      "monetize": "delta-neutral funding-arb scanner"
     },
     {
-      "ts": "2026-06-28T06:16:14.000Z",
-      "type": "yield-radar",
-      "asset": "gmtrade:EUR-USDC",
-      "msg": "gmtrade:EUR-USDC 47.7% APY · $1,078,523 · Solana",
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "STABLE",
+      "msg": "STABLE cross-venue funding 0.0901%/8h (98.6% annl) — long HlPerp / short BinPerp",
       "priority": "normal",
-      "monetize": "yield-radar newsletter / API"
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "kNEIRO",
+      "msg": "kNEIRO cross-venue funding 0.0848%/8h (92.9% annl) — long HlPerp / short BybitPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "MANTA",
+      "msg": "MANTA cross-venue funding 0.0818%/8h (89.5% annl) — long HlPerp / short BybitPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "ME",
+      "msg": "ME cross-venue funding 0.0816%/8h (89.3% annl) — long BybitPerp / short HlPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "PYTH",
+      "msg": "PYTH cross-venue funding 0.0773%/8h (84.6% annl) — long HlPerp / short BybitPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "VINE",
+      "msg": "VINE cross-venue funding 0.0773%/8h (84.6% annl) — long BinPerp / short HlPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "CELO",
+      "msg": "CELO cross-venue funding 0.0683%/8h (74.8% annl) — long BinPerp / short BybitPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "OP",
+      "msg": "OP cross-venue funding 0.0628%/8h (68.8% annl) — long HlPerp / short BybitPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "AR",
+      "msg": "AR cross-venue funding 0.0613%/8h (67.2% annl) — long BinPerp / short HlPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "PROVE",
+      "msg": "PROVE cross-venue funding 0.0593%/8h (65% annl) — long HlPerp / short BybitPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "funding-arb",
+      "asset": "IOTA",
+      "msg": "IOTA cross-venue funding 0.0562%/8h (61.6% annl) — long HlPerp / short BybitPerp",
+      "priority": "normal",
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "governance",
+      "asset": "ens.eth",
+      "msg": "ens.eth: \"Term 7 Meta-Governance Working Group Election\" closes 0h (0 votes)",
+      "priority": "normal",
+      "monetize": "pre-event DAO alpha"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "governance",
+      "asset": "pandanow.eth",
+      "msg": "pandanow.eth: \"Test proposal 6 weighted voting\" closes 1h (43 votes)",
+      "priority": "normal",
+      "monetize": "pre-event DAO alpha"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "governance",
+      "asset": "treehousefi.eth",
+      "msg": "treehousefi.eth: \"Snapshot 11: TREE Bridging to HyperEVM and tHYPE Liquidity Incentives\" closes 3h (4090 votes)",
+      "priority": "normal",
+      "monetize": "pre-event DAO alpha"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "governance",
+      "asset": "snapshot.dcl.eth",
+      "msg": "snapshot.dcl.eth: \"Removing the 'District' demarcation on all Maps\" closes 13h (1420145 votes)",
+      "priority": "normal",
+      "monetize": "pre-event DAO alpha"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 0d: 1,080,700 tokens (staking)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 0d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "sui",
+      "msg": "sui unlock in 1d: 58,598,571 tokens (undefined)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "sui",
+      "msg": "sui unlock in 1d: 55,555,556 tokens (undefined)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "sui",
+      "msg": "sui unlock in 1d: 23,809,524 tokens (undefined)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 1d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 2d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 3d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 4d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 5d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 6d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 7d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 8d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 9d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-calendar",
+      "asset": "celestia",
+      "msg": "celestia unlock in 10d: 183,562 tokens (ecosystem)",
+      "priority": "normal",
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "narrative",
+      "asset": "Retail",
+      "msg": "narrative rotating in: Retail 12.8% ($10M vol)",
+      "priority": "normal",
+      "monetize": "sector-rotation radar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "narrative",
+      "asset": "Prediction Market Tools",
+      "msg": "narrative rotating in: Prediction Market Tools 9.8% ($72M vol)",
+      "priority": "normal",
+      "monetize": "sector-rotation radar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "narrative",
+      "asset": "Appchains",
+      "msg": "narrative rotating in: Appchains 9.3% ($81M vol)",
+      "priority": "normal",
+      "monetize": "sector-rotation radar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "narrative",
+      "asset": "bStocks Ecosystem",
+      "msg": "narrative rotating in: bStocks Ecosystem 8.6% ($149M vol)",
+      "priority": "normal",
+      "monetize": "sector-rotation radar"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "depeg-doctor",
+      "asset": "FRAX",
+      "msg": "FRAX -1.17% — WATCH: supply soft -0.4%",
+      "priority": "normal",
+      "monetize": "revert-vs-break classifier"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-coil",
+      "asset": "TIA",
+      "msg": "TIA unlock 0d — COIL → fade (uncrowded) (funding +0.000% complacent into unlock)",
+      "priority": "normal",
+      "monetize": "pre-unlock funding-complacency fade"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "unlock-coil",
+      "asset": "SUI",
+      "msg": "SUI unlock 1d — COIL → fade (uncrowded) (funding +0.001% complacent into unlock)",
+      "priority": "normal",
+      "monetize": "pre-unlock funding-complacency fade"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "dev-velocity",
+      "asset": "ai-agents",
+      "msg": "ai-agents: 9,481 active repos/7d",
+      "priority": "normal",
+      "monetize": "earliest narrative-ignition rung"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "dev-velocity",
+      "asset": "defi",
+      "msg": "defi: 666 active repos/7d",
+      "priority": "normal",
+      "monetize": "earliest narrative-ignition rung"
+    },
+    {
+      "ts": "2026-07-01T11:36:24.272Z",
+      "type": "dev-velocity",
+      "asset": "zero-knowledge",
+      "msg": "zero-knowledge: 214 active repos/7d",
+      "priority": "normal",
+      "monetize": "earliest narrative-ignition rung"
     }
   ]
 }

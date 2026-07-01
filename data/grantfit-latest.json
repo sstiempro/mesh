@@ -1,0 +1,113 @@
+{
+  "ts": 1782900933489,
+  "programs_scored": 12,
+  "llm": "sstiem-big-free",
+  "drafted": 5,
+  "queued": 2,
+  "top": [
+    {
+      "name": "Optimism Retro Funding",
+      "fit": 98,
+      "reason": "High impact retroactive fit as the project is already shipped, running, and provides public utility.",
+      "url": "https://app.optimism.io/retropgf"
+    },
+    {
+      "name": "Gitcoin Grants",
+      "fit": 95,
+      "reason": "Perfect alignment with quadratic funding for open-source public goods and security tooling.",
+      "url": "https://grants.gitcoin.co"
+    },
+    {
+      "name": "Octant",
+      "fit": 90,
+      "reason": "Strong candidate for recurring community-voted public goods funding based on proven output.",
+      "url": "https://octant.app"
+    },
+    {
+      "name": "Uniswap Foundation Grants",
+      "fit": 88,
+      "reason": "High fit due to DeFi-specific focus on exploit warnings, TVL monitoring, and security audits.",
+      "url": "https://www.unigrants.org"
+    },
+    {
+      "name": "Drips Network",
+      "fit": 85,
+      "reason": "Excellent fit for continuous dependency funding given the open-core and modular nature of the engine.",
+      "url": "https://drips.network"
+    },
+    {
+      "name": "Base Ecosystem / Builder Grants",
+      "fit": 82,
+      "reason": "Strong alignment with 'Based' builder culture and onchain security monitoring for the Base ecosystem.",
+      "url": "https://base.org/grants"
+    },
+    {
+      "name": "Ethereum Foundation ESP",
+      "fit": 80,
+      "reason": "Strong fit for infrastructure and security research, though often favors deep protocol-level work.",
+      "url": "https://esp.ethereum.foundation"
+    },
+    {
+      "name": "DoraHacks BUIDL",
+      "fit": 78,
+      "reason": "Good fit for continuous builders; the autonomous nature of the project appeals to the hacker ethos.",
+      "url": "https://dorahacks.io"
+    },
+    {
+      "name": "Arbitrum Foundation Grants",
+      "fit": 75,
+      "reason": "Good fit if monitors and audit pipelines are specifically extended to support the Arbitrum ecosystem.",
+      "url": "https://arbitrum.foundation/grants"
+    },
+    {
+      "name": "Polygon Community Grants",
+      "fit": 70,
+      "reason": "Solid fit for dev tooling and security, provided there is a clear benefit to Polygon users.",
+      "url": "https://polygon.technology/grants"
+    },
+    {
+      "name": "Web3 Foundation Grants",
+      "fit": 65,
+      "reason": "Moderate fit; highly technical but often prioritizes Polkadot/Substrate-specific infrastructure.",
+      "url": "https://grants.web3.foundation"
+    },
+    {
+      "name": "Solana Foundation Grants",
+      "fit": 60,
+      "reason": "Moderate fit; requires specific integration with Solana data/RPCs to meet ecosystem-specific mandates.",
+      "url": "https://solana.org/grants"
+    }
+  ],
+  "drafts": [
+    {
+      "name": "Optimism Retro Funding",
+      "fit": 98,
+      "draft": null,
+      "note": "LLM draft unavailable"
+    },
+    {
+      "name": "Gitcoin Grants",
+      "fit": 95,
+      "url": "https://grants.gitcoin.co",
+      "draft": "data/grant-applications/gitcoin-grants.md"
+    },
+    {
+      "name": "Octant",
+      "fit": 90,
+      "url": "https://octant.app",
+      "draft": "data/grant-applications/octant.md"
+    },
+    {
+      "name": "Uniswap Foundation Grants",
+      "fit": 88,
+      "url": "https://www.unigrants.org",
+      "draft": "data/grant-applications/uniswap-foundation-grants.md"
+    },
+    {
+      "name": "Drips Network",
+      "fit": 85,
+      "url": "https://drips.network",
+      "draft": "data/grant-applications/drips-network.md"
+    }
+  ]
+}

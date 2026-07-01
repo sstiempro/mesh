@@ -1,23 +1,24 @@
-# 📡 mesh signal digest — 2026-06-28
+# 📡 mesh signal digest — 2026-07-01
 
-**Market posture:** extreme fear → contrarian long bias
+**Market posture:** narrative: bStocks Ecosystem 8.6%
 
-## 🩹 Stablecoin depegs (19)
-- frax discount -1.107% (px 0.988928)
+## 🩹 Stablecoin depegs (10)
+- frax discount -1.154% (px 0.988464)
 - ondo-us-dollar-yield premium 14% (px 1.14)
 
 ## 🌾 Top real yields (base, ≤500% sane band)
-- curve-dex:IDAI-IUSDC-IUSDT 123.8% APY · $1,758,924 · Ethereum
-- yearn-finance:USDS 55.1% APY · $1,388,102 · Ethereum
-- gmtrade:USDMXN-USDC 53.9% APY · $1,654,634 · Solana
-- gmtrade:EUR-USDC 47.7% APY · $1,078,523 · Solana
-- saturn:SUSDAT 38.1% APY · $72,199,446 · Ethereum
+- growihf:USDC 127.6% APY · $8,533,188 · Hyperliquid L1
+- curve-dex:IDAI-IUSDC-IUSDT 122.4% APY · $1,759,087 · Ethereum
+- ember-protocol:USDC 12.9% APY · $10,508,739 · Ethereum
+- gmtrade:USDMXN-USDC 43.7% APY · $1,711,742 · Solana
+- aerodrome-slipstream:EURC-USDC 45.2% APY · $2,113,657 · Base
 
 ## 📉 Funding extremes (crowded positioning)
-- S funding -0.2424% — shorts pay (fade shorts)
-- IP funding 0.1878% — longs pay (fade longs)
-- POLYX funding -0.1757% — shorts pay (fade shorts)
-- ZORA funding -0.0944% — shorts pay (fade shorts)
-- LAYER funding -0.0911% — shorts pay (fade shorts)
+- CELO funding -0.4841% — shorts pay (fade shorts)
+- TNSR funding -0.334% — shorts pay (fade shorts)
+- ME funding -0.1372% — shorts pay (fade shorts)
+- MANTA funding -0.0955% — shorts pay (fade shorts)
+- STABLE funding -0.0851% — shorts pay (fade shorts)
+- PYTH funding -0.0765% — shorts pay (fade shorts)
 
 _Keyless · free tier. Realtime push + pro signals: github.com/sstiempro/mesh_

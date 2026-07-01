@@ -1,0 +1,116 @@
+{
+  "ts": 1782908690413,
+  "snapshots": 97,
+  "count": 12,
+  "carries": [
+    {
+      "coin": "MANTA",
+      "spread8h": 0.0769,
+      "annualized": 84.2,
+      "play": "long BybitPerp / short HlPerp",
+      "persistence": 0.92,
+      "held": 89,
+      "of": 97
+    },
+    {
+      "coin": "CELO",
+      "spread8h": 0.0989,
+      "annualized": 108.3,
+      "play": "long BinPerp / short BybitPerp",
+      "persistence": 0.8,
+      "held": 78,
+      "of": 97
+    },
+    {
+      "coin": "ME",
+      "spread8h": 0.1788,
+      "annualized": 195.8,
+      "play": "long BinPerp / short BybitPerp",
+      "persistence": 0.76,
+      "held": 74,
+      "of": 97
+    },
+    {
+      "coin": "STABLE",
+      "spread8h": 0.103,
+      "annualized": 112.8,
+      "play": "long HlPerp / short BinPerp",
+      "persistence": 0.58,
+      "held": 56,
+      "of": 97
+    },
+    {
+      "coin": "TNSR",
+      "spread8h": 0.5035,
+      "annualized": 551.4,
+      "play": "long BinPerp / short BybitPerp",
+      "persistence": 0.46,
+      "held": 45,
+      "of": 97
+    },
+    {
+      "coin": "GRASS",
+      "spread8h": 0.074,
+      "annualized": 81.1,
+      "play": "long BinPerp / short HlPerp",
+      "persistence": 0.25,
+      "held": 24,
+      "of": 97
+    },
+    {
+      "coin": "AVNT",
+      "spread8h": 0.0555,
+      "annualized": 60.8,
+      "play": "long BybitPerp / short BinPerp",
+      "persistence": 0.19,
+      "held": 18,
+      "of": 97
+    },
+    {
+      "coin": "ANIME",
+      "spread8h": 0.0902,
+      "annualized": 98.8,
+      "play": "long BybitPerp / short HlPerp",
+      "persistence": 0.16,
+      "held": 16,
+      "of": 97
+    },
+    {
+      "coin": "kPEPE",
+      "spread8h": 0.0755,
+      "annualized": 82.7,
+      "play": "long BinPerp / short HlPerp",
+      "persistence": 0.12,
+      "held": 12,
+      "of": 97
+    },
+    {
+      "coin": "TIA",
+      "spread8h": 0.0647,
+      "annualized": 70.9,
+      "play": "long BybitPerp / short BinPerp",
+      "persistence": 0.1,
+      "held": 10,
+      "of": 97
+    },
+    {
+      "coin": "SKY",
+      "spread8h": 0.0964,
+      "annualized": 105.6,
+      "play": "long BybitPerp / short HlPerp",
+      "persistence": 0.06,
+      "held": 6,
+      "of": 97
+    },
+    {
+      "coin": "2Z",
+      "spread8h": 0.0748,
+      "annualized": 81.9,
+      "play": "long BybitPerp / short HlPerp",
+      "persistence": 0.03,
+      "held": 3,
+      "of": 97
+    }
+  ],
+  "note": "Cross-venue funding carry (Bin/Bybit/HL via Hyperliquid = geo-immune) with persistence: higher = the spread HOLDS, not a one-tick blip. Data product; buyer executes with their own keys. Never traded by us."
+}

@@ -44,6 +44,8 @@ if (monitors) console.log(`monitors: ${monitors.live}/${monitors.count} live · 
 if (exec) console.log(`actions:  ${exec.routed || 0} routed/tick · ${exec.deliver?.published || 0} published to /api/feed${exec.deliver?.webhooks_sent ? ` · ${exec.deliver.webhooks_sent} webhook push` : ' (pro webhook off)'} · ${exec.pending_count || 0} cards awaiting your click`);
 if (paper) console.log(`paper:    $${paper.equity} equity (${paper.return_pct >= 0 ? '+' : ''}${paper.return_pct}%) · ${paper.open_positions} open · ${paper.closed_trades} closed · win ${paper.win_rate ?? '—'}% ← signals actually TRADE`);
 if (creds) console.log(`vault:    ${creds.count} saved keys wired (secrets external, never in repo)`);
+const hunt = (() => { try { return JSON.parse(readFileSync(path.join(LAB, 'data', 'audit-watch.json'), 'utf8')); } catch { return null; } })();
+if (hunt) { const hAge = Math.round((Date.now() - new Date(hunt.ts).getTime()) / 60000); console.log(`hunt:     ${hunt.watched} repos watched · ${hunt.audited} audited · ${hunt.total_high} high leads · ${hunt.new_high_cards} new cards · ${hAge}min ago ← audit-watch (bug-bounty loop)`); }
 const spentSpecs = ledger.filter(e => e.action === 'spec-built').length;
 console.log(`specs:    ${pendingSpecs.length} pending · ${spentSpecs} already built\n`);
 console.log(`🎯 NEXT TO KNOCK DOWN (highest-scored pending specs):`);

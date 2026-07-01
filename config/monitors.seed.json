@@ -1,11 +1,194 @@
 {
   "_doc": "SEED monitors (committed). The builder loop copies this to config/monitors.json (gitignored) and grows the live fleet from here. Each = a real keyless data product. Run live at /api/monitors.",
   "monitors": [
-    { "id": "mon-stable-depeg", "template": "stable-depeg", "label": "Stablecoin depeg watch", "params": { "threshold": 0.005 }, "monetize": "depeg-alert feed (Telegram/webhook), arb trigger" },
-    { "id": "mon-tvl-drain", "template": "tvl-drain", "label": "Protocol TVL-drain early-warning", "params": { "minTvl": 50000000, "dropPct": 0.15 }, "monetize": "exploit early-warning feed (security teams pay for this)" },
-    { "id": "mon-funding-extreme", "template": "funding-extreme", "label": "Funding-rate extremes", "params": { "threshold": 0.0008 }, "monetize": "crowded-positioning signal -> omnione mean-revert / paid feed" },
-    { "id": "mon-yield-spike", "template": "yield-spike", "label": "High-APY stable-pool radar", "params": { "minApy": 20, "minTvl": 1000000, "stableOnly": true }, "monetize": "yield-radar newsletter / API" },
-    { "id": "mon-gas-watch", "template": "gas-watch", "label": "ETH gas / congestion watch", "params": { "threshold": 30, "chain": "eth" }, "monetize": "tx-timing + MEV-window alert" },
-    { "id": "mon-sentiment-flip", "template": "sentiment-flip", "label": "Fear&Greed regime flip", "params": {}, "monetize": "contrarian regime trigger -> strategist + paid feed" }
+    {
+      "id": "mon-stable-depeg",
+      "template": "stable-depeg",
+      "label": "Stablecoin depeg watch",
+      "params": {
+        "threshold": 0.005
+      },
+      "monetize": "depeg-alert feed (Telegram/webhook), arb trigger"
+    },
+    {
+      "id": "mon-tvl-drain",
+      "template": "tvl-drain",
+      "label": "Protocol TVL-drain early-warning",
+      "params": {
+        "minTvl": 50000000,
+        "dropPct": 0.15
+      },
+      "monetize": "exploit early-warning feed (security teams pay for this)"
+    },
+    {
+      "id": "mon-funding-extreme",
+      "template": "funding-extreme",
+      "label": "Funding-rate extremes",
+      "params": {
+        "threshold": 0.0008
+      },
+      "monetize": "crowded-positioning signal -> omnione mean-revert / paid feed"
+    },
+    {
+      "id": "mon-yield-spike",
+      "template": "yield-spike",
+      "label": "High-APY stable-pool radar",
+      "params": {
+        "minApy": 20,
+        "minTvl": 1000000,
+        "stableOnly": true
+      },
+      "monetize": "yield-radar newsletter / API"
+    },
+    {
+      "id": "mon-gas-watch",
+      "template": "gas-watch",
+      "label": "ETH gas / congestion watch",
+      "params": {
+        "threshold": 30,
+        "chain": "eth"
+      },
+      "monetize": "tx-timing + MEV-window alert"
+    },
+    {
+      "id": "mon-sentiment-flip",
+      "template": "sentiment-flip",
+      "label": "Fear&Greed regime flip",
+      "params": {},
+      "monetize": "contrarian regime trigger -> strategist + paid feed"
+    },
+    {
+      "id": "mon-audit-watch",
+      "template": "audit-contest-watch",
+      "label": "Audit-contest launch watch",
+      "params": {},
+      "monetize": "first-mover audit pipeline (the bounty leg)"
+    },
+    {
+      "id": "mon-stablecoin-flow",
+      "template": "stablecoin-flow",
+      "label": "Stablecoin supply flow",
+      "params": {},
+      "monetize": "capital in/outflow signal (risk-on/off)"
+    },
+    {
+      "id": "mon-world-pulse",
+      "template": "world-pulse",
+      "label": "World-pulse (Polymarket)",
+      "params": {},
+      "monetize": "prediction-market macro regime input"
+    },
+    {
+      "id": "mon-hackathon-watch",
+      "template": "hackathon-watch",
+      "label": "Hackathon watch (Devpost)",
+      "params": {},
+      "monetize": "hackathon prizes + builder-rep (we can ship to them)"
+    },
+    {
+      "id": "mon-grants-watch",
+      "template": "grants-watch",
+      "label": "Grants watch (Karma GAP)",
+      "params": {},
+      "monetize": "grant funding directory for company/builds"
+    },
+    {
+      "id": "mon-defi-hack-watch",
+      "template": "defi-hack-watch",
+      "label": "DeFi exploit feed",
+      "params": {},
+      "monetize": "exploit early-warning (security teams pay)"
+    },
+    {
+      "id": "mon-funding-arb",
+      "template": "funding-arb",
+      "label": "Cross-venue funding arb",
+      "params": {},
+      "monetize": "delta-neutral funding-arb scanner"
+    },
+    {
+      "id": "mon-governance-watch",
+      "template": "governance-watch",
+      "label": "Governance watch (Snapshot)",
+      "params": {},
+      "monetize": "pre-event DAO alpha"
+    },
+    {
+      "id": "mon-vol-regime",
+      "template": "vol-regime",
+      "label": "Vol-regime (Deribit DVOL)",
+      "params": {},
+      "monetize": "crypto-VIX regime classifier"
+    },
+    {
+      "id": "mon-token-unlock-watch",
+      "template": "token-unlock-watch",
+      "label": "Token unlock watch",
+      "params": {},
+      "monetize": "predictable sell-pressure calendar"
+    },
+    {
+      "id": "mon-narrative-rotation",
+      "template": "narrative-rotation",
+      "label": "Narrative rotation (CoinGecko)",
+      "params": {},
+      "monetize": "sector-rotation radar"
+    },
+    {
+      "id": "mon-prediction-whale",
+      "template": "prediction-whale",
+      "label": "Prediction whale flow (Polymarket)",
+      "params": {},
+      "monetize": "smart-money event conviction"
+    },
+    {
+      "id": "mon-depeg-doctor",
+      "template": "depeg-doctor",
+      "label": "Depeg doctor (revert/break)",
+      "params": {},
+      "monetize": "revert-vs-break classifier"
+    },
+    {
+      "id": "mon-unlock-coil",
+      "template": "unlock-coil",
+      "label": "Unlock coil",
+      "params": {},
+      "monetize": "pre-unlock funding-complacency fade"
+    },
+    {
+      "id": "mon-vol-compression",
+      "template": "vol-compression",
+      "label": "Vol compression trigger",
+      "params": {},
+      "monetize": "compressed-vol + catalyst breakout watch"
+    },
+    {
+      "id": "mon-github-velocity",
+      "template": "github-velocity",
+      "label": "GitHub dev-velocity",
+      "params": {},
+      "monetize": "earliest narrative-ignition rung"
+    },
+    {
+      "id": "mon-prediction-vs-perp",
+      "template": "prediction-vs-perp",
+      "label": "Prediction-vs-perp divergence",
+      "params": {},
+      "monetize": "crowd-disagreement orthogonal signal"
+    },
+    {
+      "id": "mon-governance-alpha",
+      "template": "governance-alpha",
+      "label": "Governance alpha (decided+material)",
+      "params": {},
+      "monetize": "pre-event DAO alpha"
+    },
+    {
+      "id": "mon-airdrop-eligibility-confluence",
+      "template": "airdrop-eligibility-confluence",
+      "label": "Airdrop eligibility x fresh-candidate confluence",
+      "params": {},
+      "monetize": "scoped go-interact-now alert (wallet already active + new tokenless candidate on the same chain)"
+    }
   ]
 }

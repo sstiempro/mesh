@@ -4,15 +4,22 @@
 // dashboard is ever exposed across the tailnet, do NOT expose /api/send — keep spend on the Mac.
 import http from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { exec } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isPro, gate, tierInfo, proArtifact, pricing } from './premium.mjs';
 import { runAll as runMonitors, loadRegistry as loadMonitorRegistry } from './monitors.mjs';
-import { executionView, resolveAction, publicFeed, signalTapeView, digest } from './execution.mjs';
+import { executionView, resolveAction, publicFeed, signalTapeView, digest, regimeView } from './execution.mjs';
+import { grantFitView, runGrantFit } from './grant-fit.mjs';
+import { hackathonFitView, runHackathonFit } from './hackathon-fit.mjs';
+import { persistenceView, runPersistence, durabilityOf } from './persistence.mjs';
+import { carryView, runCarry } from './carry.mjs';
+import { contestSniperView } from './contest-sniper.mjs';
+import { referralStatus } from './referral.mjs';
 import { paperView } from './paper-engine.mjs';
 import { credSummary } from './credentials.mjs';
+import { workPacketSummary } from './work-cruncher.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LAB = path.resolve(__dirname, '..');
@@ -20,6 +27,10 @@ const PORT = process.env.PORT || 8787;
 const MO = 'https://api.moneroocean.stream';
 const TS = '/opt/homebrew/bin/tailscale';
 const WRPC = 'http://127.0.0.1:18088/json_rpc';
+// /api/send confirm gate (2026-07-01): the first call used to fire the real wallet-rpc transfer
+// immediately off a bare address+amount form, no confirmation step. Now it's two-phase: first call
+// stages a token (2min TTL), second call with that token actually executes the transfer.
+const pendingSends = new Map();
 
 const sh = (cmd) => new Promise(r => exec(cmd, { maxBuffer: 1 << 20 }, (e,o)=>r(e?'':o)));
 async function cfg(){ try { return JSON.parse(await readFile(path.join(LAB,'config','xmrig.json'),'utf8')); } catch { return {}; } }
@@ -281,7 +292,7 @@ async function income(){
   const prices=ids.length? await coinPrices(ids):{};
   const out=streams.map(s=>{
     let daily=+(s.est_daily_usd||0), value=null;
-    if(s.source==='live:moneroocean') daily=+((liveMine||s.est_daily_usd||0)).toFixed(4);
+    if(s.source==='live:moneroocean') daily=+(liveMine).toFixed(4);
     if(s.amount&&s.price_id){ const px=prices[s.price_id]||0; value=+(px*s.amount).toFixed(2); if(s.apy_pct) daily=+(value*(s.apy_pct/100)/365).toFixed(4); }
     return {...s, value_usd:value, daily_usd:daily};
   });
@@ -652,7 +663,7 @@ async function formulationTest(){
   const out=F.map(f=>({ id:f.id, name:f.name, cat:f.cat, cap:f.cap, mesh:f.mesh, thesis:f.thesis, test:f.test, ...ev(f.cat) }));
   const counts=out.reduce((a,f)=>{ a[f.status]=(a[f.status]||0)+1; return a; },{});
   return { count:out.length, counts, pulse, formulations:out,
-    note:'Each of the 100 formulations evaluated against LIVE keyless data. RUNNING = infra live + learning. TESTABLE = data reads it now. OPERATOR = needs a signup/deposit/claim (the engine ranks + tracks; you sign). Forward-is-backward: RUNNING streams feed the ledger/persistence, which re-scores everything.' };
+    note:`${counts.RUNNING||0} running, ${counts.TESTABLE||0} testable, ${counts.OPERATOR||0} need setup.` };
 }
 
 // FREE / thin-air streams: zero-capital idle-resource income + the airdrop/PGF upside, mesh-stacked honestly.
@@ -684,8 +695,8 @@ async function freeStreams(){
   return { mesh_macs:dev, streams,
     daily_drip_usd:{ live, full_potential:drip },
     groups, airdrop_upside:airdropUpside,
-    framing:'The drip is small + honest (cents/day stacked across Macs). The real thin-air upside = the AIRDROP layer (early-node tokens) + getting PAID for work already done (PGF grants for the dashboard, bug bounties). Operator signs up + holds every credential; the engine ranks, deploys the safe headless ones, and tracks.',
-    honest:cfg.honest };
+    framing:`${dev} device${dev===1?'':'s'}, ${streams.filter(s=>s.live).length} running. Airdrop upside from early-node tokens + grants/bounties for existing work.`,
+    honest:`Bandwidth/compute streams: ~$0.50-1.50/day across ${dev} Mac${dev===1?'':'s'}. Real upside: airdrop tokens + grants/bounties (100-1000x the bandwidth pennies).` };
 }
 
 // KNOWLEDGE → MONEY engine: EV-rank zero-capital build/skill income; surface what's PASSIVE + what AI can do now.
@@ -739,7 +750,7 @@ async function report(){
   let md='', meta=null;
   try{ md=await readFile(path.join(LAB,'reports','latest.md'),'utf8'); }catch{}
   try{ meta=JSON.parse(await readFile(path.join(LAB,'reports','latest.json'),'utf8')); }catch{}
-  return { ok:!!md, meta, markdown:md, note:'Autonomous daily intelligence brief generated from live keyless data. Copy/publish under your identity (newsletter · Farcaster · Mirror · X) = the content-creation income play, produced for you.' };
+  return { ok:!!md, meta, markdown:md, note:'Daily brief, auto-generated. Publish to newsletter, Farcaster, Mirror, or X.' };
 }
 
 // STRATEGIST — the thinking layer. Ranks every avenue by VALUE-PER-ENERGY (money/joule·effort) and
@@ -755,28 +766,25 @@ async function strategist(){
   const mined = led?.cumulative||0;
   // energy ledger — every transform ranked by value-per-energy (honest). ratio is a relative score 0-100.
   const energy_ledger = [
-    { transform:'AI intelligence + creation (audits · content · datasets · analysis · grant drafts)', ratio:95, autonomy:'machine produces 24/7', note:'highest money/joule — the machine hosts reasoning; the operator monetizes the output' },
-    { transform:'Onchain creation (fee contracts · NFT-utility · AI agent · markets)', ratio:78, autonomy:'machine builds, operator deploys', note:`the MC dominant core: ${dom.slice(0,3).join(' · ')}` },
-    { transform:'Passive builder-pay (Base Builder Rewards · Sponsors · tea.xyz)', ratio:70, autonomy:'set up once → automatic', note:`${passiveN} passive streams pay for the GitHub signal you already produce` },
-    { transform:'Airdrops / points / retroactive (node-running · genuine usage)', ratio:55, autonomy:'mesh runs nodes, operator signs', note:'tail-driven free call-options; the mesh node edge is real' },
-    { transform:'Real DeFi yield (idle stables → organic fees)', ratio:45, autonomy:'operator deposits', note: bestYield?`best now: ${bestYield} organic`:'capital-gated but real' },
-    { transform:'Bandwidth DePIN (idle bandwidth)', ratio:25, autonomy:'mesh runs it', note:'free + stacks, but pennies' },
-    { transform:'Mining / hash (proof-of-work)', ratio:8, autonomy:'fully autonomous', note:`LOWEST money/joule — PoW wastes energy by design. cum $${mined.toFixed(3)}. keep as a tiny autonomous baseline, never the engine` },
+    { transform:'Audits, content, grants', ratio:95, autonomy:'machine produces, you submit' },
+    { transform:'Onchain apps + contracts', ratio:78, autonomy:'machine builds, you deploy' },
+    { transform:'Builder rewards (Base, Sponsors, tea.xyz)', ratio:70, autonomy:'set up once, then automatic' },
+    { transform:'Airdrops + points', ratio:55, autonomy:'mesh runs nodes, you sign claims' },
+    { transform:'DeFi yield', ratio:45, autonomy:'you deposit once', note: bestYield||null },
+    { transform:'Bandwidth DePIN', ratio:25, autonomy:'mesh runs it' },
+    { transform:'Mining (PoW)', ratio:8, autonomy:'fully autonomous', note:`$${mined.toFixed(3)} cumulative` },
   ];
   return {
-    law:'Money = transformed energy. Route the machine\'s energy (compute + AI + your thought) to the HIGHEST-value transform — intelligence & creation — not the lowest (hash).',
     energy_ledger,
     optimal_workflow:[
-      { step:1, name:'Foundations (one-time, multiply everything)', who:'operator click', detail:'Basename + repo public + Farcaster — the MC proved +20% median / +62% upside', autonomous:false },
-      { step:2, name:'Turn on the autonomous value engine', who:'machine', detail:`the mesh produces intelligence 24/7 (daily brief live · ${aiNow} AI-work products ready to draft) — this is the energy→value step`, autonomous:true },
-      { step:3, name:'Switch on passive builder-pay', who:'operator click', detail:'Base Builder Rewards + Sponsors pay automatically for the value the machine helps you ship', autonomous:false },
-      { step:4, name:'Monetize the value (the legal transform)', who:'operator click', detail:'publish the brief / submit the grant / submit the audit finding — value→funds, the one step physics+safety reserve for your identity', autonomous:false },
-      { step:5, name:'Compound + let the machine re-think', who:'machine', detail:'reinvest, the strategist re-ranks every cycle (orchestrator), routing energy to the best ratio', autonomous:true },
+      { step:1, name:'Set up identity (one-time)', who:'operator', detail:'Basename + public repo + Farcaster', autonomous:false },
+      { step:2, name:'Machine produces value', who:'machine', detail:`daily brief live, ${aiNow} drafts ready`, autonomous:true },
+      { step:3, name:'Enable passive income', who:'operator', detail:'Base Builder Rewards + Sponsors', autonomous:false },
+      { step:4, name:'Submit + publish', who:'operator', detail:'grant apps, audit findings, content — you sign', autonomous:false },
+      { step:5, name:'Reinvest + re-rank', who:'machine', detail:'orchestrator re-ranks avenues each cycle', autonomous:true },
     ],
-    machine_does:['research','draft applications + content + datasets','run + monitor all engines','rank value-per-energy','produce the daily brief','co-audit on request'],
-    operator_does:['the foundation clicks','the monetization transform (publish/submit/sign)','hold the identity + wallet (the safeguard)'],
-    now: passiveN>=0 ? 'Do the 4 foundation clicks in EXECUTION-PACKET.md — they unlock the highest-ratio transforms at once. The machine is already producing value while you do.' : 'engines warming up',
-    honest:'Most transforms are small; the edge is routing energy to the few high-ratio ones (intelligence + onchain creation + passive) and compounding. Mining stays a near-zero autonomous baseline, deliberately deprioritized — it is the worst use of the energy.'
+    now: passiveN>=0 ? 'Set up the 4 foundations in EXECUTION-PACKET.md to unlock passive income.' : 'engines warming up',
+    honest:`${passiveN} passive streams available. Mining earns $${mined.toFixed(3)} total — deprioritized.`
   };
 }
 
@@ -790,18 +798,15 @@ async function revenue(){
   const yr = (d)=> d!=null ? +(d/365).toFixed(1) : null;
   const ms = (t)=>{ const m=(comp?.milestones||[]).find(x=>x.target===t); return m?{prob:Math.round(m.prob_reach*100), years:m.median_years}:null; };
   return {
-    realized: { total:+realized.toFixed(4), source:'mining (the only autonomous transform so far)', other_streams:0,
+    realized: { total:+realized.toFixed(4), source:'mining',
       today:+((led?.today?.earned)||0).toFixed(4), week:+((led?.week?.earned)||0).toFixed(4), day_count:led?.day_count||0 },
     rate: { usd_day:+rate.toFixed(4), hashrate:hr },
-    eta_realized: {  // at the CURRENT mining-only rate — the honest, slow truth
+    eta_realized: {
       to_100:{ days:etaDays(100), years:yr(etaDays(100)) },
-      to_1000:{ days:etaDays(1000), years:yr(etaDays(1000)) },
-      note:'at the current mining-only rate. This is why hash is the worst transform — ~20yr to $100.' },
-    eta_projected: {  // IF the high-ratio transforms get monetized (compound MC) — requires the identity click
-      to_1000: ms(1000), to_10000: ms(10000), to_100000: ms(100000),
-      note:'the compound projection IF value is monetized (foundation clicks + ongoing). The gap vs eta_realized = the value of activating the high-ratio transforms.' },
-    gap:'Realized revenue is mining cents because every higher-value transform needs your identity to convert value→funds. The 4 foundation clicks collapse the ETA from ~20yr (hash) toward ~0.7yr to $1k (the projection). The machine is producing the value now; the revenue realizes when you close the circuit.',
-    honest:'Nothing here is fabricated. $'+realized.toFixed(2)+' is the real all-time number. The projection is a distribution, not a promise.'
+      to_1000:{ days:etaDays(1000), years:yr(etaDays(1000)) } },
+    eta_projected: {
+      to_1000: ms(1000), to_10000: ms(10000), to_100000: ms(100000) },
+    gap:`$${realized.toFixed(2)} realized from mining. Other avenues need identity setup to start earning.`
   };
 }
 
@@ -813,14 +818,14 @@ async function autonomousRevenue(){
   const [led, ov, free] = await Promise.all([ ledger().catch(()=>({})), overview().catch(()=>({})), freeStreams().catch(()=>({})) ]);
   const minedDay = +(ov?.totals?.fleet_usd_day ?? 0), grcDay = +(ov?.totals?.grc_usd_day || 0);
   const streams = [
-    { name:'CPU mining → XMR wallet', autonomy:'stopped', setup:'OFF by choice', usd_day:0, note:'STOPPED — operator killed it (fanless Air on battery = burning hardware for pennies, the worst transform). Energy redirected to the value engine.' },
-    { name:'Gridcoin/BOINC → GRC (VPS)', autonomy:'running', setup:'done', usd_day:+grcDay.toFixed(4), note:'VPS compute does useful science → GRC, autonomous. Cents, but useful-compute not hash. Separate box, not the Air.' },
-    { name:'Bandwidth DePIN → app balance', autonomy:'setup-once', setup:'fill depin.local.env (your account) → bin/depin-deploy.sh up', usd_day:0, note:'after ONE signup it runs on the mesh autonomously; pennies/day, stacks on mining.' },
-    { name:'Base Builder Rewards → wallet', autonomy:'setup-once', setup:'Basename + Builder Score≥40 (one-time)', usd_day:0, note:'then pays WEEKLY with NO claim — the purest set-once-then-watch stream. Needs your build-in-public.' },
-    { name:'tea.xyz → staking rewards', autonomy:'setup-once', setup:'register packages once', usd_day:0, note:'passive after registration.' },
-    { name:'Auto-compounding yield → wallet', autonomy:'setup-once', setup:'one deposit to a vault you control', usd_day:0, note:'organic yield compounds autonomously; needs your capital + one deposit.' },
-    { name:'Airdrop accrual → held wallet', autonomy:'setup-once', setup:'give a public address some genuine onchain history once', usd_day:0, note:'points/eligibility accrue passively to a wallet you just HOLD.' },
-    { name:'Grants / audits / content', autonomy:'human-each', setup:'each needs a person to submit/publish', usd_day:0, note:'NOT autonomous — these are human-leverage extras (the machine drafts; you submit). Excluded from the watch model.' },
+    { name:'CPU mining → XMR', autonomy:'stopped', setup:'OFF by choice', usd_day:0 },
+    { name:'Gridcoin/BOINC → GRC', autonomy:'running', setup:'done', usd_day:+grcDay.toFixed(4) },
+    { name:'Bandwidth DePIN', autonomy:'setup-once', setup:'fill depin.local.env → bin/depin-deploy.sh up', usd_day:0 },
+    { name:'Base Builder Rewards', autonomy:'setup-once', setup:'Basename + Builder Score ≥ 40', usd_day:0 },
+    { name:'tea.xyz staking', autonomy:'setup-once', setup:'register packages once', usd_day:0 },
+    { name:'Auto-compounding yield', autonomy:'setup-once', setup:'one vault deposit', usd_day:0 },
+    { name:'Airdrop accrual', autonomy:'setup-once', setup:'onchain history on a held wallet', usd_day:0 },
+    { name:'Grants / audits / content', autonomy:'human-each', setup:'submit or publish each one', usd_day:0 },
   ];
   const running = streams.filter(s=>s.autonomy==='running');
   const autoNow = running.reduce((a,s)=>a+s.usd_day,0);
@@ -829,8 +834,7 @@ async function autonomousRevenue(){
     realized_total:+(led?.cumulative||0).toFixed(4),
     counts:{ running:running.length, setup_once:streams.filter(s=>s.autonomy==='setup-once').length, human_each:streams.filter(s=>s.autonomy==='human-each').length },
     streams,
-    truth:'Fully autonomous + zero human EVER is impossible by physics: money needs a legal owner, so each stream needs ONE setup by you (your account/wallet). After that it is watch-only — no approvals. Right now 2 streams are fully autonomous (mining + GRC) and earning hands-off; they are just small. The bigger autonomous-after-setup streams need one identity step each, then they too become watch-only.',
-    honest:'The machine does 100% of the ongoing WORK autonomously. It cannot be the legal PAYEE — that is you, once per stream. There is no safe way around that one step.'
+    truth:`${running.length} stream${running.length===1?'':'s'} earning now. ${streams.filter(s=>s.autonomy==='setup-once').length} more need one-time setup.`
   };
 }
 
@@ -1047,6 +1051,145 @@ async function checkAddress(addr){
   return { error:'Unrecognized address format. Supports EVM (0x…), Solana, Bitcoin (bc1…/1…/3…), Cosmos (cosmos1…).' };
 }
 
+// ── COMMAND — the single overview. The one screen that answers: what have we BANKED, what WORK is the
+// engine actually producing (staged → crunched → shipped), is every cron alive, and what's lying green?
+// Reads real files only. No fabricated numbers. This is the operator's track-and-control surface.
+function command(){
+  const now = Date.now();
+  const rd = (p)=>{ try { return readFileSync(path.join(LAB,p),'utf8'); } catch { return ''; } };
+  const rdJson = (p,def)=>{ try { return JSON.parse(rd(p)); } catch { return def; } };
+  const jl = (p)=> rd(p).split('\n').filter(Boolean).map(l=>{try{return JSON.parse(l);}catch{return null;}}).filter(Boolean);
+  const dirCount = (p)=>{ try { return readdirSync(path.join(LAB,p)).filter(f=>!f.startsWith('.')).length; } catch { return 0; } };
+  const ageMin = (p)=>{ try { return Math.round((now - statSync(path.join(LAB,p)).mtimeMs)/60000); } catch { return null; } };
+
+  // ── BANKED — realized $ only. accrued = mined/credited; banked = actually paid out; held = pre-existing bag.
+  const led = jl('data/ledger.jsonl');
+  const last = led[led.length-1] || {};
+  const accrued = +(((last.mining_earned_usd||0) + (last.grc_earned_usd||0)).toFixed(4));
+  const banked = +(((last.xmr_paid||0) * (last.xmr_price||0)).toFixed(2)); // only XMR actually paid to wallet
+  const money = {
+    banked_usd: banked,                       // truly in a wallet
+    accrued_usd: accrued,                      // mined/credited, not yet paid (below payout floors)
+    held_usd: +(last.held_usd||0).toFixed(2),  // existing holdings — NOT earned by the engine
+    day_rate_usd: +(last.rate_usd_day||0).toFixed(4),
+    note: banked===0 ? `$${accrued.toFixed(4)} accrued (mining+GRC) but $0 banked — both below payout floors. Holdings $${(last.held_usd||0).toFixed(0)} are a pre-existing bag, not engine income.` : `$${banked} banked.`,
+  };
+
+  // ── WORK TRACKER — three layers: staged → crunched (output on disk) → shipped (income).
+  const wp = (()=>{ try { return workPacketSummary(); } catch { return {specs_total:0,drafted:0,remaining:0,by_need:{},recent:[]}; } })();
+  const leadsAll = jl('data/audit-leads.jsonl');
+  const auditWatch = rdJson('data/audit-watch.json',{});
+  const ticksToday = jl('data/build-ledger.jsonl').filter(e=>e.action==='tick' && (e.ts||'').slice(0,10)===new Date(now).toISOString().slice(0,10));
+  const publishedToday = ticksToday.reduce((s,t)=>s+(t.published||0),0);
+  const work = {
+    // CRUNCHED — real deliverables produced (on disk)
+    audit_reports: dirCount('data/audit-reports'),
+    grant_drafts: dirCount('data/grant-applications'),
+    daily_briefs: dirCount('data/daily-briefs'),
+    // STAGED — packets waiting to be crunched, by where they route
+    packets_staged: dirCount('data/work-packets'),
+    packets_remaining: wp.remaining,
+    packets_by_route: wp.by_need,
+    packets_recent: wp.recent,
+    // LIVE WORK — the always-on production
+    monitors_live: rdJson('data/monitor-feed.json',{}).live ?? null,
+    audit_leads: leadsAll.length,
+    audit_leads_high: leadsAll.filter(l=>String(l.severity||l.impact||'').toLowerCase().startsWith('high')).length,
+    alerts_published_today: publishedToday,
+    // SHIPPED — income-producing submissions (operator-gated). 0 until a human submits/posts.
+    shipped: 0,
+    shipped_note: 'Audits/grants are CRUNCHED (drafted) but not yet SHIPPED — submission is your sign step. That is the gap between output and income.',
+  };
+
+  // ── CRON HEALTH — every scheduler, liveness via its OUTPUT file mtime (truer than logs). Flags stale.
+  const crons = [
+    { id:'builder (5m)',        out:'data/build-ledger.jsonl',     stale:15 },
+    { id:'orchestrator (1m)',   out:'data/automation-status.json', stale:10 },
+    { id:'scanner (3m)',        out:'data/opportunities.jsonl',    stale:15 },
+    { id:'ledger (1h)',         out:'data/ledger.jsonl',           stale:150 },
+    { id:'governor (20s)',      out:'logs/governor-state.json',    stale:10 },
+    { id:'audit (1h)',          out:'data/audit-watch.json',       stale:150 },
+    { id:'report (24h)',        out:'reports/latest.json',         stale:1500 },
+  ].map(c=>{ const a=ageMin(c.out); return { id:c.id, last_min:a, alive: a!==null && a<=c.stale, out:c.out }; });
+
+  // ── THE LIES — things showing green that aren't. Each is a real, file-verified flag.
+  const flags = [];
+  const gov = rdJson('logs/governor-state.json',{});
+  const govRecent = gov.recent||[]; const govFail = govRecent.filter(r=>r.ok===false).length;
+  if (govRecent.length && govFail/govRecent.length >= 0.8) flags.push({ level:'warn', what:`Governor shows ON but ${govFail}/${govRecent.length} recent actions FAILED — it's not actually protecting.` });
+  const paperAge = ageMin('data/paper-book.json');
+  if (paperAge!==null && paperAge>360) flags.push({ level:'warn', what:`Paper book frozen ${Math.round(paperAge/60)}h — runPaper() not firing; the equity shown is stale.` });
+  if ((last.hashrate||0)===0) flags.push({ level:'info', what:`Miner stopped (0 H/s) — deprioritized by choice, but the keepalive watchdog is unloaded so nothing would restart it.` });
+  if (wp.remaining>200) flags.push({ level:'info', what:`${wp.remaining} spec work-units still queued — draining ~3/tick.` });
+  const deadCrons = crons.filter(c=>!c.alive);
+  if (deadCrons.length) flags.push({ level:'alert', what:`Stale/dead crons: ${deadCrons.map(c=>c.id).join(', ')} — no fresh output.` });
+
+  // ── PENDING — the real approve-queue count (operator clicks money/identity moves).
+  let pending_count = 0; try { const m=new Map(); for (const e of jl('data/action-queue.jsonl')) if(e.sig) m.set(e.sig,{...(m.get(e.sig)||{}),...e}); pending_count=[...m.values()].filter(e=>e.status==='pending').length; } catch {}
+
+  return {
+    ts: now,
+    money,
+    work,
+    pending_actions: pending_count,
+    crons,
+    crons_alive: crons.filter(c=>c.alive).length,
+    crons_total: crons.length,
+    flags,
+    summary: `Banked $${money.banked_usd} · accrued $${money.accrued_usd} · ${work.audit_reports} audits + ${work.grant_drafts} grants + ${work.daily_briefs} briefs crunched · ${work.packets_staged} packets staged (${work.packets_remaining} to crunch) · ${pending_count} cards awaiting your click · ${crons.filter(c=>c.alive).length}/${crons.length} crons alive · ${flags.length} flags`,
+    note: 'Real files only. STAGED=runbook written · CRUNCHED=deliverable on disk · SHIPPED=you submitted it (income). The honest gap to income is the SHIP step.',
+  };
+}
+
+// MONEY & TASKS — the one view: every avenue/task across all catalogues, normalized to
+// {what it is · $ now (realized) · $ projected (EV/mo) · profit path · next action}, ranked.
+// Answers "how much are we making, projected, per task, and how does each become profit."
+function taskMoney(){
+  const rd = (p)=>{ try { return JSON.parse(readFileSync(path.join(LAB,p),'utf8')); } catch { return null; } };
+  const arr = (d)=> Array.isArray(d) ? d : (d ? Object.values(d).find(Array.isArray) || [] : []);
+  // pull a representative $ out of a free-text range ("$15–300", "0.005–0.1 ETH (~$15–300)", "single crit $10k–$1M")
+  const dollars = (s)=>{
+    const t = String(s||'').replace(/,/g,'');
+    const nums = [...t.matchAll(/\$\s?([\d.]+)\s*([kKmM])?/g)].map(m=>{ let n=parseFloat(m[1])||0; const u=(m[2]||'').toLowerCase(); if(u==='k')n*=1e3; if(u==='m')n*=1e6; return n; });
+    if(!nums.length) return 0;
+    return nums.reduce((a,b)=>a+b,0)/nums.length;
+  };
+  const tasks = [];
+  // 1. income-streams → monthly = daily×30 (the only ones with realized)
+  for(const s of arr(rd('config/income-streams.json'))){ const mo=+((s.est_daily_usd||0)*30).toFixed(2);
+    tasks.push({ name:s.label||s.id, cat:s.category||'stream', what:String(s.source||'').slice(0,60), status:s.status||'?', actual_mo: s.status==='live'?mo:0, projected_mo:mo, profit:'recurring passive', next:s.status==='configure'?'connect account':s.status==='live'?'running':'set up', source:'streams' }); }
+  // 2. knowledge-capital (grants/builder rewards) → est_value × prob
+  for(const k of arr(rd('config/knowledge-capital.json'))){ const ev=dollars(k.est_value); const p=Number(k.prob)||0.3;
+    tasks.push({ name:k.name, cat:k.category||'grant', what:String(k.note||'').slice(0,60), status:k.fits_us?'fits-us':'review', actual_mo:0, projected_mo:+(ev*p).toFixed(0), upside:ev, profit:k.recurring||'one-off', next:k.requires?`needs: ${String(k.requires).slice(0,40)}`:'apply', url:k.url, source:'grants' }); }
+  // 3. bounty-targets → prize × odds factor (EV)
+  for(const b of arr(rd('config/bounty-targets.json'))){ const odds=b.odds==='high'?0.08:b.odds==='med'?0.03:0.01;
+    tasks.push({ name:b.name, cat:'bounty', what:`${b.platform||''} ${b.type||''} · ${b.lang||''}`.trim(), status:b.status||'open', actual_mo:0, projected_mo:+(((b.prize_usd||0)*odds)).toFixed(0), upside:b.prize_usd||0, profit:'per valid finding', next:b.access&&/gated/i.test(b.access)?'needs your account':'audit + submit', url:b.url, ends:b.ends, source:'bounties' }); }
+  // 4. system-plays → pays range (upside; mostly unbuilt)
+  for(const sp of arr(rd('config/system-plays.json'))){ const ev=dollars(sp.pays);
+    tasks.push({ name:sp.name, cat:sp.cat||'play', what:String(sp.system||'').slice(0,60), status:sp.buildable==='yes'?'buildable':'idea', actual_mo:0, projected_mo:0, upside:ev, profit:String(sp.pays||'').slice(0,40), next:'build the play', source:'plays' }); }
+  // 5. fringe-100 → (lo..hi) × probability = EV/mo
+  for(const fr of arr(rd('config/fringe-100.json'))){ const mid=((Number(fr.lo)||0)+(Number(fr.hi)||0))/2; const p=Number(fr.p)||0.15;
+    tasks.push({ name:fr.name, cat:fr.cat||'fringe', what:String(fr.note||'').slice(0,60), status:'idea', actual_mo:0, projected_mo:+(mid*p).toFixed(1), upside:Number(fr.hi)||0, profit:'creator/crypto', next:'spin up + test', source:'fringe' }); }
+  // realized (banked) from the ledger
+  let realized_mo=0; try { const led=readFileSync(path.join(LAB,'data','ledger.jsonl'),'utf8').trim().split('\n'); const last=JSON.parse(led[led.length-1]); realized_mo=+(((last.mining_earned_usd||0)+(last.grc_earned_usd||0))*30/Math.max(1,led.length)).toFixed(2); } catch {}
+  // rollups
+  const by_cat={}; for(const t of tasks){ const c=by_cat[t.cat] ||= {count:0,projected_mo:0,top_upside:0}; c.count++; c.projected_mo+=t.projected_mo||0; c.top_upside=Math.max(c.top_upside,t.upside||0); }
+  const projected_mo = tasks.reduce((a,t)=>a+(t.projected_mo||0),0);
+  const actual_mo = tasks.reduce((a,t)=>a+(t.actual_mo||0),0);
+  const ranked = tasks.slice().sort((a,b)=> (b.projected_mo||0)-(a.projected_mo||0) || (b.upside||0)-(a.upside||0));
+  return {
+    ts: Date.now(),
+    realized_mo: actual_mo,              // what's actually earning now (~$0 — honest)
+    projected_mo: +projected_mo.toFixed(0),   // EV/month if executed (speculative, probability-weighted)
+    avenues: tasks.length,
+    by_category: Object.fromEntries(Object.entries(by_cat).map(([k,v])=>[k,{count:v.count,projected_mo:+v.projected_mo.toFixed(0),top_upside:v.top_upside}]).sort((a,b)=>b[1].projected_mo-a[1].projected_mo)),
+    top_tasks: ranked.slice(0,40),
+    all_tasks: ranked,
+    summary: `${tasks.length} avenues · $${actual_mo.toFixed(2)}/mo realized · $${Math.round(projected_mo).toLocaleString()}/mo projected (EV, if executed) · top category: ${Object.entries(by_cat).sort((a,b)=>b[1].projected_mo-a[1].projected_mo)[0]?.[0]||'—'}`,
+    honest: 'realized ≈ $0 (only mining trickle). Projected = probability-weighted EV per avenue IF executed — opportunity, not income. The work is to turn projected → realized: build/ship the high-EV ones, you approve the outward steps.',
+  };
+}
+
 async function readBody(req){ let b=''; for await (const c of req) b+=c; return b; }
 
 http.createServer(async (req,res)=>{
@@ -1057,6 +1200,8 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/fleet')  return J(200, await fleet());
     if(u.pathname==='/api/mesh')   return J(200, await mesh());
     if(u.pathname==='/api/overview') return J(200, await overview());
+    if(u.pathname==='/api/command') return J(200, command());
+    if(u.pathname==='/api/money') return J(200, taskMoney());
     if(u.pathname==='/api/machine') return J(200, await machineDetail(u.searchParams.get('name')));
     if(u.pathname==='/api/machine-control') return J(200, await machineControl(u.searchParams.get('name'), u.searchParams.get('action')));
     if(u.pathname==='/api/fleet-control') return J(200, await fleetControl(u.searchParams.get('action')));
@@ -1084,6 +1229,9 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/autonomous') return J(200, await autonomousRevenue());
     if(u.pathname==='/api/agent-wallet') return J(200, await agentWallet());
     if(u.pathname==='/api/agent-plan') return J(200, await agentPlan());
+    if(u.pathname==='/api/audit') return J(200, await (async()=>{ try{ return JSON.parse(await readFile(path.join(LAB,'data','audit-watch.json'),'utf8')); }catch{ return {watched:0,audited:0,total_high:0,new_high_cards:0,targets:[],note:'audit-watch warming up'}; } })());
+    if(u.pathname==='/api/audit/report'){ const t=u.searchParams.get('target'); if(!t) return J(400,{error:'?target= required'}); try{ return J(200, JSON.parse(await readFile(path.join(LAB,'data','audit-reports',t+'.json'),'utf8'))); }catch{ return J(404,{error:'no report for '+t}); } }
+    if(u.pathname==='/api/audit/leads'){ const t=u.searchParams.get('target'); try{ const raw=await readFile(path.join(LAB,'data','audit-leads.jsonl'),'utf8'); const all=raw.split('\n').filter(Boolean).map(l=>{ try{return JSON.parse(l)}catch{return null} }).filter(Boolean); return J(200, t ? all.filter(x=>x.target===t) : all); }catch{ return J(200,[]); } }
     if(u.pathname==='/api/airdrops') return J(200, await airdropRadar());
     if(u.pathname==='/api/system-plays') return J(200, await systemPlays());
     if(u.pathname==='/api/links') return J(200, await links(u));
@@ -1092,6 +1240,17 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/execution') return J(200, await executionView());
     if(u.pathname==='/api/action' && req.method==='POST'){ const {sig,status}=JSON.parse((await readBody(req))||'{}'); return J(200, await resolveAction(sig,status)); }
     if(u.pathname==='/api/signal-tape') return J(200, await signalTapeView());
+    if(u.pathname==='/api/regime') return J(200, await regimeView());
+    if(u.pathname==='/api/grantfit') return J(200, await grantFitView());
+    if(u.pathname==='/api/grantfit/run' && req.method==='POST'){ const b=JSON.parse((await readBody(req))||'{}'); return J(200, await runGrantFit({n:b.n||5})); }
+    if(u.pathname==='/api/hackathonfit') return J(200, await hackathonFitView());
+    if(u.pathname==='/api/hackathonfit/run' && req.method==='POST'){ const b=JSON.parse((await readBody(req))||'{}'); return J(200, await runHackathonFit({n:b.n||5})); }
+    if(u.pathname==='/api/persistence'){ const pool=u.searchParams.get('pool'); return J(200, pool? await durabilityOf(pool) : await persistenceView()); }
+    if(u.pathname==='/api/persistence/run' && req.method==='POST') return J(200, await runPersistence({}));
+    if(u.pathname==='/api/carry') return J(200, await carryView());
+    if(u.pathname==='/api/carry/run' && req.method==='POST') return J(200, await runCarry({}));
+    if(u.pathname==='/api/sniper') return J(200, await contestSniperView());
+    if(u.pathname==='/api/referral') return J(200, await referralStatus());
     if(u.pathname==='/api/digest'){ if(u.searchParams.get('format')==='md'){ const d=await digest(); res.writeHead(200,{'content-type':'text/markdown; charset=utf-8'}); res.end(d.markdown); return; } return J(200, await digest()); }
     if(u.pathname==='/api/pricing') return J(200, await pricing());
     if(u.pathname==='/api/paper') return J(200, await paperView());
@@ -1134,18 +1293,29 @@ http.createServer(async (req,res)=>{
     if(u.pathname==='/api/wallet') return J(200, await wallet());
     if(u.pathname==='/api/state')  return J(200, {state: await gstate()});
     if(u.pathname==='/api/send' && req.method==='POST'){
-      const {to,amount}=JSON.parse((await readBody(req))||'{}');
+      const {to,amount,confirm}=JSON.parse((await readBody(req))||'{}');
       if(!to||!amount) return J(400,{error:'need destination address + amount'});
+      for(const [tok,p] of pendingSends) if(p.exp<Date.now()) pendingSends.delete(tok); // sweep expired
+      if(!confirm){
+        const token=`${Date.now().toString(36)}${Math.random().toString(36).slice(2,10)}`;
+        pendingSends.set(token,{to,amount:String(amount),exp:Date.now()+120000});
+        return J(200,{ok:false,needs_confirm:true,confirm_token:token,to,amount,expires_in_sec:120});
+      }
+      const pending=pendingSends.get(confirm);
+      pendingSends.delete(confirm);
+      if(!pending||pending.to!==to||pending.amount!==String(amount)) return J(400,{error:'confirmation expired or details changed — click Send again'});
       const r=await rpc('transfer',{destinations:[{address:to,amount:Math.round(Number(amount)*1e12)}],priority:0,ring_size:16});
       return J(200, r.error?{error:r.error}:{ok:true,tx_hash:r.tx_hash,fee:(r.fee||0)/1e12});
     }
     if(u.pathname==='/api/control'){
+      if(req.method!=='POST') return J(405,{error:'POST required'});
       const map={flatout:'mine-flatout.sh',idle:'start.sh',stop:'stop.sh'};
       const s=map[u.searchParams.get('action')];
       if(!s) return J(400,{error:'action must be flatout|idle|stop'});
       return exec(`"${LAB}/bin/${s}"`,(e,o)=>J(200,{ok:!e,out:(o||'').trim()}));
     }
     if(u.pathname==='/api/miner'){
+      if(req.method!=='POST') return J(405,{error:'POST required'});
       const a=u.searchParams.get('action');
       if(a==='restart') return exec(`"${LAB}/bin/mine-flatout.sh"`,(e,o)=>J(200,{ok:!e,out:(o||'').trim()}));
       if(a==='pause'||a==='resume'){ const c=await cfg(); const t=c?.http?.['access-token']; const p=c?.http?.port||18000;

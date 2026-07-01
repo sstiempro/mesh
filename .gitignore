@@ -43,3 +43,12 @@ config/agent-wallet.key.json
 config/*.key.json
 node_modules/
 data/airdrop-discovered.json
+
+# audit reports (regenerated per hunt; may contain target code snippets)
+data/audit-reports/
+data/audit-leads.jsonl
+data/audit-watch.json
+data/audit-watch-state.json
+
+# idea-gen live-category cache (regenerated from DeFiLlama /protocols on next run if missing)
+data/llama-categories-cache.json

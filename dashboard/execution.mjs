@@ -21,6 +21,23 @@ const DELIVERY = path.join(LAB, 'config', 'delivery.local.json'); // gitignored;
 
 const jsonl = (f) => existsSync(f) ? readFileSync(f, 'utf8').split('\n').filter(Boolean).map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean) : [];
 
+// ── canonical asset key — so monitors that name the SAME project differently (tvl-drain "Aave V3",
+// defi-hack "Aave", funding "AAVE", depeg coingecko-id "tether") converge for confluence(). The unlock
+// from the creative sweep: the 3 highest-value monitors emitted different key shapes, so they never fused.
+const PROTO2SYM = {
+  tether: 'USDT', 'usd-coin': 'USDC', dai: 'DAI', 'first-digital-usd': 'FDUSD', 'paypal-usd': 'PYUSD', frax: 'FRAX', 'ethena-usde': 'USDE', 'ondo-us-dollar-yield': 'USDY', rlusd: 'RLUSD',
+  aave: 'AAVE', lido: 'LDO', 'ether.fi': 'ETHFI', etherfi: 'ETHFI', pendle: 'PENDLE', ethena: 'ENA', arbitrum: 'ARB', optimism: 'OP', curve: 'CRV', 'curve-dex': 'CRV', uniswap: 'UNI', jupiter: 'JUP', celestia: 'TIA', dydx: 'DYDX', wormhole: 'W', jito: 'JTO', pyth: 'PYTH', sui: 'SUI', aptos: 'APT', starknet: 'STRK', 'sei-network': 'SEI', maker: 'MKR', sky: 'USDS',
+};
+function normAsset(asset) {
+  if (!asset || asset === 'MARKET') return asset;
+  const low = String(asset).toLowerCase().trim();
+  if (PROTO2SYM[low]) return PROTO2SYM[low];
+  const cleaned = low.replace(/\s+(v\d+|finance|protocol|dex|exchange|network|labs|ecosystem|chain)\b/g, '').trim();
+  if (PROTO2SYM[cleaned]) return PROTO2SYM[cleaned];
+  if (/^[a-z0-9]{2,6}$/.test(low)) return low.toUpperCase(); // already a ticker
+  return cleaned.replace(/\s+/g, '-').toUpperCase().slice(0, 14);
+}
+
 // ── routing: monitor template → action(s) with a lane each ──
 const ROUTE = {
   'stable-depeg': (a) => [
@@ -44,7 +61,80 @@ const ROUTE = {
     { lane: 'auto', type: 'regime', asset: 'MARKET', signal: a.trigger, sink: 'signal-tape' },
     { lane: 'deliver', type: 'regime-feed', asset: 'MARKET', msg: a.trigger },
   ],
+  // ── newly wired (were orphaned): signal monitors ──
+  'stablecoin-flow': (a) => [
+    { lane: 'deliver', type: 'capital-flow', asset: a.symbol, msg: `${a.symbol} supply ${a.flow} ${a.dayChange}/day (wk ${a.weekChange})` },
+    { lane: 'auto', type: 'flow-signal', asset: a.symbol, signal: `${a.flow} ${a.dayChange}`, sink: 'signal-tape' },
+  ],
+  'funding-arb': (a) => [
+    { lane: 'deliver', type: 'funding-arb', asset: a.coin, msg: `${a.coin} cross-venue funding ${a.spread8h}/8h (${a.annualized} annl) — ${a.play}` },
+    { lane: 'auto', type: 'paper-signal', asset: a.coin, signal: `funding-arb ${a.spread8h} ${a.play}`, sink: 'signal-tape' },
+  ],
+  'defi-hack-watch': (a) => [
+    { lane: 'deliver', type: 'exploit-confirmed', asset: a.name, priority: 'high', msg: `🚨 EXPLOIT: ${a.name} lost ${a.lost} (${a.technique}, ${a.chain})` },
+    { lane: 'approve', type: 'derisk', asset: a.name, action: `If exposed to ${a.name}: exit now`, needs: 'position check', why: a.technique },
+  ],
+  'governance-watch': (a) => [
+    { lane: 'deliver', type: 'governance', asset: a.space, msg: `${a.space}: "${a.title}" closes ${a.closesIn} (${a.votes} votes)` },
+  ],
+  'vol-regime': (a) => [
+    { lane: 'auto', type: 'regime', asset: 'MARKET', signal: `${a.cur} DVOL ${a.dvol} — ${a.regime}`, sink: 'signal-tape' },
+    { lane: 'deliver', type: 'vol-regime', asset: a.cur, msg: `${a.cur} DVOL ${a.dvol} (${a.regime}) ${a.change}` },
+  ],
+  'token-unlock-watch': (a) => [
+    { lane: 'deliver', type: 'unlock-calendar', asset: a.token, msg: `${a.token} unlock in ${a.inDays}d: ${a.tokens?.toLocaleString?.()} tokens (${a.category})` },
+    { lane: 'auto', type: 'paper-signal', asset: a.token, signal: `unlock ${a.inDays}d sell-pressure`, sink: 'signal-tape' },
+  ],
+  'world-pulse': (a) => [{ lane: 'deliver', type: 'prediction-odds', asset: 'MARKET', msg: `${a.q}: ${a.prob} (${a.moved})` }],
+  'narrative-rotation': (a) => [
+    { lane: 'deliver', type: 'narrative', asset: a.narrative, msg: `narrative rotating in: ${a.narrative} ${a.chg24h} ($${a.vol} vol)` },
+    { lane: 'auto', type: 'regime', asset: 'MARKET', signal: `narrative: ${a.narrative} ${a.chg24h}`, sink: 'signal-tape' },
+  ],
+  'prediction-whale': (a) => [{ lane: 'deliver', type: 'prediction-whale', asset: 'MARKET', msg: `whale ${a.side} ${a.notional} @ ${a.prob}: ${a.market}` }],
+  // ── newly wired: opportunity scanners → approve-cards (the discover→crunch→ship loop) ──
+  'audit-contest-watch': (a) => [{ lane: 'approve', type: 'run-audit', asset: a.title, action: `Fresh ${a.board} contest: ${a.title} (${a.prize}) — confirm the repo URL so the audit pipeline can auto-run on day-1 code`, needs: 'paste repo URL into config/audit-targets.json needs_repo entry (one-time, no identity) + later submit under your identity', why: 'low-dup findings', url: a.url }],
+  // hackathon-watch: hackathon-fit.mjs (built 2026-07-01) now independently consumes this SAME monitor and
+  // cards a real 'hackathon-apply' draft — same reason grants-watch was removed from ROUTE below: routing
+  // it here too would duplicate a dead-end card alongside the real drafted one.
+  // grants-watch: grant-fit.mjs already consumes this SAME monitor and cards a real 'grant-apply' draft —
+  // routing it here too used to duplicate a dead-end 'apply-grant' card with no draft behind it (found in
+  // the 2026-07-01 audit). Removed; grant-fit.mjs is the one real path for this monitor.
+  // ── fused 2nd-order signals ──
+  'depeg-doctor': (a) => [
+    { lane: 'deliver', type: 'depeg-doctor', asset: a.stable, priority: a.verdict === 'BREAK-RISK' ? 'high' : 'normal', msg: `${a.stable} ${a.dev} — ${a.verdict}: ${a.why}` },
+    ...(a.verdict === 'BREAK-RISK' ? [{ lane: 'approve', type: 'derisk', asset: a.stable, action: `${a.stable} BREAK-RISK — exit/hedge`, needs: 'position check', why: a.why }] : []),
+  ],
+  'unlock-coil': (a) => [
+    { lane: 'deliver', type: 'unlock-coil', asset: a.token, msg: `${a.token} unlock ${a.inDays}d — ${a.setup} (${a.why})` },
+    { lane: 'auto', type: 'paper-signal', asset: a.token, signal: `unlock-coil ${a.setup}`, sink: 'signal-tape' },
+  ],
+  'vol-compression': (a) => [
+    { lane: 'deliver', type: 'vol-compression', asset: 'MARKET', priority: 'high', msg: `${a.trigger}: BTC DVOL ${a.dvol} (${a.dvol_pctile}) + ${a.catalysts?.length} catalysts <72h` },
+    { lane: 'auto', type: 'regime', asset: 'MARKET', signal: `vol compressed ${a.dvol_pctile}`, sink: 'signal-tape' },
+  ],
+  'github-velocity': (a) => [{ lane: 'deliver', type: 'dev-velocity', asset: a.topic, msg: `${a.topic}: ${a.active_repos_7d?.toLocaleString?.()} active repos/7d` }],
+  'prediction-vs-perp': (a) => [
+    { lane: 'deliver', type: 'crowd-disagreement', asset: a.coin, msg: `${a.coin}: Polymarket ${a.pm_p_up} up vs funding ${a.funding8h} — ${a.read}` },
+    { lane: 'auto', type: 'paper-signal', asset: a.coin, signal: `pred-vs-perp ${a.read}`, sink: 'signal-tape' },
+  ],
+  'governance-alpha': (a) => [{ lane: 'deliver', type: 'governance-alpha', asset: a.space, priority: /DECIDED/.test(a.status) ? 'high' : 'normal', msg: `${a.space}: "${a.title}" ${a.status} — leading "${a.leading}" (${a.conviction}), closes ${a.closesIn}` }],
+  'airdrop-eligibility-confluence': (a) => [
+    { lane: 'approve', type: 'airdrop-confluence', asset: a.protocol, priority: a.is_new ? 'high' : 'normal', action: `${a.wallet} already has ${a.tx_count} tx on ${a.chain} — ${a.protocol} (${a.category}, $${a.tvl?.toLocaleString?.()} TVL) is a live tokenless candidate there. Go interact now to build eligibility before any snapshot.`, needs: 'wallet interaction (you sign)', why: 'wallet already active on the matching chain + fresh airdrop candidate', url: a.url },
+    { lane: 'deliver', type: 'airdrop-confluence', asset: a.protocol, msg: `${a.protocol} (${a.chain}) — ${a.wallet} active there (${a.tx_count} tx); ${a.is_new ? 'NEW' : 'live'} tokenless candidate` },
+  ],
 };
+
+// generic fallback for monitor-forge.mjs's autonomously-generated templates ('gen:*') — they don't get a
+// hand-written ROUTE entry (nobody wrote one), so without this their alerts would silently vanish the
+// moment they shipped. Generic delivery: publish to the free feed + log to the signal-tape. No approve
+// lane by default (a freshly forged monitor hasn't earned operator trust yet) — promote it to a real
+// ROUTE entry once its output is reviewed and judged worth acting on.
+function genericRoute(a, template) {
+  return [
+    { lane: 'deliver', type: 'forged-signal', asset: a.name || a.id || a.asset || 'MARKET', msg: `[${template}] ${JSON.stringify(a).slice(0, 160)}` },
+    { lane: 'auto', type: 'forged-signal', asset: a.name || a.id || a.asset || 'MARKET', signal: `${template}: ${JSON.stringify(a).slice(0, 100)}`, sink: 'signal-tape' },
+  ];
+}
 
 async function route() {
   const reg = await loadRegistry();
@@ -52,19 +142,29 @@ async function route() {
   for (const m of (reg.monitors || [])) {
     const r = await runMonitor(m);
     if (!r.ok) continue;
-    const fn = ROUTE[r.template]; if (!fn) continue;
+    const fn = ROUTE[r.template] || (String(r.template || '').startsWith('gen:') ? (a) => genericRoute(a, r.template) : null);
+    if (!fn) continue;
     for (const a of (r.alerts || [])) for (const act of fn(a)) actions.push({ ...act, monitor: r.label, template: r.template, monetize: r.monetize, ts: Date.now() });
   }
   return actions;
 }
 
-// confluence: same asset flagged by ≥2 different monitor templates = escalate
+// confluence: same (canonical) asset flagged by ≥2 different monitor templates = escalate.
+// Keys on normAsset() so "Aave V3"/"Aave"/"AAVE" converge. Opportunity lanes (run-audit/ship-hackathon/
+// apply-grant) are excluded — a contest title is not an asset and shouldn't pollute confluence.
+const OPP_TYPES = new Set(['run-audit', 'ship-hackathon', 'apply-grant']);
 function confluence(actions) {
   const byAsset = {};
-  for (const a of actions) { if (!a.asset || a.asset === 'MARKET') continue; (byAsset[a.asset] ||= new Set()).add(a.template); }
+  for (const a of actions) {
+    if (OPP_TYPES.has(a.type)) continue;
+    const key = normAsset(a.asset);
+    if (!key || key === 'MARKET') continue;
+    (byAsset[key] ||= { templates: new Set(), raw: new Set() });
+    byAsset[key].templates.add(a.template); byAsset[key].raw.add(a.asset);
+  }
   const hits = [];
-  for (const [asset, templates] of Object.entries(byAsset)) {
-    if (templates.size >= 2) hits.push({ lane: 'approve', type: 'confluence', asset, priority: 'high', action: `HIGH CONVICTION: ${asset} flagged by ${[...templates].join(' + ')} — review`, why: 'multi-signal confirmation', templates: [...templates], ts: Date.now() });
+  for (const [asset, { templates, raw }] of Object.entries(byAsset)) {
+    if (templates.size >= 2) hits.push({ lane: 'approve', type: 'confluence', asset, priority: 'high', action: `HIGH CONVICTION: ${asset} flagged by ${[...templates].join(' + ')} (${[...raw].join(', ')}) — review`, why: 'multi-signal confirmation', templates: [...templates], ts: Date.now() });
   }
   return hits;
 }
@@ -141,8 +241,10 @@ export async function executionView() {
   let plan = null; try { plan = JSON.parse(await readFile(PLAN, 'utf8')); } catch {}
   const bySig = new Map();
   for (const e of jsonl(QUEUE)) if (e.sig) bySig.set(e.sig, { ...(bySig.get(e.sig) || {}), ...e });
-  const pending = [...bySig.values()].filter(e => e.status === 'pending').slice(-20).reverse();
-  return { ...(plan || { note: 'no plan yet — runs each builder tick' }), pending_actions: pending, pending_count: pending.length };
+  const allPending = [...bySig.values()].filter(e => e.status === 'pending');
+  // rank high-priority + freshest first; surface ALL (true count, no silent truncation), cap rendered payload at 60.
+  const ranked = allPending.sort((a, b) => (b.priority === 'high' ? 1 : 0) - (a.priority === 'high' ? 1 : 0) || String(b.queued || '').localeCompare(String(a.queued || '')));
+  return { ...(plan || { note: 'no plan yet — runs each builder tick' }), pending_actions: ranked.slice(0, 60), pending_count: allPending.length };
 }
 
 // PUBLIC FEED — the always-on free-tier product. JSON by default, RSS so it's actually subscribable.
@@ -156,6 +258,39 @@ export async function publicFeed(format = 'json') {
     note: 'Open-core free tier. Live keyless signals published every builder tick.' };
 }
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// REGIME CLOCK — the creative-sweep #2 ship. Fuses three keyless macro feeds into one risk-on/off state,
+// lookahead-free, written to the signal-tape so the paper book can gate on it (the internal income edge):
+//   stablecoin-flow (net mint=inflow/risk-on, burn=outflow/risk-off) + funding bias (crowded longs=greed) +
+//   Fear&Greed (with a contrarian overlay at extremes). Internal/autonomous — no money, no operator click.
+const REGIME = path.join(LAB, 'data', 'regime-latest.json');
+export async function regimeClock() {
+  const [flow, fund, fng] = await Promise.all([
+    runMonitor({ template: 'stablecoin-flow', id: 'rc-flow', params: {} }),
+    runMonitor({ template: 'funding-extreme', id: 'rc-fund', params: {} }),
+    runMonitor({ template: 'sentiment-flip', id: 'rc-fng', params: {} }),
+  ]);
+  const flowNet = flow.ok ? flow.alerts.reduce((s, a) => s + (parseFloat(a.dayChange) || 0), 0) : 0;
+  const flowScore = Math.max(-1, Math.min(1, flowNet / 5)); // ±5% net daily supply = full tilt
+  let lp = 0, sp = 0; if (fund.ok) for (const a of fund.alerts) { if (/longs pay/.test(a.side)) lp++; else sp++; }
+  const fundScore = (lp + sp) ? (lp - sp) / (lp + sp) : 0;
+  const fngVal = fng.ok ? (parseInt((String(fng.signal).match(/F&G (\d+)/) || [])[1]) || 50) : 50;
+  const fngScore = (fngVal - 50) / 50;
+  const composite = +((flowScore + fundScore + fngScore) / 3).toFixed(3);
+  const state = composite > 0.2 ? 'risk-on' : composite < -0.2 ? 'risk-off' : 'neutral';
+  const contrarian = fngVal >= 75 ? 'extreme greed → fade rallies / de-risk' : fngVal <= 25 ? 'extreme fear → contrarian long bias' : null;
+  const out = {
+    ts: Date.now(), state, confidence: +Math.abs(composite).toFixed(2), composite, contrarian,
+    components: { stablecoin_flow: { net_day_pct: +flowNet.toFixed(2), score: +flowScore.toFixed(2) }, funding_bias: { longs_pay: lp, shorts_pay: sp, score: +fundScore.toFixed(2) }, fear_greed: { value: fngVal, score: +fngScore.toFixed(2) } },
+    note: 'Risk-on/off regime fused from 3 keyless feeds, lookahead-free. The paper book gates entries on this; contrarian overlay flags extremes. Queryable at /api/regime.',
+  };
+  try { await writeFile(REGIME, JSON.stringify(out, null, 2)); } catch {}
+  try { await appendFile(TAPE, JSON.stringify({ type: 'macro-regime', asset: 'MARKET', signal: `${state} (conf ${out.confidence}${contrarian ? '; ' + contrarian : ''})`, executed: new Date().toISOString() }) + '\n'); } catch {}
+  return out;
+}
+export async function regimeView() {
+  try { return JSON.parse(await readFile(REGIME, 'utf8')); } catch { return await regimeClock(); }
+}
 
 // SIGNAL TAPE — the AUTO-lane consumer. Reads the tape, digests it into the current market posture so
 // the auto signals actually FEED something readable (the paper-sim handoff + a queryable state).

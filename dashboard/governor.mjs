@@ -107,7 +107,11 @@ async function tick() {
     } else row.action = 'hold';
     decisions.push(row);
   }
-  await persist(cfg, decisions, 'ok');
+  // each row already carries its own per-node action/ok result (FAILED/error strings), but the top-level
+  // status used to hardcode 'ok' regardless — so a node retrying a dead target every tick (e.g. no local
+  // xmrig running, placeholder access-token) looked identical to a healthy loop in the persisted state.
+  const anyFail = decisions.some(d => /FAILED|error/i.test(d.action || ''));
+  await persist(cfg, decisions, anyFail ? 'degraded' : 'ok');
 }
 
 async function persist(cfg, decisions, status) {

@@ -1,0 +1,9 @@
+{
+  "ts": 1782908696889,
+  "live_contests": 0,
+  "armed": 0,
+  "needs_repo": 0,
+  "contest_targets": [],
+  "pending_repo": [],
+  "note": "No live contest (drought). Armed — fires the moment a board opens (audit-contest-watch on the cron)."
+}
